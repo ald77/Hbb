@@ -5,9 +5,19 @@
 
 # Compiled Dynamic libraries
 *.so
+!bin/lib_jet_met_objects.so
 *.dylib
 
 # Compiled Static libraries
 *.lai
 *.la
 *.a
+
+# Compiled executables
+*.exe
+
+# Other
+*.root
+!example_root_file.root
+*.log
+*.pdf
