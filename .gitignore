@@ -19,6 +19,7 @@
 # Generated source files
 inc/cfa.hpp
 src/cfa.cpp
+bin/*
 
 # Other
 *.root
