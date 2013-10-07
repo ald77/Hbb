@@ -342,13 +342,7 @@ bool EventHandler::PassesRegionD2bCut() const{
 }
 
 bool EventHandler::PassesBadJetFilter() const{
-  if(event==44263635 || event==380728775 || event==809306306 || event==968577694){
-    std::cout << event << std::endl;
-  }
   for(unsigned int i(0); i<jets_AK5PF_pt->size(); ++i){
-    if(event==44263635 || event==380728775 || event==809306306 || event==968577694){
-      std::cout << i << " " << isGoodJet(i,false,30.0,DBL_MAX) << " " << isGoodJet(i,true,30.0,DBL_MAX) << std::endl;
-    }
     if(isGoodJet(i,false,30.0,DBL_MAX) && !isGoodJet(i,true,30.0,DBL_MAX)) return false;
   }
   return true;
@@ -815,11 +809,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
     const double localWeight((isRealData?1.0:GetPUWeight(lumiWeights))*scaleFactor*(true && isttbar?GetTopPtWeight():1.0)*GetSbinWeight()*(HasGluonSplitting()?1.0:1.0));
     const double nonpileupweight(scaleFactor*(true && isttbar?GetTopPtWeight():1.0)*(HasGluonSplitting()?1.0:1.0)*GetSbinWeight());
     const double notopweight((isRealData?1.0:GetPUWeight(lumiWeights))*scaleFactor*GetSbinWeight());
-
-    /*std::cout << "event=" << event
-	      << ", lumi weight=" << scaleFactor
-	      << ", top pt weight=" << (isttbar?GetTopPtWeight():1.0)
-	      << ", PU weight=" << GetPUWeight(lumiWeights) << std::endl;*/
 
     if(sampleName.find("Run2012")!=std::string::npos){
       if(sampleName.find("PromptReco")!=std::string::npos
