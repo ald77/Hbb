@@ -16,6 +16,10 @@
 # Compiled executables
 *.exe
 
+# Generated source files
+inc/cfa.hpp
+src/cfa.cpp
+
 # Other
 *.root
 !example_root_file.root
