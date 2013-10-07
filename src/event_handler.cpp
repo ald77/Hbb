@@ -797,7 +797,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
   FixSbinLabels(yy_Sbins_2bSig);
   FixSbinLabels(yy_Sbins_2bSB);
   
-  std::ofstream crappyfile("crappyfile.txt");
   std::vector<std::vector<int> > VRunLumiPrompt = MakeVRunLumi("Golden");
   std::vector<std::vector<int> > VRunLumi24Aug = MakeVRunLumi("24Aug");
   std::vector<std::vector<int> > VRunLumi13Jul = MakeVRunLumi("13Jul");
@@ -1086,7 +1085,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(!PassesMETCleaningCut()) continue;
     ++METCleaningCount;
     METCleaningCountWeighted+=localWeight;
-    crappyfile << event << std::endl;
     if(!PassesTriggerCut()) continue;
     ++TriggerCount;
     TriggerCountWeighted+=localWeight;
@@ -1131,7 +1129,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
     xx_metSig_D2b.SetBinContent(i,xx_metSig_D2b.GetBinContent(i)*10.0/xx_metSig_D2b.GetBinWidth(i));
   }
 
-  crappyfile.close();
   xx_metSig_SigOverSB_4b.Divide(&xx_metSig_A,&xx_metSig_B);
   xx_metSig_SigOverSB_3b.Divide(&xx_metSig_C3b,&xx_metSig_D3b);
   xx_metSig_SigOverSB_2b.Divide(&xx_metSig_C2b,&xx_metSig_D2b);

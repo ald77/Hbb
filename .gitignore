@@ -21,6 +21,10 @@ inc/cfa.hpp
 src/cfa.cpp
 bin/*
 
+# emacs backups
+*~
+*#
+
 # Other
 *.root
 !example_root_file.root
