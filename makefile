@@ -39,17 +39,19 @@ $(MAKEDIR)/%.d: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM -MG -MF $@ $< 
 	sed -i 's#$*.o#$(OBJDIR)/$*.o $(MAKEDIR)/$*.d#g' $@
 
-$(OBJDIR)/%.o: %.cpp
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
-$(EXEDIR)/%.exe:
+# This is a bit ugly. Shouldn't need the dependency explicitly.
+$(EXEDIR)/%.exe: $(OBJDIR)/%.o
 	$(LD) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
-# cfa.cpp and cfa.hpp need special treatment.
-# Need to figure out how to recompile cfa.* when generate_cfa_class.* changes
-# This may also unecessarily run twice (harmless but annoying)
-$(SRCDIR)/cfa.cpp $(INCDIR)/cfa.hpp: $(EXEDIR)/generate_cfa_class.exe example_root_file.root
-	./$< example_root_file.root
+# cfa.cpp and cfa.hpp need special treatment. Probably cleaner ways to do this.
+$(SRCDIR)/cfa.cpp $(INCDIR)/cfa.hpp: dummy_cfa.all
+.SECONDARY: dummy_cfa.all
+dummy_cfa.all: $(EXEDIR)/generate_cfa_class.exe example_root_file.root
+	./$< $(word 2,$^)
+.PRECIOUS: generate_cfa_class.o
 
 .PHONY: clean
 

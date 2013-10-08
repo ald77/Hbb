@@ -4,7 +4,7 @@ shopt -s nullglob
 
 tmp_file="makefile_errors_and_warnings_temporary_collision_free_long_unambiguous_name.log"
 
-make -j -k -r -R 2> $tmp_file
+make -j -k -r -R 2> >(tee $tmp_file >&2)
 
 echo
 
