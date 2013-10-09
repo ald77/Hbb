@@ -224,6 +224,10 @@ bool EventHandler::PassesDRCut() const{
   return GetMaxDR()<2.2;
 }
 
+bool EventHandler::PassesInvertedDRCut() const{
+  return GetMaxDR()>2.2;
+}
+
 bool EventHandler::PassesMETSig50Cut() const{
   return pfmets_fullSignif>50.0;
 }
@@ -332,6 +336,210 @@ bool EventHandler::PassesRegionD2bCut() const{
   if(!PassesMinDeltaPhiCut()) return false;
   if(!PassesLeptonVetoCut()) return false;
   if(!PassesIsoTrackVetoCut()) return false;
+  if(!PassesDRCut()) return false;
+  if(!PassesMETSig30Cut()) return false;
+  const std::pair<double, double> higgs_masses(GetHiggsMasses());
+  const double avg(0.5*(higgs_masses.first+higgs_masses.second));
+  const double delta(fabs(higgs_masses.first-higgs_masses.second));
+  if((delta<30.0 && avg>90.0 && avg<150.0) || GetNumCSVMJets()>=3) return false;
+  return true;
+}
+
+bool EventHandler::PassesInvertedDRRegionACut() const{
+  if(!PassesPVCut()) return false;
+  if(!PassesMETCleaningCut()) return false;
+  if(!PassesTriggerCut()) return false;
+  if(!PassesNumJetsCut()) return false;
+  if(!Passes2CSVTCut()) return false;
+  if(!PassesJet2PtCut()) return false;
+  if(!PassesMinDeltaPhiCut()) return false;
+  if(!PassesLeptonVetoCut()) return false;
+  if(!PassesIsoTrackVetoCut()) return false;
+  if(!PassesInvertedDRCut()) return false;
+  if(!PassesMETSig30Cut()) return false;
+  if(!PassesHiggsMassCut() || !PassesBTaggingCut()) return false;
+  return true;
+}
+
+bool EventHandler::PassesInvertedDRRegionBCut() const{
+  if(!PassesPVCut()) return false;
+  if(!PassesMETCleaningCut()) return false;
+  if(!PassesTriggerCut()) return false;
+  if(!PassesNumJetsCut()) return false;
+  if(!Passes2CSVTCut()) return false;
+  if(!PassesJet2PtCut()) return false;
+  if(!PassesMinDeltaPhiCut()) return false;
+  if(!PassesLeptonVetoCut()) return false;
+  if(!PassesIsoTrackVetoCut()) return false;
+  if(!PassesInvertedDRCut()) return false;
+  if(!PassesMETSig30Cut()) return false;
+  const std::pair<double, double> higgs_masses(GetHiggsMasses());
+  const double avg(0.5*(higgs_masses.first+higgs_masses.second));
+  const double delta(fabs(higgs_masses.first-higgs_masses.second));
+  if((delta<30.0 && avg>90.0 && avg<150.0) || !PassesBTaggingCut()) return false;
+  return true;
+}
+
+bool EventHandler::PassesInvertedDRRegionC3bCut() const{
+  if(!PassesPVCut()) return false;
+  if(!PassesMETCleaningCut()) return false;
+  if(!PassesTriggerCut()) return false;
+  if(!PassesNumJetsCut()) return false;
+  if(!Passes2CSVTCut()) return false;
+  if(!PassesJet2PtCut()) return false;
+  if(!PassesMinDeltaPhiCut()) return false;
+  if(!PassesLeptonVetoCut()) return false;
+  if(!PassesIsoTrackVetoCut()) return false;
+  if(!PassesInvertedDRCut()) return false;
+  if(!PassesMETSig30Cut()) return false;
+  if(!PassesHiggsMassCut() || GetNumCSVMJets()<3 || GetNumCSVLJets()>=4) return false;
+  return true;
+}
+
+bool EventHandler::PassesInvertedDRRegionD3bCut() const{
+  if(!PassesPVCut()) return false;
+  if(!PassesMETCleaningCut()) return false;
+  if(!PassesTriggerCut()) return false;
+  if(!PassesNumJetsCut()) return false;
+  if(!Passes2CSVTCut()) return false;
+  if(!PassesJet2PtCut()) return false;
+  if(!PassesMinDeltaPhiCut()) return false;
+  if(!PassesLeptonVetoCut()) return false;
+  if(!PassesIsoTrackVetoCut()) return false;
+  if(!PassesInvertedDRCut()) return false;
+  if(!PassesMETSig30Cut()) return false;
+  const std::pair<double, double> higgs_masses(GetHiggsMasses());
+  const double avg(0.5*(higgs_masses.first+higgs_masses.second));
+  const double delta(fabs(higgs_masses.first-higgs_masses.second));
+  if((delta<30.0 && avg>90.0 && avg<150.0) || GetNumCSVMJets()<3 || GetNumCSVLJets()>=4) return false;
+  return true;
+}
+
+bool EventHandler::PassesInvertedDRRegionC2bCut() const{
+  if(!PassesPVCut()) return false;
+  if(!PassesMETCleaningCut()) return false;
+  if(!PassesTriggerCut()) return false;
+  if(!PassesNumJetsCut()) return false;
+  if(!Passes2CSVTCut()) return false;
+  if(!PassesJet2PtCut()) return false;
+  if(!PassesMinDeltaPhiCut()) return false;
+  if(!PassesLeptonVetoCut()) return false;
+  if(!PassesIsoTrackVetoCut()) return false;
+  if(!PassesInvertedDRCut()) return false;
+  if(!PassesMETSig30Cut()) return false;
+  if(!PassesHiggsMassCut() || GetNumCSVMJets()>=3) return false;
+  return true;
+}
+
+bool EventHandler::PassesInvertedDRRegionD2bCut() const{
+  if(!PassesPVCut()) return false;
+  if(!PassesMETCleaningCut()) return false;
+  if(!PassesTriggerCut()) return false;
+  if(!PassesNumJetsCut()) return false;
+  if(!Passes2CSVTCut()) return false;
+  if(!PassesJet2PtCut()) return false;
+  if(!PassesMinDeltaPhiCut()) return false;
+  if(!PassesLeptonVetoCut()) return false;
+  if(!PassesIsoTrackVetoCut()) return false;
+  if(!PassesInvertedDRCut()) return false;
+  if(!PassesMETSig30Cut()) return false;
+  const std::pair<double, double> higgs_masses(GetHiggsMasses());
+  const double avg(0.5*(higgs_masses.first+higgs_masses.second));
+  const double delta(fabs(higgs_masses.first-higgs_masses.second));
+  if((delta<30.0 && avg>90.0 && avg<150.0) || GetNumCSVMJets()>=3) return false;
+  return true;
+}
+
+bool EventHandler::PassesSingleLeptonRegionACut() const{
+  if(!PassesPVCut()) return false;
+  if(!PassesMETCleaningCut()) return false;
+  if(!PassesTriggerCut()) return false;
+  if(!PassesNumJetsCut()) return false;
+  if(!Passes2CSVTCut()) return false;
+  if(!PassesJet2PtCut()) return false;
+  if(!PassesMinDeltaPhiCut()) return false;
+  if(!PassesSingleLeptonCut()) return false;
+  if(!PassesDRCut()) return false;
+  if(!PassesMETSig30Cut()) return false;
+  if(!PassesHiggsMassCut() || !PassesBTaggingCut()) return false;
+  return true;
+}
+
+bool EventHandler::PassesSingleLeptonRegionBCut() const{
+  if(!PassesPVCut()) return false;
+  if(!PassesMETCleaningCut()) return false;
+  if(!PassesTriggerCut()) return false;
+  if(!PassesNumJetsCut()) return false;
+  if(!Passes2CSVTCut()) return false;
+  if(!PassesJet2PtCut()) return false;
+  if(!PassesMinDeltaPhiCut()) return false;
+  if(!PassesSingleLeptonCut()) return false;
+  if(!PassesDRCut()) return false;
+  if(!PassesMETSig30Cut()) return false;
+  const std::pair<double, double> higgs_masses(GetHiggsMasses());
+  const double avg(0.5*(higgs_masses.first+higgs_masses.second));
+  const double delta(fabs(higgs_masses.first-higgs_masses.second));
+  if((delta<30.0 && avg>90.0 && avg<150.0) || !PassesBTaggingCut()) return false;
+  return true;
+}
+
+bool EventHandler::PassesSingleLeptonRegionC3bCut() const{
+  if(!PassesPVCut()) return false;
+  if(!PassesMETCleaningCut()) return false;
+  if(!PassesTriggerCut()) return false;
+  if(!PassesNumJetsCut()) return false;
+  if(!Passes2CSVTCut()) return false;
+  if(!PassesJet2PtCut()) return false;
+  if(!PassesMinDeltaPhiCut()) return false;
+  if(!PassesSingleLeptonCut()) return false;
+  if(!PassesDRCut()) return false;
+  if(!PassesMETSig30Cut()) return false;
+  if(!PassesHiggsMassCut() || GetNumCSVMJets()<3 || GetNumCSVLJets()>=4) return false;
+  return true;
+}
+
+bool EventHandler::PassesSingleLeptonRegionD3bCut() const{
+  if(!PassesPVCut()) return false;
+  if(!PassesMETCleaningCut()) return false;
+  if(!PassesTriggerCut()) return false;
+  if(!PassesNumJetsCut()) return false;
+  if(!Passes2CSVTCut()) return false;
+  if(!PassesJet2PtCut()) return false;
+  if(!PassesMinDeltaPhiCut()) return false;
+  if(!PassesSingleLeptonCut()) return false;
+  if(!PassesDRCut()) return false;
+  if(!PassesMETSig30Cut()) return false;
+  const std::pair<double, double> higgs_masses(GetHiggsMasses());
+  const double avg(0.5*(higgs_masses.first+higgs_masses.second));
+  const double delta(fabs(higgs_masses.first-higgs_masses.second));
+  if((delta<30.0 && avg>90.0 && avg<150.0) || GetNumCSVMJets()<3 || GetNumCSVLJets()>=4) return false;
+  return true;
+}
+
+bool EventHandler::PassesSingleLeptonRegionC2bCut() const{
+  if(!PassesPVCut()) return false;
+  if(!PassesMETCleaningCut()) return false;
+  if(!PassesTriggerCut()) return false;
+  if(!PassesNumJetsCut()) return false;
+  if(!Passes2CSVTCut()) return false;
+  if(!PassesJet2PtCut()) return false;
+  if(!PassesMinDeltaPhiCut()) return false;
+  if(!PassesSingleLeptonCut()) return false;
+  if(!PassesDRCut()) return false;
+  if(!PassesMETSig30Cut()) return false;
+  if(!PassesHiggsMassCut() || GetNumCSVMJets()>=3) return false;
+  return true;
+}
+
+bool EventHandler::PassesSingleLeptonRegionD2bCut() const{
+  if(!PassesPVCut()) return false;
+  if(!PassesMETCleaningCut()) return false;
+  if(!PassesTriggerCut()) return false;
+  if(!PassesNumJetsCut()) return false;
+  if(!Passes2CSVTCut()) return false;
+  if(!PassesJet2PtCut()) return false;
+  if(!PassesMinDeltaPhiCut()) return false;
+  if(!PassesSingleLeptonCut()) return false;
   if(!PassesDRCut()) return false;
   if(!PassesMETSig30Cut()) return false;
   const std::pair<double, double> higgs_masses(GetHiggsMasses());
@@ -648,6 +856,14 @@ void EventHandler::MakePlots(const std::string &outFileName){
   double ACountWeighted(0.0), BCountWeighted(0.0), C3bCountWeighted(0.0), D3bCountWeighted(0.0), C2bCountWeighted(0.0), D2bCountWeighted(0.0);
   double AUncert(0.0), BUncert(0.0), C3bUncert(0.0), D3bUncert(0.0), C2bUncert(0.0), D2bUncert(0.0);
 
+  unsigned int ADRInvCount(0), BDRInvCount(0), C3bDRInvCount(0), D3bDRInvCount(0), C2bDRInvCount(0), D2bDRInvCount(0);
+  double ADRInvCountWeighted(0.0), BDRInvCountWeighted(0.0), C3bDRInvCountWeighted(0.0), D3bDRInvCountWeighted(0.0), C2bDRInvCountWeighted(0.0), D2bDRInvCountWeighted(0.0);
+  double ADRInvUncert(0.0), BDRInvUncert(0.0), C3bDRInvUncert(0.0), D3bDRInvUncert(0.0), C2bDRInvUncert(0.0), D2bDRInvUncert(0.0);
+
+  unsigned int ASLCount(0), BSLCount(0), C3bSLCount(0), D3bSLCount(0), C2bSLCount(0), D2bSLCount(0);
+  double ASLCountWeighted(0.0), BSLCountWeighted(0.0), C3bSLCountWeighted(0.0), D3bSLCountWeighted(0.0), C2bSLCountWeighted(0.0), D2bSLCountWeighted(0.0);
+  double ASLUncert(0.0), BSLUncert(0.0), C3bSLUncert(0.0), D3bSLUncert(0.0), C2bSLUncert(0.0), D2bSLUncert(0.0);
+
   std::vector<float> dataDist(pu::RunsThrough203002, pu::RunsThrough203002+60);
   std::vector<float> MCDist(pu::Summer2012_S10, pu::Summer2012_S10+60);//QQQ this needs to change later for general pileup scenario
   reweight::LumiReWeighting lumiWeights(MCDist, dataDist);
@@ -852,7 +1068,7 @@ void EventHandler::MakePlots(const std::string &outFileName){
       xx_origin4.Fill(GetType(bo.at(3)),localWeight);
       std::vector<std::pair<double, double> > CSV_beta(0);
       for(unsigned int jet(0); jet<jets_AK5PF_pt->size(); ++jet){
-	if(isGoodJet(jet)){
+	if(isGoodJet(jet, true, 20.0, 2.4, false)){
 	  CSV_beta.push_back(std::pair<double,double>(beta.at(jet),
 						      jets_AK5PF_btag_secVertexCombined->at(jet)));
 	}
@@ -872,7 +1088,7 @@ void EventHandler::MakePlots(const std::string &outFileName){
       yy_origin4.Fill(GetType(bo.at(3)),localWeight);
       std::vector<std::pair<double, double> > CSV_beta(0);
       for(unsigned int jet(0); jet<jets_AK5PF_pt->size(); ++jet){
-	if(isGoodJet(jet)){
+	if(isGoodJet(jet, true, 20.0, 2.4, false)){
 	  CSV_beta.push_back(std::pair<double,double>(beta.at(jet),
 						      jets_AK5PF_btag_secVertexCombined->at(jet)));
 	}
@@ -1008,9 +1224,7 @@ void EventHandler::MakePlots(const std::string &outFileName){
     xx_MET_vs_fracMETFromLowPt.Fill(GetMETOfLowPtPfCands(20.0)/pfmets_et->at(0),pfmets_et->at(0),localWeight);
     xx_METSig_vs_fracMETFromLowPt.Fill(GetMETOfLowPtPfCands(20.0)/pfmets_et->at(0),pfmets_fullSignif,localWeight);
 
-    unsigned int regionPasses(0);//Sanity check
     if(PassesRegionACut()){
-      ++regionPasses;
       ++ACount;
       ACountWeighted+=localWeight;
       AUncert+=localWeight*localWeight;
@@ -1018,7 +1232,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
       xx_metSig_A.Fill(pfmets_fullSignif,localWeight);
     }
     if(PassesRegionBCut()){
-      ++regionPasses;
       ++BCount;
       BCountWeighted+=localWeight;
       BUncert+=localWeight*localWeight;
@@ -1026,7 +1239,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
       xx_metSig_B.Fill(pfmets_fullSignif,localWeight);
     }
     if(PassesRegionC3bCut()){
-      ++regionPasses;
       ++C3bCount;
       C3bCountWeighted+=localWeight;
       C3bUncert+=localWeight*localWeight;
@@ -1034,7 +1246,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
       xx_metSig_C3b.Fill(pfmets_fullSignif,localWeight);
     }
     if(PassesRegionD3bCut()){
-      ++regionPasses;
       ++D3bCount;
       D3bCountWeighted+=localWeight;
       D3bUncert+=localWeight*localWeight;
@@ -1042,7 +1253,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
       xx_metSig_D3b.Fill(pfmets_fullSignif,localWeight);
     }
     if(PassesRegionC2bCut()){
-      ++regionPasses;
       ++C2bCount;
       C2bCountWeighted+=localWeight;
       C2bUncert+=localWeight*localWeight;
@@ -1050,14 +1260,74 @@ void EventHandler::MakePlots(const std::string &outFileName){
       xx_metSig_C2b.Fill(pfmets_fullSignif,localWeight);
     }
     if(PassesRegionD2bCut()){
-      ++regionPasses;
       ++D2bCount;
       D2bCountWeighted+=localWeight;
       D2bUncert+=localWeight*localWeight;
       xx_ABCD.Fill(5.0,localWeight);
       xx_metSig_D2b.Fill(pfmets_fullSignif,localWeight);
     }
-    assert(regionPasses<=1);
+
+    if(PassesInvertedDRRegionACut()){
+      ++ADRInvCount;
+      ADRInvCountWeighted+=localWeight;
+      ADRInvUncert+=localWeight*localWeight;
+    }
+    if(PassesInvertedDRRegionBCut()){
+      ++BDRInvCount;
+      BDRInvCountWeighted+=localWeight;
+      BDRInvUncert+=localWeight*localWeight;
+    }
+    if(PassesInvertedDRRegionC3bCut()){
+      ++C3bDRInvCount;
+      C3bDRInvCountWeighted+=localWeight;
+      C3bDRInvUncert+=localWeight*localWeight;
+    }
+    if(PassesInvertedDRRegionD3bCut()){
+      ++D3bDRInvCount;
+      D3bDRInvCountWeighted+=localWeight;
+      D3bDRInvUncert+=localWeight*localWeight;
+    }
+    if(PassesInvertedDRRegionC2bCut()){
+      ++C2bDRInvCount;
+      C2bDRInvCountWeighted+=localWeight;
+      C2bDRInvUncert+=localWeight*localWeight;
+    }
+    if(PassesInvertedDRRegionD2bCut()){
+      ++D2bDRInvCount;
+      D2bDRInvCountWeighted+=localWeight;
+      D2bDRInvUncert+=localWeight*localWeight;
+    }
+
+    if(PassesSingleLeptonRegionACut()){
+      ++ASLCount;
+      ASLCountWeighted+=localWeight;
+      ASLUncert+=localWeight*localWeight;
+    }
+    if(PassesSingleLeptonRegionBCut()){
+      ++BSLCount;
+      BSLCountWeighted+=localWeight;
+      BSLUncert+=localWeight*localWeight;
+    }
+    if(PassesSingleLeptonRegionC3bCut()){
+      ++C3bSLCount;
+      C3bSLCountWeighted+=localWeight;
+      C3bSLUncert+=localWeight*localWeight;
+    }
+    if(PassesSingleLeptonRegionD3bCut()){
+      ++D3bSLCount;
+      D3bSLCountWeighted+=localWeight;
+      D3bSLUncert+=localWeight*localWeight;
+    }
+    if(PassesSingleLeptonRegionC2bCut()){
+      ++C2bSLCount;
+      C2bSLCountWeighted+=localWeight;
+      C2bSLUncert+=localWeight*localWeight;
+    }
+    if(PassesSingleLeptonRegionD2bCut()){
+      ++D2bSLCount;
+      D2bSLCountWeighted+=localWeight;
+      D2bSLUncert+=localWeight*localWeight;
+    }
 
     if(!PassesPVCut()) continue;
     ++PVCount;
@@ -1200,6 +1470,42 @@ void EventHandler::MakePlots(const std::string &outFileName){
   ABCD.Branch("D2bUncert", &D2bUncert);
   ABCD.Branch("CtotUncert", &CtotUncert);
   ABCD.Branch("DtotUncert", &DtotUncert);
+  ABCD.Branch("A_DRInv", &ADRInvCount);
+  ABCD.Branch("B_DRInv", &BDRInvCount);
+  ABCD.Branch("C3b_DRInv", &C3bDRInvCount);
+  ABCD.Branch("D3b_DRInv", &D3bDRInvCount);
+  ABCD.Branch("C2b_DRInv", &C2bDRInvCount);
+  ABCD.Branch("D2b_DRInv", &D2bDRInvCount);
+  ABCD.Branch("AWeighted_DRInv", &ADRInvCountWeighted);
+  ABCD.Branch("BWeighted_DRInv", &BDRInvCountWeighted);
+  ABCD.Branch("C3bWeighted_DRInv", &C3bDRInvCountWeighted);
+  ABCD.Branch("D3bWeighted_DRInv", &D3bDRInvCountWeighted);
+  ABCD.Branch("C2bWeighted_DRInv", &C2bDRInvCountWeighted);
+  ABCD.Branch("D2bWeighted_DRInv", &D2bDRInvCountWeighted);
+  ABCD.Branch("AUncert_DRInv", &ADRInvUncert);
+  ABCD.Branch("BDRInvUncert_DRInv", &BDRInvUncert);
+  ABCD.Branch("C3bUncert_DRInv", &C3bDRInvUncert);
+  ABCD.Branch("D3bUncert_DRInv", &D3bDRInvUncert);
+  ABCD.Branch("C2bUncert_DRInv", &C2bDRInvUncert);
+  ABCD.Branch("D2bUncert_DRInv", &D2bDRInvUncert);
+  ABCD.Branch("A_SL", &ASLCount);
+  ABCD.Branch("B_SL", &BSLCount);
+  ABCD.Branch("C3b_SL", &C3bSLCount);
+  ABCD.Branch("D3b_SL", &D3bSLCount);
+  ABCD.Branch("C2b_SL", &C2bSLCount);
+  ABCD.Branch("D2b_SL", &D2bSLCount);
+  ABCD.Branch("AWeighted_SL", &ASLCountWeighted);
+  ABCD.Branch("BWeighted_SL", &BSLCountWeighted);
+  ABCD.Branch("C3bWeighted_SL", &C3bSLCountWeighted);
+  ABCD.Branch("D3bWeighted_SL", &D3bSLCountWeighted);
+  ABCD.Branch("C2bWeighted_SL", &C2bSLCountWeighted);
+  ABCD.Branch("D2bWeighted_SL", &D2bSLCountWeighted);
+  ABCD.Branch("AUncert_SL", &ASLUncert);
+  ABCD.Branch("BSLUncert_SL", &BSLUncert);
+  ABCD.Branch("C3bUncert_SL", &C3bSLUncert);
+  ABCD.Branch("D3bUncert_SL", &D3bSLUncert);
+  ABCD.Branch("C2bUncert_SL", &C2bSLUncert);
+  ABCD.Branch("D2bUncert_SL", &D2bSLUncert);
   ABCD.Branch("kappa3b", &kappa3b);
   ABCD.Branch("kappa2b", &kappa2b);
   ABCD.Branch("kappatot", &kappatot);
@@ -1293,6 +1599,9 @@ bool EventHandler::PassesMETSig30Cut() const{
 bool EventHandler::PassesLeptonVetoCut() const{
   return GetNumVetoElectrons()==0 && GetNumVetoMuons()==0 && GetNumVetoTaus()==0;
 }
+bool EventHandler::PassesSingleLeptonCut() const{
+  return GetNumVetoElectrons()+GetNumVetoMuons()==1 && GetNumVetoTaus()==0;
+}
 
 bool EventHandler::PassesIsoTrackVetoCut() const{
   return NewGetNumIsoTracks(10.0)==0;
@@ -1376,11 +1685,11 @@ bool EventHandler::isProblemJet(const unsigned int ijet) const{
     && jets_AK5PF_chg_Mult->at(ijet)-jets_AK5PF_neutral_Mult->at(ijet)>=40;
 }
 
-bool EventHandler::isGoodJet(const unsigned int ijet, const bool jetid, const double ptThresh, const double etaThresh) const{
+bool EventHandler::isGoodJet(const unsigned int ijet, const bool jetid, const double ptThresh, const double etaThresh, const bool doBeta) const{
   if(jets_AK5PF_pt->at(ijet)<ptThresh || fabs(jets_AK5PF_eta->at(ijet))>etaThresh) return false;
   if ( jetid && !jetPassLooseID(ijet) ) return false;
   if(!betaUpToDate) GetBeta();
-  if(GetcfAVersion()>=69 && beta.at(ijet)<0.2) return false;
+  if(GetcfAVersion()>=69 && beta.at(ijet)<0.2 && doBeta) return false;
   return true;
 }
 

@@ -55,9 +55,12 @@ private:
   bool PassesHiggsMassDiffCut() const;
   bool PassesHiggsMassCut() const;
   bool PassesDRCut() const;
+  bool PassesInvertedDRCut() const;
   bool PassesMETSig50Cut() const;
   bool PassesMETSig100Cut() const;
   bool PassesMETSig150Cut() const;
+
+  bool PassesSingleLeptonCut() const;
 
   bool PassesRegionACut() const;
   bool PassesRegionBCut() const;
@@ -65,6 +68,20 @@ private:
   bool PassesRegionD3bCut() const;
   bool PassesRegionC2bCut() const;
   bool PassesRegionD2bCut() const;
+
+  bool PassesInvertedDRRegionACut() const;
+  bool PassesInvertedDRRegionBCut() const;
+  bool PassesInvertedDRRegionC3bCut() const;
+  bool PassesInvertedDRRegionD3bCut() const;
+  bool PassesInvertedDRRegionC2bCut() const;
+  bool PassesInvertedDRRegionD2bCut() const;
+
+  bool PassesSingleLeptonRegionACut() const;
+  bool PassesSingleLeptonRegionBCut() const;
+  bool PassesSingleLeptonRegionC3bCut() const;
+  bool PassesSingleLeptonRegionD3bCut() const;
+  bool PassesSingleLeptonRegionC2bCut() const;
+  bool PassesSingleLeptonRegionD2bCut() const;
 
   bool PassesBadJetFilter() const;
 
@@ -87,7 +104,7 @@ private:
   int GetNumCSVMJets() const;
   int GetNumCSVLJets() const;
 
-  bool isGoodJet(const unsigned int, const bool=true, const double=20.0, const double=2.4) const;
+  bool isGoodJet(const unsigned int, const bool=true, const double=20.0, const double=2.4, const bool=true) const;
   bool isProblemJet(const unsigned int) const;
   bool jetPassLooseID(const unsigned int) const;
 
