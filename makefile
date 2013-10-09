@@ -18,7 +18,7 @@ vpath %.exe $(EXEDIR)
 vpath %.d $(MAKEDIR)
 
 # Add new executables to this list
-all: make_plots.exe skim_file.exe stack_histos.exe draw_abcd_ratio_plots.exe make_sig_plots.exe fix_skimmed_file.exe calc_abcd.exe count_specific_mass_events.exe draw_npv_plot.exe
+all: make_plots.exe skim_file.exe stack_histos.exe draw_abcd_ratio_plots.exe make_sig_plots.exe fix_skimmed_file.exe calc_abcd.exe count_specific_mass_events.exe draw_npv_plot.exe make_cutflow_table.exe
 
 # List any object files your executable need to be linked with
 $(EXEDIR)/draw_npv_plot.exe: draw_npv_plot.o pu_constants.o
@@ -31,6 +31,7 @@ $(EXEDIR)/stack_histos.exe: stack_histos.o
 $(EXEDIR)/draw_abcd_ratio_plots.exe: draw_abcd_ratio_plots.o
 $(EXEDIR)/skim_file.exe: skim_file.o lib_jet_met_objects.so event_handler.o event_number.o b_jet.o math.o pu_constants.o timer.o cfa.o weights.o
 $(EXEDIR)/make_plots.exe: make_plots.o lib_jet_met_objects.so event_handler.o event_number.o b_jet.o math.o pu_constants.o timer.o cfa.o weights.o
+$(EXEDIR)/make_cutflow_table.exe: make_cutflow_table.o cutflow.o
 
 -include $(addsuffix .d,$(addprefix $(MAKEDIR)/,$(notdir $(basename $(wildcard $(SRCDIR)/*.cpp)))))
 -include $(MAKEDIR)/cfa.d
