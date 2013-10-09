@@ -17,8 +17,36 @@ Cutflow::Cutflow(const vector<TFile*> files) :
 	LoadValues();
 }
 
-/*Cutflow::Cutflow(const string in_filename){
-}*/
+Cutflow::Cutflow(const string in_filename, bool filelist)  : 
+	fChain_("cutFlow"),
+	numCutsTotal_(13),
+	unscaled_(numCutsTotal_,0),
+	scaled_(numCutsTotal_,0.0),
+	error_sq_(numCutsTotal_,0.0),
+	error_(numCutsTotal_,0.0) 
+{
+	char path[1024]="";
+	if(filelist){
+		FILE *fp(fopen(in_filename.c_str(), "r"));
+		while(!feof(fp)){
+		  char line[1024]="";
+		  int scanner(fscanf(fp, "%s", line));
+		  sprintf(path, "%s", line);
+		  fChain_.Add(path);
+		  if(false && scanner==0){
+		  }
+		}
+		fclose(fp);
+    }
+    else{
+    sprintf(path, "%s", in_filename.c_str());
+    fChain_.Add(path);
+  	} 
+	
+	PrepareVectors();
+	LoadValues();
+}
+
 
 void Cutflow::PrepareVectors() {
 	/*char *cutNames[numCutsTotal_]  = {"Start", // 0 (cutflow index)

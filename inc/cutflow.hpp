@@ -15,7 +15,7 @@ using namespace std;
 class Cutflow{
 public:
   Cutflow(const vector<TFile*>);
-  //Cutflow(const string);
+  Cutflow(const string, const bool=false);
   void PrepareVectors();
   void LoadValues();
   void Print(const bool=false) const;

@@ -11,7 +11,9 @@
 typedef unsigned int uint;
 using namespace std;
 
-int main() {
+int main(int argc, char* argv[]) {
+	
+	// Option 1: print the cutflow from vectors of root files
 	vector<TFile*> ttbar, qcd, wt, diboson, znn, SM, data;
 
 	ttbar.push_back(new TFile("raw_plots_and_values/TTJets_FullLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7C-v2_AODSIM_UCSB1883_v71_SyncSkim.root","read"));
@@ -69,7 +71,7 @@ int main() {
     data.push_back(new TFile("raw_plots_and_values/MET_Run2012D-PromptReco-v1_AOD_UCSB1870_v71_SyncSkim.root","read"));    
     // buggy! diboson.push_back(new TFile("raw_plots_and_values/ZH","read"));	
     
-    Cutflow* ttbar_cutflow = new Cutflow(ttbar);
+    /*Cutflow* ttbar_cutflow = new Cutflow(ttbar);
     ttbar_cutflow->PrintCSV();
     Cutflow* qcd_cutflow = new Cutflow(qcd);
     qcd_cutflow->PrintCSV();
@@ -80,6 +82,32 @@ int main() {
     Cutflow* diboson_cutflow = new Cutflow(diboson);
     diboson_cutflow->PrintCSV();
     Cutflow* SM_cutflow = new Cutflow(SM);
-    SM_cutflow->PrintCSV();
+    SM_cutflow->PrintCSV();*/
+    
+    // Option 2: use a list of files specified by the 'i' flag
+    char in_filename[1024]="";
+	char c(' ');
+	bool fileList(false);
+	while((c=getopt(argc, argv, "i:"))!=-1){
+	switch(c){
+	case 'i':
+	  sprintf(in_filename, "%s", optarg);
+	  break;
+	default:
+	  break;
+	}
+	}
+	if (strlen(in_filename)>0) {
+		// check to see if input is a text file or just a path to a root file
+		char* txt = strstr(in_filename,".txt");
+		char* list = strstr(in_filename,".list");
+		cout << txt << " " << list << endl;
+		if (txt||list) fileList = true;
+		cout << fileList << endl;
+		cout << in_filename << endl;
+		Cutflow* in_cutflow = new Cutflow(in_filename,fileList);
+		in_cutflow->Print();  
+	}
+    
 	return 0;
 }
