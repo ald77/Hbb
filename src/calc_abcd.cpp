@@ -5,10 +5,16 @@
 #include <algorithm>
 #include <vector>
 #include <string>
+#include <unistd.h>
 #include "TFile.h"
 #include "TTree.h"
 #include "TMath.h"
 #include "TRandom3.h"
+#include "TCanvas.h"
+#include "TH1D.h"
+#include "TGraphAsymmErrors.h"
+#include "TLegend.h"
+#include "style.hpp"
 #include "weights.hpp"
 
 const unsigned int max_draws(10000);
@@ -47,7 +53,7 @@ void GetTrees(std::vector<TTree*> &trees, const std::vector<TFile*> &files){
 
 void GetValues(std::vector<double> &A, std::vector<double> &B, std::vector<double> &C3,
 	       std::vector<double> &D3, std::vector<double> &C2, std::vector<double> &D2,
-	       const std::vector<TTree*> &trees){
+	       const std::vector<TTree*> &trees, const std::string &str=""){
   A.clear();
   B.clear();
   C3.clear();
@@ -62,12 +68,12 @@ void GetValues(std::vector<double> &A, std::vector<double> &B, std::vector<doubl
   D2.resize(trees.size(),0.0);
   for(std::vector<TTree*>::size_type tree(0); tree<trees.size(); ++tree){
     if(trees.at(tree)!=NULL && trees.at(tree)->GetEntries()>0){
-      trees.at(tree)->SetBranchAddress("AWeighted",&A.at(tree));
-      trees.at(tree)->SetBranchAddress("BWeighted",&B.at(tree));
-      trees.at(tree)->SetBranchAddress("C3bWeighted",&C3.at(tree));
-      trees.at(tree)->SetBranchAddress("D3bWeighted",&D3.at(tree));
-      trees.at(tree)->SetBranchAddress("C2bWeighted",&C2.at(tree));
-      trees.at(tree)->SetBranchAddress("D2bWeighted",&D2.at(tree));
+      trees.at(tree)->SetBranchAddress(("AWeighted"+str).c_str(),&A.at(tree));
+      trees.at(tree)->SetBranchAddress(("BWeighted"+str).c_str(),&B.at(tree));
+      trees.at(tree)->SetBranchAddress(("C3bWeighted"+str).c_str(),&C3.at(tree));
+      trees.at(tree)->SetBranchAddress(("D3bWeighted"+str).c_str(),&D3.at(tree));
+      trees.at(tree)->SetBranchAddress(("C2bWeighted"+str).c_str(),&C2.at(tree));
+      trees.at(tree)->SetBranchAddress(("D2bWeighted"+str).c_str(),&D2.at(tree));
       
       trees.at(tree)->GetEntry(0);
     }
@@ -286,7 +292,23 @@ void PrintLine(std::string name, const double A, const double Aup, const double 
 	    << std::endl;
 }
 
-int main(){
+int main(int argc, char *argv[]){
+  bool plot_only(false), mc_plot(false);
+  char opt(' ');
+  while(( opt=getopt(argc, argv, "pm") )!=-1){
+    switch(opt){
+    case 'p':
+      plot_only=true;
+      break;
+    case 'm':
+      mc_plot=true;
+      break;
+    default:
+      std::cerr << "Error in " << argv[0] << ": '" << opt
+		<< "' is not a valid option." << std::endl;
+    }
+  }
+
   {TTree crap;}
   std::vector<std::string> names(0);
   names.push_back("raw_plots_and_values/MET_Run2012A-13Jul2012-v1_AOD_UCSB1852_v71_SyncSkim.root");//0
@@ -339,34 +361,80 @@ int main(){
   std::vector<double> A(0), B(0), C3(0), D3(0), C2(0), D2(0);
   GetValues(A, B, C3, D3, C2, D2, trees);
 
+  std::vector<double> A_DRInv(0), B_DRInv(0), C3_DRInv(0), D3_DRInv(0), C2_DRInv(0), D2_DRInv(0);
+  GetValues(A_DRInv, B_DRInv, C3_DRInv, D3_DRInv, C2_DRInv, D2_DRInv, trees, "_DRInv");
+
+  std::vector<double> A_SL(0), B_SL(0), C3_SL(0), D3_SL(0), C2_SL(0), D2_SL(0);
+  GetValues(A_SL, B_SL, C3_SL, D3_SL, C2_SL, D2_SL, trees, "_SL");
+
   WeightCalculator weightCalc(19399.0);
   std::vector<double> weights(0);
   GetWeights(weights, names, weightCalc);
 
   std::vector<std::string> tex(0);
   std::vector<unsigned int> upper(0), lower(0);
-  tex.push_back("Data"); upper.push_back(6); lower.push_back(0);
-  tex.push_back("QCD"); upper.push_back(15); lower.push_back(6);
-  tex.push_back("$t\\overline{t}$ (2l)"); upper.push_back(16); lower.push_back(15);
-  tex.push_back("$t\\overline{t}$ (1l)"); upper.push_back(17); lower.push_back(16);
-  tex.push_back("$t\\overline{t}$ (0l)"); upper.push_back(18); lower.push_back(17);
-  tex.push_back("t\\overline{t}H$"); upper.push_back(19); lower.push_back(18);
-  tex.push_back("$t\\overline{t}V$"); upper.push_back(21); lower.push_back(19);
-  tex.push_back("$t$"); upper.push_back(27); lower.push_back(21);
-  tex.push_back("$V$"); upper.push_back(35); lower.push_back(27);
-  tex.push_back("$VH$"); upper.push_back(37); lower.push_back(35);
-  tex.push_back("$VV$"); upper.push_back(39); lower.push_back(37);
-  tex.push_back("SM total"); upper.push_back(39); lower.push_back(15);
-  tex.push_back("SM total (no QCD)"); upper.push_back(39); lower.push_back(15);
+  if(!(plot_only && mc_plot)){
+    tex.push_back("Data"); upper.push_back(6); lower.push_back(0);
+  }
+  if(!plot_only){
+    tex.push_back("QCD"); upper.push_back(15); lower.push_back(6);
+    tex.push_back("$t\\overline{t}$ (2l)"); upper.push_back(16); lower.push_back(15);
+    tex.push_back("$t\\overline{t}$ (1l)"); upper.push_back(17); lower.push_back(16);
+    tex.push_back("$t\\overline{t}$ (0l)"); upper.push_back(18); lower.push_back(17);
+    tex.push_back("t\\overline{t}H$"); upper.push_back(19); lower.push_back(18);
+    tex.push_back("$t\\overline{t}V$"); upper.push_back(21); lower.push_back(19);
+    tex.push_back("$t$"); upper.push_back(27); lower.push_back(21);
+    tex.push_back("$V$"); upper.push_back(35); lower.push_back(27);
+    tex.push_back("$VH$"); upper.push_back(37); lower.push_back(35);
+    tex.push_back("$VV$"); upper.push_back(39); lower.push_back(37);
+  }
+  if(mc_plot || !plot_only){
+    tex.push_back("SM total"); upper.push_back(39); lower.push_back(15);
+  }
 
-  std::vector<double> Aval(tex.size()), Aup(tex.size()), Adown(tex.size()), Bval(tex.size()), Bup(tex.size()), Bdown(tex.size()), C3val(tex.size()),
-    C3up(tex.size()), C3down(tex.size()), D3val(tex.size()), D3up(tex.size()), D3down(tex.size()), C2val(tex.size()), C2up(tex.size()), C2down(tex.size()),
-    D2val(tex.size()), D2up(tex.size()), D2down(tex.size()), kappa3val(tex.size()), kappa3up(tex.size()), kappa3down(tex.size()),
+  std::vector<double> Aval(tex.size()), Aup(tex.size()), Adown(tex.size()),
+    Bval(tex.size()), Bup(tex.size()), Bdown(tex.size()),
+    C3val(tex.size()), C3up(tex.size()), C3down(tex.size()),
+    D3val(tex.size()), D3up(tex.size()), D3down(tex.size()),
+    C2val(tex.size()), C2up(tex.size()), C2down(tex.size()),
+    D2val(tex.size()), D2up(tex.size()), D2down(tex.size()),
+    kappa3val(tex.size()), kappa3up(tex.size()), kappa3down(tex.size()),
     kappa2val(tex.size()), kappa2up(tex.size()), kappa2down(tex.size());
+
+  std::vector<double> Aval_DRInv(tex.size()), Aup_DRInv(tex.size()), Adown_DRInv(tex.size()),
+    Bval_DRInv(tex.size()), Bup_DRInv(tex.size()), Bdown_DRInv(tex.size()),
+    C3val_DRInv(tex.size()), C3up_DRInv(tex.size()), C3down_DRInv(tex.size()),
+    D3val_DRInv(tex.size()), D3up_DRInv(tex.size()), D3down_DRInv(tex.size()),
+    C2val_DRInv(tex.size()), C2up_DRInv(tex.size()), C2down_DRInv(tex.size()),
+    D2val_DRInv(tex.size()), D2up_DRInv(tex.size()), D2down_DRInv(tex.size());
+
+  std::vector<double> Aval_SL(tex.size()), Aup_SL(tex.size()), Adown_SL(tex.size()),
+    Bval_SL(tex.size()), Bup_SL(tex.size()), Bdown_SL(tex.size()),
+    C3val_SL(tex.size()), C3up_SL(tex.size()), C3down_SL(tex.size()),
+    D3val_SL(tex.size()), D3up_SL(tex.size()), D3down_SL(tex.size()),
+    C2val_SL(tex.size()), C2up_SL(tex.size()), C2down_SL(tex.size()),
+    D2val_SL(tex.size()), D2up_SL(tex.size()), D2down_SL(tex.size());
 
   std::vector<double> pred23(tex.size()), predup23(tex.size()), preddown23(tex.size());
   std::vector<double> pred24(tex.size()), predup24(tex.size()), preddown24(tex.size());
   std::vector<double> pred34(tex.size()), predup34(tex.size()), preddown34(tex.size());
+  std::vector<double> pred32(tex.size()), predup32(tex.size()), preddown32(tex.size());
+  std::vector<double> pred42(tex.size()), predup42(tex.size()), preddown42(tex.size());
+  std::vector<double> pred43(tex.size()), predup43(tex.size()), preddown43(tex.size());
+
+  std::vector<double> pred23_DRInv(tex.size()), predup23_DRInv(tex.size()), preddown23_DRInv(tex.size());
+  std::vector<double> pred24_DRInv(tex.size()), predup24_DRInv(tex.size()), preddown24_DRInv(tex.size());
+  std::vector<double> pred34_DRInv(tex.size()), predup34_DRInv(tex.size()), preddown34_DRInv(tex.size());
+  std::vector<double> pred32_DRInv(tex.size()), predup32_DRInv(tex.size()), preddown32_DRInv(tex.size());
+  std::vector<double> pred42_DRInv(tex.size()), predup42_DRInv(tex.size()), preddown42_DRInv(tex.size());
+  std::vector<double> pred43_DRInv(tex.size()), predup43_DRInv(tex.size()), preddown43_DRInv(tex.size());
+
+  std::vector<double> pred23_SL(tex.size()), predup23_SL(tex.size()), preddown23_SL(tex.size());
+  std::vector<double> pred24_SL(tex.size()), predup24_SL(tex.size()), preddown24_SL(tex.size());
+  std::vector<double> pred34_SL(tex.size()), predup34_SL(tex.size()), preddown34_SL(tex.size());
+  std::vector<double> pred32_SL(tex.size()), predup32_SL(tex.size()), preddown32_SL(tex.size());
+  std::vector<double> pred42_SL(tex.size()), predup42_SL(tex.size()), preddown42_SL(tex.size());
+  std::vector<double> pred43_SL(tex.size()), predup43_SL(tex.size()), preddown43_SL(tex.size());
 
   for(unsigned int i(0); i<Aval.size(); ++i){
     GetSummedVals(Aup.at(i), Adown.at(i), Aval.at(i), A,
@@ -381,26 +449,247 @@ int main(){
 		  weights, lower.at(i), upper.at(i));
     GetSummedVals(D2up.at(i), D2down.at(i), D2val.at(i), D2,
 		  weights, lower.at(i), upper.at(i));
+
+    if(plot_only){
+      GetSummedVals(Aup_DRInv.at(i), Adown_DRInv.at(i), Aval_DRInv.at(i), A_DRInv,
+		    weights, lower.at(i), upper.at(i));
+      GetSummedVals(Bup_DRInv.at(i), Bdown_DRInv.at(i), Bval_DRInv.at(i), B_DRInv,
+		    weights, lower.at(i), upper.at(i));
+      GetSummedVals(C3up_DRInv.at(i), C3down_DRInv.at(i), C3val_DRInv.at(i), C3_DRInv,
+		    weights, lower.at(i), upper.at(i));
+      GetSummedVals(D3up_DRInv.at(i), D3down_DRInv.at(i), D3val_DRInv.at(i), D3_DRInv,
+		    weights, lower.at(i), upper.at(i));
+      GetSummedVals(C2up_DRInv.at(i), C2down_DRInv.at(i), C2val_DRInv.at(i), C2_DRInv,
+		    weights, lower.at(i), upper.at(i));
+      GetSummedVals(D2up_DRInv.at(i), D2down_DRInv.at(i), D2val_DRInv.at(i), D2_DRInv,
+		    weights, lower.at(i), upper.at(i));
+      
+      GetSummedVals(Aup_SL.at(i), Adown_SL.at(i), Aval_SL.at(i), A_SL,
+		    weights, lower.at(i), upper.at(i));
+      GetSummedVals(Bup_SL.at(i), Bdown_SL.at(i), Bval_SL.at(i), B_SL,
+		    weights, lower.at(i), upper.at(i));
+      GetSummedVals(C3up_SL.at(i), C3down_SL.at(i), C3val_SL.at(i), C3_SL,
+		    weights, lower.at(i), upper.at(i));
+      GetSummedVals(D3up_SL.at(i), D3down_SL.at(i), D3val_SL.at(i), D3_SL,
+		    weights, lower.at(i), upper.at(i));
+      GetSummedVals(C2up_SL.at(i), C2down_SL.at(i), C2val_SL.at(i), C2_SL,
+		    weights, lower.at(i), upper.at(i));
+      GetSummedVals(D2up_SL.at(i), D2down_SL.at(i), D2val_SL.at(i), D2_SL,
+		    weights, lower.at(i), upper.at(i));
+    }
+
     GetSummedKappas(kappa3up.at(i), kappa3down.at(i), kappa3val.at(i), A, B, C3, D3,
 		    weights, lower.at(i), upper.at(i));
     GetSummedKappas(kappa2up.at(i), kappa2down.at(i), kappa2val.at(i), A, B, C2, D2,
 		    weights, lower.at(i), upper.at(i));
+
     GetSummedAPred(predup23.at(i), preddown23.at(i), pred23.at(i), D3, C2, D2, weights,
 		   lower.at(i), upper.at(i));
     GetSummedAPred(predup24.at(i), preddown24.at(i), pred24.at(i), B, C2, D2, weights,
 		   lower.at(i), upper.at(i));
     GetSummedAPred(predup34.at(i), preddown34.at(i), pred34.at(i), B, C3, D3, weights,
 		   lower.at(i), upper.at(i));
-    PrintLine( tex.at(i), Aval.at(i), Aup.at(i), Adown.at(i), Bval.at(i), Bup.at(i),
-	       Bdown.at(i), C3val.at(i), C3up.at(i), C3down.at(i), D3val.at(i),
-	       D3up.at(i), D3down.at(i), C2val.at(i), C2up.at(i), C2down.at(i),
-	       D2val.at(i), D2up.at(i), D2down.at(i), kappa3val.at(i), kappa3up.at(i),
-	       kappa3down.at(i), kappa2val.at(i), kappa2up.at(i), kappa2down.at(i),
-	       pred23.at(i), predup23.at(i), preddown23.at(i), pred24.at(i),
-	       predup24.at(i), preddown24.at(i), pred34.at(i), predup34.at(i),
-	       preddown34.at(i));
-  }
+    if(plot_only){
+      GetSummedAPred(predup32.at(i), preddown32.at(i), pred32.at(i), D2, C3, D3, weights,
+		     lower.at(i), upper.at(i));
+      GetSummedAPred(predup42.at(i), preddown42.at(i), pred42.at(i), D2, A, B, weights,
+		     lower.at(i), upper.at(i));
+      GetSummedAPred(predup43.at(i), preddown43.at(i), pred43.at(i), D3, A, B, weights,
+		     lower.at(i), upper.at(i));
+    }
 
+    if(plot_only){
+      GetSummedAPred(predup23_DRInv.at(i), preddown23_DRInv.at(i), pred23_DRInv.at(i), D3_DRInv, C2_DRInv, D2_DRInv, weights,
+		     lower.at(i), upper.at(i));
+      GetSummedAPred(predup24_DRInv.at(i), preddown24_DRInv.at(i), pred24_DRInv.at(i), B_DRInv, C2_DRInv, D2_DRInv, weights,
+		     lower.at(i), upper.at(i));
+      GetSummedAPred(predup34_DRInv.at(i), preddown34_DRInv.at(i), pred34_DRInv.at(i), B_DRInv, C3_DRInv, D3_DRInv, weights,
+		     lower.at(i), upper.at(i));
+      GetSummedAPred(predup32_DRInv.at(i), preddown32_DRInv.at(i), pred32_DRInv.at(i), D2_DRInv, C3_DRInv, D3_DRInv, weights,
+		     lower.at(i), upper.at(i));
+      GetSummedAPred(predup42_DRInv.at(i), preddown42_DRInv.at(i), pred42_DRInv.at(i), D2_DRInv, A_DRInv, B_DRInv, weights,
+		     lower.at(i), upper.at(i));
+      GetSummedAPred(predup43_DRInv.at(i), preddown43_DRInv.at(i), pred43_DRInv.at(i), D3_DRInv, A_DRInv, B_DRInv, weights,
+		     lower.at(i), upper.at(i));
+      
+      GetSummedAPred(predup23_SL.at(i), preddown23_SL.at(i), pred23_SL.at(i), D3_SL, C2_SL, D2_SL, weights,
+		     lower.at(i), upper.at(i));
+      GetSummedAPred(predup24_SL.at(i), preddown24_SL.at(i), pred24_SL.at(i), B_SL, C2_SL, D2_SL, weights,
+		     lower.at(i), upper.at(i));
+      GetSummedAPred(predup34_SL.at(i), preddown34_SL.at(i), pred34_SL.at(i), B_SL, C3_SL, D3_SL, weights,
+		     lower.at(i), upper.at(i));
+      GetSummedAPred(predup32_SL.at(i), preddown32_SL.at(i), pred32_SL.at(i), D2_SL, C3_SL, D3_SL, weights,
+		     lower.at(i), upper.at(i));
+      GetSummedAPred(predup42_SL.at(i), preddown42_SL.at(i), pred42_SL.at(i), D2_SL, A_SL, B_SL, weights,
+		     lower.at(i), upper.at(i));
+      GetSummedAPred(predup43_SL.at(i), preddown43_SL.at(i), pred43_SL.at(i), D3_SL, A_SL, B_SL, weights,
+		     lower.at(i), upper.at(i));
+    }
+
+    if(!plot_only){
+      PrintLine( tex.at(i), (i==0?0.0:1.0)*Aval.at(i), Aup.at(i), Adown.at(i), Bval.at(i), Bup.at(i),//blind
+			     Bdown.at(i), C3val.at(i), C3up.at(i), C3down.at(i), D3val.at(i),
+			     D3up.at(i), D3down.at(i), C2val.at(i), C2up.at(i), C2down.at(i),
+			     D2val.at(i), D2up.at(i), D2down.at(i), kappa3val.at(i), kappa3up.at(i),
+			     kappa3down.at(i), kappa2val.at(i), kappa2up.at(i), kappa2down.at(i),
+			     pred23.at(i), predup23.at(i), preddown23.at(i), pred24.at(i),
+			     predup24.at(i), preddown24.at(i), pred34.at(i), predup34.at(i),
+			     preddown34.at(i));
+		 }
+    }
+
+  if(plot_only){
+    TCanvas canvas;
+    TH1D h_closure_test("h_closure_test", "Closure Test;Sample;Events/19.4 fb^{-1}", 9, 0.5, 9.5);
+    h_closure_test.GetXaxis()->SetBinLabel(1,"4b,normal");
+    h_closure_test.GetXaxis()->SetBinLabel(2,"3b,normal");
+    h_closure_test.GetXaxis()->SetBinLabel(3,"2b,normal");
+    h_closure_test.GetXaxis()->SetBinLabel(4,"4b,DR inv.");
+    h_closure_test.GetXaxis()->SetBinLabel(5,"3b,DR inv.");
+    h_closure_test.GetXaxis()->SetBinLabel(6,"2b,DR inv.");
+    h_closure_test.GetXaxis()->SetBinLabel(7,"4b,1 lep.");
+    h_closure_test.GetXaxis()->SetBinLabel(8,"3b,1 lep.");
+    h_closure_test.GetXaxis()->SetBinLabel(9,"2b,1 lep.");
+    std::vector<double> val(0), up(0), down(0), halves(9,0.5), xval(0);
+    xval.push_back(1.0); val.push_back(0.0*Aval.at(0)); up.push_back(0.0*Aup.at(0)); down.push_back((mc_plot?1.0:0.0)*Adown.at(0));//blind
+    xval.push_back(2.0); val.push_back(C3val.at(0)); up.push_back(C3up.at(0)); down.push_back(C3down.at(0));
+    xval.push_back(3.0); val.push_back(C2val.at(0)); up.push_back(C2up.at(0)); down.push_back(C2down.at(0));
+    xval.push_back(4.0); val.push_back(Aval_DRInv.at(0)); up.push_back(Aup_DRInv.at(0)); down.push_back(Adown_DRInv.at(0));
+    xval.push_back(5.0); val.push_back(C3val_DRInv.at(0)); up.push_back(C3up_DRInv.at(0)); down.push_back(C3down_DRInv.at(0));
+    xval.push_back(6.0); val.push_back(C2val_DRInv.at(0)); up.push_back(C2up_DRInv.at(0)); down.push_back(C2down_DRInv.at(0));
+    xval.push_back(7.0); val.push_back(Aval_SL.at(0)); up.push_back(Aup_SL.at(0)); down.push_back(Adown_SL.at(0));
+    xval.push_back(8.0); val.push_back(C3val_SL.at(0)); up.push_back(C3up_SL.at(0)); down.push_back(C3down_SL.at(0));
+    xval.push_back(9.0); val.push_back(C2val_SL.at(0)); up.push_back(C2up_SL.at(0)); down.push_back(C2down_SL.at(0));
+    TGraphAsymmErrors g_closure_test(xval.size(), &xval.at(0), &val.at(0), &halves.at(0), &halves.at(0), &up.at(0), &down.at(0));  
+    g_closure_test.SetFillColor(1);
+    g_closure_test.SetLineColor(1);
+    g_closure_test.SetFillStyle(3003);
+    
+    std::vector<double> from2(0), from3(0), from4(0);
+    std::vector<double> from2_x(0), from3_x(0), from4_x(0);
+    std::vector<double> from2_up(0), from3_up(0), from4_up(0);
+    std::vector<double> from2_down(0), from3_down(0), from4_down(0);
+    const double shift(0.125);
+    from2_x.push_back(1.0-shift);
+    from2_x.push_back(2.0-shift);
+    from2_x.push_back(4.0-shift);
+    from2_x.push_back(5.0-shift);
+    from2_x.push_back(7.0-shift);
+    from2_x.push_back(8.0-shift);
+    from3_x.push_back(1.0+shift);
+    from3_x.push_back(3.0-shift);
+    from3_x.push_back(4.0+shift);
+    from3_x.push_back(6.0-shift);
+    from3_x.push_back(7.0+shift);
+    from3_x.push_back(9.0-shift);
+    from4_x.push_back(2.0+shift);
+    from4_x.push_back(3.0+shift);
+    from4_x.push_back(5.0+shift);
+    from4_x.push_back(6.0+shift);
+    from4_x.push_back(8.0+shift);
+    from4_x.push_back(9.0+shift);
+    from2.push_back(pred24.at(0));
+    from2.push_back(pred23.at(0));
+    from2.push_back(pred24_DRInv.at(0));
+    from2.push_back(pred23_DRInv.at(0));
+    from2.push_back(pred24_SL.at(0));
+    from2.push_back(pred23_SL.at(0));
+    from2_up.push_back(predup24.at(0));
+    from2_up.push_back(predup23.at(0));
+    from2_up.push_back(predup24_DRInv.at(0));
+    from2_up.push_back(predup23_DRInv.at(0));
+    from2_up.push_back(predup24_SL.at(0));
+    from2_up.push_back(predup23_SL.at(0));
+    from2_down.push_back(preddown24.at(0));
+    from2_down.push_back(preddown23.at(0));
+    from2_down.push_back(preddown24_DRInv.at(0));
+    from2_down.push_back(preddown23_DRInv.at(0));
+    from2_down.push_back(preddown24_SL.at(0));
+    from2_down.push_back(preddown23_SL.at(0));
+    from3.push_back(pred34.at(0));
+    from3.push_back(pred32.at(0));
+    from3.push_back(pred34_DRInv.at(0));
+    from3.push_back(pred32_DRInv.at(0));
+    from3.push_back(pred34_SL.at(0));
+    from3.push_back(pred32_SL.at(0));
+    from3_up.push_back(predup34.at(0));
+    from3_up.push_back(predup32.at(0));
+    from3_up.push_back(predup34_DRInv.at(0));
+    from3_up.push_back(predup32_DRInv.at(0));
+    from3_up.push_back(predup34_SL.at(0));
+    from3_up.push_back(predup32_SL.at(0));
+    from3_down.push_back(preddown34.at(0));
+    from3_down.push_back(preddown32.at(0));
+    from3_down.push_back(preddown34_DRInv.at(0));
+    from3_down.push_back(preddown32_DRInv.at(0));
+    from3_down.push_back(preddown34_SL.at(0));
+    from3_down.push_back(preddown32_SL.at(0));
+    from4.push_back((mc_plot?1.0:0.0)*pred43.at(0));//blind
+    from4.push_back((mc_plot?1.0:0.0)*pred42.at(0));//blind
+    from4.push_back(pred43_DRInv.at(0));
+    from4.push_back(pred42_DRInv.at(0));
+    from4.push_back(pred43_SL.at(0));
+    from4.push_back(pred42_SL.at(0));
+    from4_up.push_back((mc_plot?1.0:0.0)*predup43.at(0));//blind
+    from4_up.push_back((mc_plot?1.0:0.0)*predup42.at(0));//blind
+    from4_up.push_back(predup43_DRInv.at(0));
+    from4_up.push_back(predup42_DRInv.at(0));
+    from4_up.push_back(predup43_SL.at(0));
+    from4_up.push_back(predup42_SL.at(0));
+    from4_down.push_back((mc_plot?1.0:0.0)*preddown43.at(0));//blind
+    from4_down.push_back((mc_plot?1.0:0.0)*preddown42.at(0));//blind
+    from4_down.push_back(preddown43_DRInv.at(0));
+    from4_down.push_back(preddown42_DRInv.at(0));
+    from4_down.push_back(preddown43_SL.at(0));
+    from4_down.push_back(preddown42_SL.at(0));
+    h_closure_test.SetStats(0);
+    h_closure_test.SetLineColor(0);
+    
+    std::vector<double> zeroes(from2.size(), 0.0);
+    
+    TGraphAsymmErrors graph2(from2_x.size(), &from2_x.at(0), &from2.at(0), &zeroes.at(0), &zeroes.at(0), &from2_up.at(0), &from2_down.at(0));
+    TGraphAsymmErrors graph3(from3_x.size(), &from3_x.at(0), &from3.at(0), &zeroes.at(0), &zeroes.at(0), &from3_up.at(0), &from3_down.at(0));
+    TGraphAsymmErrors graph4(from4_x.size(), &from4_x.at(0), &from4.at(0), &zeroes.at(0), &zeroes.at(0), &from4_up.at(0), &from4_down.at(0));
+    graph2.SetLineColor(2);
+    graph3.SetLineColor(3);
+    graph4.SetLineColor(4);
+    graph2.SetMarkerStyle(20);
+    graph3.SetMarkerStyle(20);
+    graph4.SetMarkerStyle(20);
+    graph2.SetMarkerColor(2);
+    graph3.SetMarkerColor(3);
+    graph4.SetMarkerColor(4);
+    
+    double max(TMath::MaxElement(g_closure_test.GetN(), g_closure_test.GetY()));
+    double max2(TMath::MaxElement(graph2.GetN(), graph2.GetY()));
+    double max3(TMath::MaxElement(graph3.GetN(), graph3.GetY()));
+    double max4(TMath::MaxElement(graph4.GetN(), graph4.GetY()));
+    if(graph2.GetMaximum()>max) max=graph2.GetMaximum();
+    if(graph3.GetMaximum()>max) max=graph3.GetMaximum();
+    if(graph4.GetMaximum()>max) max=graph4.GetMaximum();
+    if(max2>max) max=max2;
+    if(max3>max) max=max3;
+    if(max4>max) max=max4;
+    h_closure_test.SetMaximum(1.1*max);
+  
+    h_closure_test.Draw();
+    g_closure_test.Draw("2same");
+    g_closure_test.Draw("psame");
+    graph2.Draw("psame");
+    graph3.Draw("psame");
+    graph4.Draw("psame");
+    
+    TLegend legend(0.7,0.7,0.9,0.9);
+    legend.AddEntry(&g_closure_test,"Observed","lf");
+    legend.AddEntry(&graph2,"Pred. from 2b","lpe");
+    legend.AddEntry(&graph3,"Pred. from 3b","lpe");
+    legend.AddEntry(&graph4,"Pred. from 4b","lpe");
+    legend.Draw("same");
+    canvas.Print("plots/closure_test.pdf");
+    canvas.SetLogy(1);
+    canvas.Print("plots/closure_test_log.pdf");
+  }
+  
   KillTrees(trees);
   KillFiles(files);
 }
