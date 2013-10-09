@@ -33,6 +33,10 @@
 ./scripts/skim_file.exe -i QCD_Pt-1400to1800_TuneZ2star_8TeV_pythia6_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1904_v71 &> logs/make_skim_1904.log &
 ./scripts/skim_file.exe -i QCD_Pt-1800_TuneZ2star_8TeV_pythia6_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1905_v71 &> logs/make_skim_1905.log &
 
+./scripts/skim_file.exe -i BJets_HT-250To500_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1893_v71 &> logs/make_skim_1893.log &
+./scripts/skim_file.exe -i BJets_HT-500To1000_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1894_v71 &> logs/make_skim_1894.log &
+./scripts/skim_file.exe -i BJets_HT-1000ToInf_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1895_v71 &> logs/make_skim_1895.log &
+
 ./scripts/skim_file.exe -i W2JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1877_v71 &> logs/make_skim_1877.log &
 ./scripts/skim_file.exe -i W3JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1878_v71 &> logs/make_skim_1878.log &
 ./scripts/skim_file.exe -i W4JetsToLNu_TuneZ2Star_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1879_v71 &> logs/make_skim_1879.log &
