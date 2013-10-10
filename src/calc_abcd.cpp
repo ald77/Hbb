@@ -551,7 +551,7 @@ int main(int argc, char *argv[]){
     h_closure_test.GetXaxis()->SetBinLabel(8,"3b,1 lep.");
     h_closure_test.GetXaxis()->SetBinLabel(9,"2b,1 lep.");
     std::vector<double> val(0), up(0), down(0), halves(9,0.5), xval(0);
-    xval.push_back(1.0); val.push_back(0.0*Aval.at(0)); up.push_back(0.0*Aup.at(0)); down.push_back((mc_plot?1.0:0.0)*Adown.at(0));//blind
+    xval.push_back(1.0); val.push_back((mc_plot?1.0:0.0)*Aval.at(0)); up.push_back((mc_plot?1.0:0.0)*Aup.at(0)); down.push_back((mc_plot?1.0:0.0)*Adown.at(0));//blind
     xval.push_back(2.0); val.push_back(C3val.at(0)); up.push_back(C3up.at(0)); down.push_back(C3down.at(0));
     xval.push_back(3.0); val.push_back(C2val.at(0)); up.push_back(C2up.at(0)); down.push_back(C2down.at(0));
     xval.push_back(4.0); val.push_back(Aval_DRInv.at(0)); up.push_back(Aup_DRInv.at(0)); down.push_back(Adown_DRInv.at(0));
@@ -685,9 +685,16 @@ int main(int argc, char *argv[]){
     legend.AddEntry(&graph3,"Pred. from 3b","lpe");
     legend.AddEntry(&graph4,"Pred. from 4b","lpe");
     legend.Draw("same");
-    canvas.Print("plots/closure_test.pdf");
-    canvas.SetLogy(1);
-    canvas.Print("plots/closure_test_log.pdf");
+
+    if(mc_plot){
+      canvas.Print("plots/mc_closure_test.pdf");
+      canvas.SetLogy(1);
+      canvas.Print("plots/mc_closure_test_log.pdf");
+    }else{
+      canvas.Print("plots/data_closure_test.pdf");
+      canvas.SetLogy(1);
+      canvas.Print("plots/data_closure_test_log.pdf");
+    }
   }
   
   KillTrees(trees);
