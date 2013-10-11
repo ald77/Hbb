@@ -5,6 +5,7 @@
 #include <string>
 #include <utility>
 #include <cfloat>
+#include <stdint.h>
 #include "TChain.h"
 #include "TBranch.h"
 #include "TLorentzVector.h"
@@ -22,6 +23,29 @@ public:
 
   void SetScaleFactor(const double);
   void SetScaleFactor(const double, const double, const int);
+
+  enum FailureType{
+    kGood = 0u,
+    kMETSig150 = 1u<<0,
+    kMETSig80 = 1u<<1,
+    kMETSig50 = 1u<<2,
+    kMETSig30 = 1u<<3,
+    kDeltaR = 1u<<4,
+    kHiggsAvgMass = 1u<<5,
+    kHiggsMassDiff = 1u<<6,
+    k4thBTag = 1u<<7,
+    k3rdBTag = 1u<<8,
+    k2ndBTag = 1u<<9,
+    kIsoTrackVeto = 1u<<10,
+    kLeptonVeto = 1u<<11,
+    kMinDeltaPhi = 1u<<12,
+    kNumJets = 1u<<13,
+    kTrigger = 1u<<14,
+    kJSON = 1u<<15,
+    kMETCleaning = 1u<<16,
+    kPV = 1u<<17,
+    kTChiZHMassCut = 1u<<18
+  };
 
 private:
   mutable std::pair<std::pair<TLorentzVector, TLorentzVector>, std::pair<TLorentzVector, TLorentzVector> > higgsBJetPairing;//caching for efficiency
@@ -57,10 +81,14 @@ private:
   bool PassesDRCut() const;
   bool PassesInvertedDRCut() const;
   bool PassesMETSig50Cut() const;
+  bool PassesMETSig80Cut() const;
   bool PassesMETSig100Cut() const;
   bool PassesMETSig150Cut() const;
 
   bool PassesSingleLeptonCut() const;
+  bool PassesJSONCut() const;
+
+  uint_least32_t GetCutFailCode() const;
 
   bool PassesRegionACut() const;
   bool PassesRegionBCut() const;
@@ -129,7 +157,7 @@ private:
 
   double GetMaxDR() const;
   double GetHT(const bool=true, const bool=false) const;
-  double GetHighestBTag(const unsigned int=1) const;
+  double GetHighestCSV(const unsigned int=1) const;
 
   bool HasGluonSplitting() const;
 
