@@ -915,6 +915,30 @@ void EventHandler::MakePlots(const std::string &outFileName){
   double ASLCountWeighted(0.0), BSLCountWeighted(0.0), C3bSLCountWeighted(0.0), D3bSLCountWeighted(0.0), C2bSLCountWeighted(0.0), D2bSLCountWeighted(0.0);
   double ASLUncert(0.0), BSLUncert(0.0), C3bSLUncert(0.0), D3bSLUncert(0.0), C2bSLUncert(0.0), D2bSLUncert(0.0);
 
+  unsigned int ASLsbin1Count(0), BSLsbin1Count(0), C3bSLsbin1Count(0), D3bSLsbin1Count(0), C2bSLsbin1Count(0), D2bSLsbin1Count(0);
+  double ASLsbin1CountWeighted(0.0), BSLsbin1CountWeighted(0.0), C3bSLsbin1CountWeighted(0.0), D3bSLsbin1CountWeighted(0.0), C2bSLsbin1CountWeighted(0.0), D2bSLsbin1CountWeighted(0.0);
+
+  unsigned int ASLsbin2Count(0), BSLsbin2Count(0), C3bSLsbin2Count(0), D3bSLsbin2Count(0), C2bSLsbin2Count(0), D2bSLsbin2Count(0);
+  double ASLsbin2CountWeighted(0.0), BSLsbin2CountWeighted(0.0), C3bSLsbin2CountWeighted(0.0), D3bSLsbin2CountWeighted(0.0), C2bSLsbin2CountWeighted(0.0), D2bSLsbin2CountWeighted(0.0);
+
+  unsigned int ASLsbin3Count(0), BSLsbin3Count(0), C3bSLsbin3Count(0), D3bSLsbin3Count(0), C2bSLsbin3Count(0), D2bSLsbin3Count(0);
+  double ASLsbin3CountWeighted(0.0), BSLsbin3CountWeighted(0.0), C3bSLsbin3CountWeighted(0.0), D3bSLsbin3CountWeighted(0.0), C2bSLsbin3CountWeighted(0.0), D2bSLsbin3CountWeighted(0.0);
+
+  unsigned int ASLsbin4Count(0), BSLsbin4Count(0), C3bSLsbin4Count(0), D3bSLsbin4Count(0), C2bSLsbin4Count(0), D2bSLsbin4Count(0);
+  double ASLsbin4CountWeighted(0.0), BSLsbin4CountWeighted(0.0), C3bSLsbin4CountWeighted(0.0), D3bSLsbin4CountWeighted(0.0), C2bSLsbin4CountWeighted(0.0), D2bSLsbin4CountWeighted(0.0);
+
+  unsigned int Asbin1Count(0), Bsbin1Count(0), C3bsbin1Count(0), D3bsbin1Count(0), C2bsbin1Count(0), D2bsbin1Count(0);
+  double Asbin1CountWeighted(0.0), Bsbin1CountWeighted(0.0), C3bsbin1CountWeighted(0.0), D3bsbin1CountWeighted(0.0), C2bsbin1CountWeighted(0.0), D2bsbin1CountWeighted(0.0);
+
+  unsigned int Asbin2Count(0), Bsbin2Count(0), C3bsbin2Count(0), D3bsbin2Count(0), C2bsbin2Count(0), D2bsbin2Count(0);
+  double Asbin2CountWeighted(0.0), Bsbin2CountWeighted(0.0), C3bsbin2CountWeighted(0.0), D3bsbin2CountWeighted(0.0), C2bsbin2CountWeighted(0.0), D2bsbin2CountWeighted(0.0);
+
+  unsigned int Asbin3Count(0), Bsbin3Count(0), C3bsbin3Count(0), D3bsbin3Count(0), C2bsbin3Count(0), D2bsbin3Count(0);
+  double Asbin3CountWeighted(0.0), Bsbin3CountWeighted(0.0), C3bsbin3CountWeighted(0.0), D3bsbin3CountWeighted(0.0), C2bsbin3CountWeighted(0.0), D2bsbin3CountWeighted(0.0);
+
+  unsigned int Asbin4Count(0), Bsbin4Count(0), C3bsbin4Count(0), D3bsbin4Count(0), C2bsbin4Count(0), D2bsbin4Count(0);
+  double Asbin4CountWeighted(0.0), Bsbin4CountWeighted(0.0), C3bsbin4CountWeighted(0.0), D3bsbin4CountWeighted(0.0), C2bsbin4CountWeighted(0.0), D2bsbin4CountWeighted(0.0);
+
   std::vector<float> dataDist(pu::RunsThrough203002, pu::RunsThrough203002+60);
   std::vector<float> MCDist(pu::Summer2012_S10, pu::Summer2012_S10+60);//QQQ this needs to change later for general pileup scenario
   reweight::LumiReWeighting lumiWeights(MCDist, dataDist);
@@ -1327,7 +1351,30 @@ void EventHandler::MakePlots(const std::string &outFileName){
     xx_MET_vs_fracMETFromLowPt.Fill(GetMETOfLowPtPfCands(20.0)/pfmets_et->at(0),pfmets_et->at(0),localWeight);
     xx_METSig_vs_fracMETFromLowPt.Fill(GetMETOfLowPtPfCands(20.0)/pfmets_et->at(0),pfmets_fullSignif,localWeight);
 
+    unsigned int this_sbin(0);
+    if(pfmets_fullSignif>30.0 && pfmets_fullSignif<50.0){
+      this_sbin=1;
+    }else if(pfmets_fullSignif>50.0 && pfmets_fullSignif<80.0){
+      this_sbin=2;
+    }else if(pfmets_fullSignif>80.0 && pfmets_fullSignif<150.0){
+      this_sbin=3;
+    }else if(pfmets_fullSignif>150.0){
+      this_sbin=4;
+    }
     if(PassesRegionACut()){
+      switch(this_sbin){
+      case 1: ++Asbin1Count;
+	Asbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++Asbin2Count;
+	Asbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++Asbin3Count;
+	Asbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++Asbin4Count;
+	Asbin4CountWeighted+=localWeight;
+      }
       ++ACount;
       ACountWeighted+=localWeight;
       AUncert+=localWeight*localWeight;
@@ -1335,6 +1382,19 @@ void EventHandler::MakePlots(const std::string &outFileName){
       xx_metSig_A.Fill(pfmets_fullSignif,localWeight);
     }
     if(PassesRegionBCut()){
+      switch(this_sbin){
+      case 1: ++Bsbin1Count;
+	Bsbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++Bsbin2Count;
+	Bsbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++Bsbin3Count;
+	Bsbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++Bsbin4Count;
+	Bsbin4CountWeighted+=localWeight;
+      }
       ++BCount;
       BCountWeighted+=localWeight;
       BUncert+=localWeight*localWeight;
@@ -1342,6 +1402,19 @@ void EventHandler::MakePlots(const std::string &outFileName){
       xx_metSig_B.Fill(pfmets_fullSignif,localWeight);
     }
     if(PassesRegionC3bCut()){
+      switch(this_sbin){
+      case 1: ++C3bsbin1Count;
+	C3bsbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++C3bsbin2Count;
+	C3bsbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++C3bsbin3Count;
+	C3bsbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++C3bsbin4Count;
+	C3bsbin4CountWeighted+=localWeight;
+      }
       ++C3bCount;
       C3bCountWeighted+=localWeight;
       C3bUncert+=localWeight*localWeight;
@@ -1349,6 +1422,19 @@ void EventHandler::MakePlots(const std::string &outFileName){
       xx_metSig_C3b.Fill(pfmets_fullSignif,localWeight);
     }
     if(PassesRegionD3bCut()){
+      switch(this_sbin){
+      case 1: ++D3bsbin1Count;
+	D3bsbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++D3bsbin2Count;
+	D3bsbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++D3bsbin3Count;
+	D3bsbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++D3bsbin4Count;
+	D3bsbin4CountWeighted+=localWeight;
+      }
       ++D3bCount;
       D3bCountWeighted+=localWeight;
       D3bUncert+=localWeight*localWeight;
@@ -1356,6 +1442,19 @@ void EventHandler::MakePlots(const std::string &outFileName){
       xx_metSig_D3b.Fill(pfmets_fullSignif,localWeight);
     }
     if(PassesRegionC2bCut()){
+      switch(this_sbin){
+      case 1: ++C2bsbin1Count;
+	C2bsbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++C2bsbin2Count;
+	C2bsbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++C2bsbin3Count;
+	C2bsbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++C2bsbin4Count;
+	C2bsbin4CountWeighted+=localWeight;
+      }
       ++C2bCount;
       C2bCountWeighted+=localWeight;
       C2bUncert+=localWeight*localWeight;
@@ -1363,6 +1462,19 @@ void EventHandler::MakePlots(const std::string &outFileName){
       xx_metSig_C2b.Fill(pfmets_fullSignif,localWeight);
     }
     if(PassesRegionD2bCut()){
+      switch(this_sbin){
+      case 1: ++D2bsbin1Count;
+	D2bsbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++D2bsbin2Count;
+	D2bsbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++D2bsbin3Count;
+	D2bsbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++D2bsbin4Count;
+	D2bsbin4CountWeighted+=localWeight;
+      }
       ++D2bCount;
       D2bCountWeighted+=localWeight;
       D2bUncert+=localWeight*localWeight;
@@ -1405,31 +1517,109 @@ void EventHandler::MakePlots(const std::string &outFileName){
       ++ASLCount;
       ASLCountWeighted+=localWeight;
       ASLUncert+=localWeight*localWeight;
+      switch(this_sbin){
+      case 1: ++ASLsbin1Count;
+	ASLsbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++ASLsbin2Count;
+	ASLsbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++ASLsbin3Count;
+	ASLsbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++ASLsbin4Count;
+	ASLsbin4CountWeighted+=localWeight;
+      }
     }
     if(PassesSingleLeptonRegionBCut()){
       ++BSLCount;
       BSLCountWeighted+=localWeight;
       BSLUncert+=localWeight*localWeight;
+      switch(this_sbin){
+      case 1: ++BSLsbin1Count;
+	BSLsbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++BSLsbin2Count;
+	BSLsbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++BSLsbin3Count;
+	BSLsbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++BSLsbin4Count;
+	BSLsbin4CountWeighted+=localWeight;
+      }
     }
     if(PassesSingleLeptonRegionC3bCut()){
       ++C3bSLCount;
       C3bSLCountWeighted+=localWeight;
       C3bSLUncert+=localWeight*localWeight;
+      switch(this_sbin){
+      case 1: ++C3bSLsbin1Count;
+	C3bSLsbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++C3bSLsbin2Count;
+	C3bSLsbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++C3bSLsbin3Count;
+	C3bSLsbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++C3bSLsbin4Count;
+	C3bSLsbin4CountWeighted+=localWeight;
+      }
     }
     if(PassesSingleLeptonRegionD3bCut()){
       ++D3bSLCount;
       D3bSLCountWeighted+=localWeight;
       D3bSLUncert+=localWeight*localWeight;
+      switch(this_sbin){
+      case 1: ++D3bSLsbin1Count;
+	D3bSLsbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++D3bSLsbin2Count;
+	D3bSLsbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++D3bSLsbin3Count;
+	D3bSLsbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++D3bSLsbin4Count;
+	D3bSLsbin4CountWeighted+=localWeight;
+      }
     }
     if(PassesSingleLeptonRegionC2bCut()){
       ++C2bSLCount;
       C2bSLCountWeighted+=localWeight;
       C2bSLUncert+=localWeight*localWeight;
+      switch(this_sbin){
+      case 1: ++C2bSLsbin1Count;
+	C2bSLsbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++C2bSLsbin2Count;
+	C2bSLsbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++C2bSLsbin3Count;
+	C2bSLsbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++C2bSLsbin4Count;
+	C2bSLsbin4CountWeighted+=localWeight;
+      }
     }
     if(PassesSingleLeptonRegionD2bCut()){
       ++D2bSLCount;
       D2bSLCountWeighted+=localWeight;
       D2bSLUncert+=localWeight*localWeight;
+      switch(this_sbin){
+      case 1: ++D2bSLsbin1Count;
+	D2bSLsbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++D2bSLsbin2Count;
+	D2bSLsbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++D2bSLsbin3Count;
+	D2bSLsbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++D2bSLsbin4Count;
+	D2bSLsbin4CountWeighted+=localWeight;
+      }
     }
 
     if(!PassesPVCut()) continue;
@@ -1609,6 +1799,102 @@ void EventHandler::MakePlots(const std::string &outFileName){
   ABCD.Branch("D3bUncert_SL", &D3bSLUncert);
   ABCD.Branch("C2bUncert_SL", &C2bSLUncert);
   ABCD.Branch("D2bUncert_SL", &D2bSLUncert);
+  ABCD.Branch("A_SLsbin1", &ASLsbin1Count);
+  ABCD.Branch("B_SLsbin1", &BSLsbin1Count);
+  ABCD.Branch("C3b_SLsbin1", &C3bSLsbin1Count);
+  ABCD.Branch("D3b_SLsbin1", &D3bSLsbin1Count);
+  ABCD.Branch("C2b_SLsbin1", &C2bSLsbin1Count);
+  ABCD.Branch("D2b_SLsbin1", &D2bSLsbin1Count);
+  ABCD.Branch("AWeighted_SLsbin1", &ASLsbin1CountWeighted);
+  ABCD.Branch("BWeighted_SLsbin1", &BSLsbin1CountWeighted);
+  ABCD.Branch("C3bWeighted_SLsbin1", &C3bSLsbin1CountWeighted);
+  ABCD.Branch("D3bWeighted_SLsbin1", &D3bSLsbin1CountWeighted);
+  ABCD.Branch("C2bWeighted_SLsbin1", &C2bSLsbin1CountWeighted);
+  ABCD.Branch("D2bWeighted_SLsbin1", &D2bSLsbin1CountWeighted);
+  ABCD.Branch("A_SLsbin2", &ASLsbin2Count);
+  ABCD.Branch("B_SLsbin2", &BSLsbin2Count);
+  ABCD.Branch("C3b_SLsbin2", &C3bSLsbin2Count);
+  ABCD.Branch("D3b_SLsbin2", &D3bSLsbin2Count);
+  ABCD.Branch("C2b_SLsbin2", &C2bSLsbin2Count);
+  ABCD.Branch("D2b_SLsbin2", &D2bSLsbin2Count);
+  ABCD.Branch("AWeighted_SLsbin2", &ASLsbin2CountWeighted);
+  ABCD.Branch("BWeighted_SLsbin2", &BSLsbin2CountWeighted);
+  ABCD.Branch("C3bWeighted_SLsbin2", &C3bSLsbin2CountWeighted);
+  ABCD.Branch("D3bWeighted_SLsbin2", &D3bSLsbin2CountWeighted);
+  ABCD.Branch("C2bWeighted_SLsbin2", &C2bSLsbin2CountWeighted);
+  ABCD.Branch("D2bWeighted_SLsbin2", &D2bSLsbin2CountWeighted);
+  ABCD.Branch("A_SLsbin3", &ASLsbin3Count);
+  ABCD.Branch("B_SLsbin3", &BSLsbin3Count);
+  ABCD.Branch("C3b_SLsbin3", &C3bSLsbin3Count);
+  ABCD.Branch("D3b_SLsbin3", &D3bSLsbin3Count);
+  ABCD.Branch("C2b_SLsbin3", &C2bSLsbin3Count);
+  ABCD.Branch("D2b_SLsbin3", &D2bSLsbin3Count);
+  ABCD.Branch("AWeighted_SLsbin3", &ASLsbin3CountWeighted);
+  ABCD.Branch("BWeighted_SLsbin3", &BSLsbin3CountWeighted);
+  ABCD.Branch("C3bWeighted_SLsbin3", &C3bSLsbin3CountWeighted);
+  ABCD.Branch("D3bWeighted_SLsbin3", &D3bSLsbin3CountWeighted);
+  ABCD.Branch("C2bWeighted_SLsbin3", &C2bSLsbin3CountWeighted);
+  ABCD.Branch("D2bWeighted_SLsbin3", &D2bSLsbin3CountWeighted);
+  ABCD.Branch("A_SLsbin4", &ASLsbin4Count);
+  ABCD.Branch("B_SLsbin4", &BSLsbin4Count);
+  ABCD.Branch("C3b_SLsbin4", &C3bSLsbin4Count);
+  ABCD.Branch("D3b_SLsbin4", &D3bSLsbin4Count);
+  ABCD.Branch("C2b_SLsbin4", &C2bSLsbin4Count);
+  ABCD.Branch("D2b_SLsbin4", &D2bSLsbin4Count);
+  ABCD.Branch("AWeighted_SLsbin4", &ASLsbin4CountWeighted);
+  ABCD.Branch("BWeighted_SLsbin4", &BSLsbin4CountWeighted);
+  ABCD.Branch("C3bWeighted_SLsbin4", &C3bSLsbin4CountWeighted);
+  ABCD.Branch("D3bWeighted_SLsbin4", &D3bSLsbin4CountWeighted);
+  ABCD.Branch("C2bWeighted_SLsbin4", &C2bSLsbin4CountWeighted);
+  ABCD.Branch("D2bWeighted_SLsbin4", &D2bSLsbin4CountWeighted);
+  ABCD.Branch("A_sbin1", &Asbin1Count);
+  ABCD.Branch("B_sbin1", &Bsbin1Count);
+  ABCD.Branch("C3b_sbin1", &C3bsbin1Count);
+  ABCD.Branch("D3b_sbin1", &D3bsbin1Count);
+  ABCD.Branch("C2b_sbin1", &C2bsbin1Count);
+  ABCD.Branch("D2b_sbin1", &D2bsbin1Count);
+  ABCD.Branch("AWeighted_sbin1", &Asbin1CountWeighted);
+  ABCD.Branch("BWeighted_sbin1", &Bsbin1CountWeighted);
+  ABCD.Branch("C3bWeighted_sbin1", &C3bsbin1CountWeighted);
+  ABCD.Branch("D3bWeighted_sbin1", &D3bsbin1CountWeighted);
+  ABCD.Branch("C2bWeighted_sbin1", &C2bsbin1CountWeighted);
+  ABCD.Branch("D2bWeighted_sbin1", &D2bsbin1CountWeighted);
+  ABCD.Branch("A_sbin2", &Asbin2Count);
+  ABCD.Branch("B_sbin2", &Bsbin2Count);
+  ABCD.Branch("C3b_sbin2", &C3bsbin2Count);
+  ABCD.Branch("D3b_sbin2", &D3bsbin2Count);
+  ABCD.Branch("C2b_sbin2", &C2bsbin2Count);
+  ABCD.Branch("D2b_sbin2", &D2bsbin2Count);
+  ABCD.Branch("AWeighted_sbin2", &Asbin2CountWeighted);
+  ABCD.Branch("BWeighted_sbin2", &Bsbin2CountWeighted);
+  ABCD.Branch("C3bWeighted_sbin2", &C3bsbin2CountWeighted);
+  ABCD.Branch("D3bWeighted_sbin2", &D3bsbin2CountWeighted);
+  ABCD.Branch("C2bWeighted_sbin2", &C2bsbin2CountWeighted);
+  ABCD.Branch("D2bWeighted_sbin2", &D2bsbin2CountWeighted);
+  ABCD.Branch("A_sbin3", &Asbin3Count);
+  ABCD.Branch("B_sbin3", &Bsbin3Count);
+  ABCD.Branch("C3b_sbin3", &C3bsbin3Count);
+  ABCD.Branch("D3b_sbin3", &D3bsbin3Count);
+  ABCD.Branch("C2b_sbin3", &C2bsbin3Count);
+  ABCD.Branch("D2b_sbin3", &D2bsbin3Count);
+  ABCD.Branch("AWeighted_sbin3", &Asbin3CountWeighted);
+  ABCD.Branch("BWeighted_sbin3", &Bsbin3CountWeighted);
+  ABCD.Branch("C3bWeighted_sbin3", &C3bsbin3CountWeighted);
+  ABCD.Branch("D3bWeighted_sbin3", &D3bsbin3CountWeighted);
+  ABCD.Branch("C2bWeighted_sbin3", &C2bsbin3CountWeighted);
+  ABCD.Branch("D2bWeighted_sbin3", &D2bsbin3CountWeighted);
+  ABCD.Branch("A_sbin4", &Asbin4Count);
+  ABCD.Branch("B_sbin4", &Bsbin4Count);
+  ABCD.Branch("C3b_sbin4", &C3bsbin4Count);
+  ABCD.Branch("D3b_sbin4", &D3bsbin4Count);
+  ABCD.Branch("C2b_sbin4", &C2bsbin4Count);
+  ABCD.Branch("D2b_sbin4", &D2bsbin4Count);
+  ABCD.Branch("AWeighted_sbin4", &Asbin4CountWeighted);
+  ABCD.Branch("BWeighted_sbin4", &Bsbin4CountWeighted);
+  ABCD.Branch("C3bWeighted_sbin4", &C3bsbin4CountWeighted);
+  ABCD.Branch("D3bWeighted_sbin4", &D3bsbin4CountWeighted);
+  ABCD.Branch("C2bWeighted_sbin4", &C2bsbin4CountWeighted);
+  ABCD.Branch("D2bWeighted_sbin4", &D2bsbin4CountWeighted);
   ABCD.Branch("kappa3b", &kappa3b);
   ABCD.Branch("kappa2b", &kappa2b);
   ABCD.Branch("kappatot", &kappatot);
