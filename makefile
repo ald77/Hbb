@@ -54,6 +54,8 @@ dummy_cfa.all: $(EXEDIR)/generate_cfa_class.exe example_root_file.root
 	./$< $(word 2,$^)
 .PRECIOUS: generate_cfa_class.o
 
+.DELETE_ON_ERROR:
+
 .PHONY: clean
 
 clean:
