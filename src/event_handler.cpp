@@ -1237,8 +1237,8 @@ void EventHandler::MakePlots(const std::string &outFileName){
       if((masked_fc & ~kHiggsMassDiff) == kGood) single_lepton_nm1_higgsMassDiff.Fill(fabs(higgsMasses.first-higgsMasses.second),localWeight);
       if((masked_fc & ~kHiggsAvgMass) == kGood) single_lepton_nm1_higgsMassDiff.Fill(0.5*(higgsMasses.first+higgsMasses.second),localWeight);
       if((masked_fc & ~kDeltaR) == kGood) single_lepton_nm1_maxDeltaR.Fill(GetMaxDR(),localWeight);
-      if(masked_fc & ~kMETSig30 == kGood) single_lepton_nm1_met.Fill(pfmets_et->at(0),localWeight);
-      if(masked_fc & ~kMETSig30 == kGood) single_lepton_nm1_metSig.Fill(pfmets_fullSignif,localWeight);
+      if((masked_fc & ~kMETSig30) == kGood) single_lepton_nm1_met.Fill(pfmets_et->at(0),localWeight);
+      if((masked_fc & ~kMETSig30) == kGood) single_lepton_nm1_metSig.Fill(pfmets_fullSignif,localWeight);
     }
 
     if(PassesPVCut() && PassesMETCleaningCut() && PassesTriggerCut() && PassesNumJetsCut() && Passes2CSVTCut() && PassesJet2PtCut() && PassesMinDeltaPhiCut() && PassesLeptonVetoCut() && PassesIsoTrackVetoCut()){
@@ -2338,7 +2338,7 @@ void EventHandler::Skim(const std::string &skimFileName){
 
     if(!PassesTChiZHMassCut()) continue;
     /*if(sampleName.find("Run2012")!=std::string::npos
-       && !inJSON(VRunLumi,run,lumiblock)){
+      && !inJSON(VRunLumi,run,lumiblock)){
       continue;
       }*/
 
