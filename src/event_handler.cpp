@@ -2041,7 +2041,7 @@ int EventHandler::GetNumCSVLJets() const{
 double EventHandler::GetMinDeltaPhiMET(const unsigned int maxjets) const{
   std::vector<std::pair<double, double> > jets(0);
   for(unsigned int i(0); i<jets_AK5PF_phi->size(); ++i){
-    if(isGoodJet(i)){
+    if(isGoodJet(i, false, 20.0, 5.0, false)){
       jets.push_back(std::make_pair(jets_AK5PF_pt->at(i),jets_AK5PF_phi->at(i)));
     }
   }
@@ -2061,9 +2061,9 @@ double EventHandler::GetMinDeltaPhiMET(const unsigned int maxjets) const{
 
 bool EventHandler::PassesMinDeltaPhiCut() const{
   if(pfmets_fullSignif<50.0){ 
-    return GetMinDeltaPhiMET(3)>0.5;
+    return GetMinDeltaPhiMET(UINT_MAX)>0.5;
   }else{
-    return GetMinDeltaPhiMET(3)>0.3;
+    return GetMinDeltaPhiMET(UINT_MAX)>0.3;
   }
 }
 
