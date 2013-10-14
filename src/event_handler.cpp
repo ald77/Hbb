@@ -267,7 +267,7 @@ uint_least32_t EventHandler::GetCutFailCode() const{
   if(!higgsPairingUpToDate) GetHiggsBJetPairing();
   uint_least32_t fail_code(0);
   if(!PassesMETSig150Cut()) fail_code |= 0x00001;
-  if(!PassesMETSig80Cut()) fail_code |= 0x00002;
+  if(!PassesMETSig100Cut()) fail_code |= 0x00002;
   if(!PassesMETSig50Cut()) fail_code |= 0x00004;
   if(!PassesMETSig30Cut()) fail_code |= 0x00008;
   if(!PassesDRCut()) fail_code |= 0x00010;
@@ -1198,8 +1198,8 @@ void EventHandler::MakePlots(const std::string &outFileName){
 
     double SbinToFill(0.0);
     if(pfmets_fullSignif>30.0 && pfmets_fullSignif<50.0) SbinToFill=1.0;
-    if(pfmets_fullSignif>50.0 && pfmets_fullSignif<80.0) SbinToFill=2.0;
-    if(pfmets_fullSignif>80.0 && pfmets_fullSignif<150.0) SbinToFill=3.0;
+    if(pfmets_fullSignif>50.0 && pfmets_fullSignif<100.0) SbinToFill=2.0;
+    if(pfmets_fullSignif>100.0 && pfmets_fullSignif<150.0) SbinToFill=3.0;
     if(pfmets_fullSignif>150.0) SbinToFill=4.0;
 
     if(PassesRegionACut()) xx_Sbins_4bSig.Fill(SbinToFill, localWeight);
@@ -1216,7 +1216,7 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesSingleLeptonRegionD2bCut()) sl_Sbins_2bSB.Fill(SbinToFill, localWeight);
 
     const uint_least32_t failure_code(GetCutFailCode());
-    uint_least32_t masked_fc(failure_code & ~kMETSig80 & ~kMETSig150);
+    uint_least32_t masked_fc(failure_code & ~kMETSig100 & ~kMETSig150);
     if((masked_fc & ~kNumJets) == kMETSig50) sbin1_4b_sb_nm1_numJets.Fill(GetNumGoodJets(),localWeight);
     if((masked_fc & ~kMinDeltaPhi) == kMETSig50) sbin1_4b_sb_nm1_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),localWeight);
     if((masked_fc & ~k3rdBTag & ~k4thBTag) == kMETSig50) sbin1_4b_sb_nm1_thirdCSV.Fill(GetHighestCSV(3),localWeight);
@@ -1228,7 +1228,7 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(masked_fc == kMETSig50) sbin1_4b_sb_nm1_met.Fill(pfmets_et->at(0),localWeight);
     if(masked_fc == kMETSig50) sbin1_4b_sb_nm1_metSig.Fill(pfmets_fullSignif,localWeight);
 
-    masked_fc=(failure_code & ~kMETSig50 & ~kMETSig80 & ~kMETSig150);
+    masked_fc=(failure_code & ~kMETSig50 & ~kMETSig100 & ~kMETSig150);
     if(PassesSingleLeptonCut()){
       if((masked_fc & ~kNumJets) == kGood) single_lepton_nm1_numJets.Fill(GetNumGoodJets(),localWeight);
       if((masked_fc & ~kMinDeltaPhi) == kGood) single_lepton_nm1_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),localWeight);
@@ -1354,9 +1354,9 @@ void EventHandler::MakePlots(const std::string &outFileName){
     unsigned int this_sbin(0);
     if(pfmets_fullSignif>30.0 && pfmets_fullSignif<50.0){
       this_sbin=1;
-    }else if(pfmets_fullSignif>50.0 && pfmets_fullSignif<80.0){
+    }else if(pfmets_fullSignif>50.0 && pfmets_fullSignif<100.0){
       this_sbin=2;
-    }else if(pfmets_fullSignif>80.0 && pfmets_fullSignif<150.0){
+    }else if(pfmets_fullSignif>100.0 && pfmets_fullSignif<150.0){
       this_sbin=3;
     }else if(pfmets_fullSignif>150.0){
       this_sbin=4;

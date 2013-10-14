@@ -27,7 +27,7 @@ public:
   enum FailureType{
     kGood = 0u,
     kMETSig150 = 1u<<0,
-    kMETSig80 = 1u<<1,
+    kMETSig100 = 1u<<1,
     kMETSig50 = 1u<<2,
     kMETSig30 = 1u<<3,
     kDeltaR = 1u<<4,
