@@ -952,7 +952,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
 
   TCanvas xx_metSig_SigOverSB("xx_metSig_SigOverSB","xx_metSig_SigOverSB");
 
-  //Plots with names starting with xx_ are not blinded. Do NOT look at real data for these plots!
   TH1D xx_nm1_thirdBTag("xx_nm1_thirdBTag", "N-1 Third B-Tag;CSV;Events/19.4 fb^{-1}/0.04", 25, 0.0, 1.0);
   TH1D xx_nm1_fourthBTag("xx_nm1_fourthBTag", "N-1 Fourth B-Tag;CSV;Events/19.4 fb^{-1}/0.04", 25, 0.0, 1.0);
   TH1D xx_nm1_avgHiggsMass("xx_nm1_avgHiggsMass", "N-1 Avg. Higgs Mass;Avg. Higgs Mass [GeV];Events/19.4 fb^{-1}/10 GeV", 30, 0, 300.0);

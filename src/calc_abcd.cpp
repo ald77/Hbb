@@ -521,16 +521,16 @@ int main(int argc, char *argv[]){
     }
 
     if(!plot_only){
-      PrintLine( tex.at(i), (i==0?0.0:1.0)*Aval.at(i), Aup.at(i), Adown.at(i), Bval.at(i), Bup.at(i),//blind
-			     Bdown.at(i), C3val.at(i), C3up.at(i), C3down.at(i), D3val.at(i),
-			     D3up.at(i), D3down.at(i), C2val.at(i), C2up.at(i), C2down.at(i),
-			     D2val.at(i), D2up.at(i), D2down.at(i), kappa3val.at(i), kappa3up.at(i),
-			     kappa3down.at(i), kappa2val.at(i), kappa2up.at(i), kappa2down.at(i),
-			     pred23.at(i), predup23.at(i), preddown23.at(i), pred24.at(i),
-			     predup24.at(i), preddown24.at(i), pred34.at(i), predup34.at(i),
-			     preddown34.at(i));
-		 }
+      PrintLine(tex.at(i), Aval.at(i), Aup.at(i), Adown.at(i), Bval.at(i), Bup.at(i),
+		Bdown.at(i), C3val.at(i), C3up.at(i), C3down.at(i), D3val.at(i),
+		D3up.at(i), D3down.at(i), C2val.at(i), C2up.at(i), C2down.at(i),
+		D2val.at(i), D2up.at(i), D2down.at(i), kappa3val.at(i), kappa3up.at(i),
+		kappa3down.at(i), kappa2val.at(i), kappa2up.at(i), kappa2down.at(i),
+		pred23.at(i), predup23.at(i), preddown23.at(i), pred24.at(i),
+		predup24.at(i), preddown24.at(i), pred34.at(i), predup34.at(i),
+		preddown34.at(i));
     }
+  }
 
   if(plot_only){
     TCanvas canvas;
@@ -545,7 +545,7 @@ int main(int argc, char *argv[]){
     h_closure_test.GetXaxis()->SetBinLabel(8,"3b,1 lep.");
     h_closure_test.GetXaxis()->SetBinLabel(9,"2b,1 lep.");
     std::vector<double> val(0), up(0), down(0), halves(9,0.5), xval(0);
-    xval.push_back(1.0); val.push_back((mc_plot?1.0:0.0)*Aval.at(0)); up.push_back((mc_plot?1.0:0.0)*Aup.at(0)); down.push_back((mc_plot?1.0:0.0)*Adown.at(0));//blind
+    xval.push_back(1.0); val.push_back(Aval.at(0)); up.push_back(Aup.at(0)); down.push_back(Adown.at(0));
     xval.push_back(2.0); val.push_back(C3val.at(0)); up.push_back(C3up.at(0)); down.push_back(C3down.at(0));
     xval.push_back(3.0); val.push_back(C2val.at(0)); up.push_back(C2up.at(0)); down.push_back(C2down.at(0));
     xval.push_back(4.0); val.push_back(Aval_DRInv.at(0)); up.push_back(Aup_DRInv.at(0)); down.push_back(Adown_DRInv.at(0));
@@ -618,20 +618,20 @@ int main(int argc, char *argv[]){
     from3_down.push_back(preddown32_DRInv.at(0));
     from3_down.push_back(preddown34_SL.at(0));
     from3_down.push_back(preddown32_SL.at(0));
-    from4.push_back((mc_plot?1.0:0.0)*pred43.at(0));//blind
-    from4.push_back((mc_plot?1.0:0.0)*pred42.at(0));//blind
+    from4.push_back(pred43.at(0));
+    from4.push_back(pred42.at(0));
     from4.push_back(pred43_DRInv.at(0));
     from4.push_back(pred42_DRInv.at(0));
     from4.push_back(pred43_SL.at(0));
     from4.push_back(pred42_SL.at(0));
-    from4_up.push_back((mc_plot?1.0:0.0)*predup43.at(0));//blind
-    from4_up.push_back((mc_plot?1.0:0.0)*predup42.at(0));//blind
+    from4_up.push_back(predup43.at(0));
+    from4_up.push_back(predup42.at(0));
     from4_up.push_back(predup43_DRInv.at(0));
     from4_up.push_back(predup42_DRInv.at(0));
     from4_up.push_back(predup43_SL.at(0));
     from4_up.push_back(predup42_SL.at(0));
-    from4_down.push_back((mc_plot?1.0:0.0)*preddown43.at(0));//blind
-    from4_down.push_back((mc_plot?1.0:0.0)*preddown42.at(0));//blind
+    from4_down.push_back(preddown43.at(0));
+    from4_down.push_back(preddown42.at(0));
     from4_down.push_back(preddown43_DRInv.at(0));
     from4_down.push_back(preddown42_DRInv.at(0));
     from4_down.push_back(preddown43_SL.at(0));

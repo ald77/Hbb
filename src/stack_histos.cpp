@@ -133,8 +133,7 @@ int main(int argc, char *argv[]){
 
     for(int obj(0); obj<QCD.at(0)->GetListOfKeys()->GetSize(); ++obj){
       const std::string obj_name(QCD.at(0)->GetListOfKeys()->At(obj)->GetName());
-      const bool doBlind= obj_name.find("xx_")!=std::string::npos;
-      const double signalScale(doBlind?1.0:20.0);
+      const double signalScale((obj_name.find("xx_")!=std::string::npos)?1.0:20.0);
 
       if(QCD.at(0)->GetKey(obj_name.c_str(),1)->ReadObj()->IsA()==TH1D::Class()){
 	TH1D h_QCD(GetTH1D(QCD,obj_name));
@@ -150,7 +149,6 @@ int main(int argc, char *argv[]){
 	TH1D h_realData(GetTH1D(realData,obj_name));
 	TH1D h_signal400(GetTH1D(signal400,obj_name));
 	TH1D h_signal250(GetTH1D(signal250,obj_name));
-	if(doBlind) h_realData.Scale(0.0);
 
 	h_QCD.SetFillColor(c_QCD);
 	h_TTJets_FullLept.SetFillColor(c_TTJets_FullLept);
@@ -184,21 +182,20 @@ int main(int argc, char *argv[]){
 	h_signal400.SetLineWidth(3);
 	h_signal250.SetLineWidth(3);
 
-	if(!doBlind){
-	  const double scaling=1.0;//h_realData.Integral("width")/(h_QCD.Integral("width")+h_TTJets_FullLept.Integral("width")+h_TTJets_SemiLept.Integral("width")+h_TTJets_Hadronic.Integral("width")+h_TTV.Integral("width")+h_Wbb.Integral("width")+h_ZJets.Integral("width")+h_TTH.Integral("width"));
-	  h_QCD.Scale(scaling);
-	  h_TTJets_FullLept.Scale(scaling);
-	  h_TTJets_SemiLept.Scale(scaling);
-	  h_TTJets_Hadronic.Scale(scaling);
-	  h_TTV.Scale(scaling);
-	  h_TTH.Scale(scaling);
-	  h_VH.Scale(scaling);
-	  h_VV.Scale(scaling);
-	  h_V.Scale(scaling);
-	  h_singleT.Scale(scaling);
-	  h_signal400.Scale(scaling);
-	  h_signal250.Scale(scaling);
-	}
+	const double scaling=1.0;//h_realData.Integral("width")/(h_QCD.Integral("width")+h_TTJets_FullLept.Integral("width")+h_TTJets_SemiLept.Integral("width")+h_TTJets_Hadronic.Integral("width")+h_TTV.Integral("width")+h_Wbb.Integral("width")+h_ZJets.Integral("width")+h_TTH.Integral("width"));
+	h_QCD.Scale(scaling);
+	h_TTJets_FullLept.Scale(scaling);
+	h_TTJets_SemiLept.Scale(scaling);
+	h_TTJets_Hadronic.Scale(scaling);
+	h_TTV.Scale(scaling);
+	h_TTH.Scale(scaling);
+	h_VH.Scale(scaling);
+	h_VV.Scale(scaling);
+	h_V.Scale(scaling);
+	h_singleT.Scale(scaling);
+	h_signal400.Scale(scaling);
+	h_signal250.Scale(scaling);
+	
 	h_signal400.Scale(signalScale);
 	h_signal250.Scale(signalScale);
 	  
@@ -235,7 +232,7 @@ int main(int argc, char *argv[]){
 	stack.Draw("hist");
 	TLegend legend(0.7,0.5,0.95,0.85);
 	legend.SetFillColor(4000);
-	if(!doBlind) legend.AddEntry(&h_realData, "CMS Data, #sqrt{s}=8 TeV","lpe");
+	legend.AddEntry(&h_realData, "CMS Data, #sqrt{s}=8 TeV","lpe");
 	legend.AddEntry(&h_TTJets_Hadronic,"ttbar (0l)","lf");
 	legend.AddEntry(&h_TTJets_SemiLept,"ttbar (1l)","lf");
 	legend.AddEntry(&h_TTJets_FullLept,"ttbar (2l)","lf");
@@ -274,7 +271,6 @@ int main(int argc, char *argv[]){
 
 	TH2D h_backgroundMC=h_QCD+h_TTJets_FullLept+h_TTJets_SemiLept
 	  +h_TTJets_Hadronic+h_TTV+h_VH+h_VV+h_V+h_singleT;
-        if(doBlind) h_realData.Scale(0.0);//Blinding!                                                                                            
         h_backgroundMC.SetFillColor(c_backgroundMC);
         h_realData.SetFillColor(c_realData);
 	h_signal400.SetFillColor(c_signal400);
@@ -290,12 +286,11 @@ int main(int argc, char *argv[]){
 	h_signal400.SetMarkerColor(c_signal400);
 	h_signal250.SetMarkerColor(c_signal250);
 	
-	if(!doBlind){
-	  const double scaling=1.0;//h_realData.Integral("width")/(h_backgroundMC.Integral("width"));
-	  h_backgroundMC.Scale(scaling);
-	  h_signal400.Scale(scaling);
-	  h_signal250.Scale(scaling);
-	}
+	const double scaling=1.0;//h_realData.Integral("width")/(h_backgroundMC.Integral("width"));
+	h_backgroundMC.Scale(scaling);
+	h_signal400.Scale(scaling);
+	h_signal250.Scale(scaling);
+
 	h_signal400.Scale(signalScale);
 	h_signal250.Scale(signalScale);
 
@@ -313,7 +308,7 @@ int main(int argc, char *argv[]){
         h_realData.Draw(GetScatArg(h_realData,"same").c_str());
         TLegend legend(0.8,0.85,1.0,1.0);
         legend.SetFillColor(4000);
-        if(!doBlind) legend.AddEntry(&h_realData, "CMS Data, #sqrt{s}=8 TeV","f");
+        legend.AddEntry(&h_realData, "CMS Data, #sqrt{s}=8 TeV","f");
         legend.AddEntry(&h_backgroundMC,"SM","f");
         legend.AddEntry(&h_signal400,("Hbb(400)"+oss.str()).c_str(),"f");
         legend.Draw("same");
