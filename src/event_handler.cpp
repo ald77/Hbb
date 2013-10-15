@@ -8,6 +8,7 @@
 #include <cmath>
 #include <cstdio>
 #include <iostream>
+#include <climits>
 #include <cfloat>
 #include <ctime>
 #include <sstream>
