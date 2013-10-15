@@ -5,12 +5,13 @@
 using namespace std;
 
 Cutflow::Cutflow(const vector<TFile*> files) : 
-	fChain_("cutFlow"),
 	numCutsTotal_(13),
 	unscaled_(numCutsTotal_,0),
 	scaled_(numCutsTotal_,0.0),
 	error_sq_(numCutsTotal_,0.0),
-	error_(numCutsTotal_,0.0) 
+	error_(numCutsTotal_,0.0),
+	fChain_("cutFlow")
+
 {
 	for (unsigned int f = 0; f < files.size(); f++) fChain_.Add(files[f]->GetName());
 	PrepareVectors();
@@ -18,12 +19,12 @@ Cutflow::Cutflow(const vector<TFile*> files) :
 }
 
 Cutflow::Cutflow(const string in_filename, bool filelist)  : 
-	fChain_("cutFlow"),
 	numCutsTotal_(13),
 	unscaled_(numCutsTotal_,0),
 	scaled_(numCutsTotal_,0.0),
 	error_sq_(numCutsTotal_,0.0),
-	error_(numCutsTotal_,0.0) 
+	error_(numCutsTotal_,0.0),
+	fChain_("cutFlow")
 {
 	char path[1024]="";
 	if(filelist){
@@ -63,18 +64,18 @@ void Cutflow::PrepareVectors() {
       								 "Higgs mass window cuts", // 11
       								 "Max. delta R<2.2"}; // 12*/
     cutNames_.push_back("Start"); // 0 (cutflow index)
-	cutNames_.push_back("Primary Vertex"); // 1
-	cutNames_.push_back("Jet 2 pT > 50 GeV"); // 2
-	cutNames_.push_back("MET Cleaning"); // 3
-	cutNames_.push_back("METsig>30"); // 4
-	cutNames_.push_back("Trigger"); // 5
-	cutNames_.push_back("nJets = 4 || 5"); // 6
-	cutNames_.push_back("Min. Delta Phi >0.3"); // 7
+	cutNames_.push_back("PV"); // 1
+	cutNames_.push_back("$\\pt_{j_2}>50$ GeV"); // 2
+	cutNames_.push_back("Cleaning"); // 3
+	cutNames_.push_back("$\\metsig>30$"); // 4
+	cutNames_.push_back("Presel."); // 5 (trigger)
+	cutNames_.push_back("nJets $= 4 || 5$"); // 6
+	cutNames_.push_back("$\\mdp>0.3$"); // 7
 	cutNames_.push_back("Lepton Veto"); // 8
-	cutNames_.push_back("Isolated Track Veto"); // 9
+	cutNames_.push_back("IsoTk. Veto"); // 9
 	cutNames_.push_back("4 b-Jets"); // 10
-	cutNames_.push_back("Higgs mass window cuts"); // 11
-	cutNames_.push_back("Max. delta R<2.2"); // 12
+	cutNames_.push_back("$\\left<m_{bb}\\right>,\\Delta m_{bb}$"); // 11
+	cutNames_.push_back("$\\mdR<2.2$"); // 12
 
 }
 void Cutflow::LoadValues() {
@@ -84,7 +85,6 @@ void Cutflow::LoadValues() {
 	fChain_.SetBranchAddress("TriggerCount", &TriggerCount_, &b_TriggerCount_);
 	fChain_.SetBranchAddress("numJetsCounts", &numJetsCount_, &b_numJetsCount_);
 	fChain_.SetBranchAddress("jet2PtCount", &jet2PtCount_, &b_jet2PtCount_);
-	fChain_.SetBranchAddress("JSONCount", &JSONCount_, &b_JSONCount_);
 	fChain_.SetBranchAddress("minDeltaPhiCount", &minDeltaPhiCount_, &b_minDeltaPhiCount_);
 	fChain_.SetBranchAddress("METSig30Count", &METSig30Count_, &b_METSig30Count_);
 	fChain_.SetBranchAddress("METCleaningCount", &METCleaningCount_, &b_METCleaningCount_);
@@ -98,7 +98,6 @@ void Cutflow::LoadValues() {
 	fChain_.SetBranchAddress("METSig150Count", &METSig150Count_, &b_METSig150Count_);
 	fChain_.SetBranchAddress("startCountWeighted", &startCountWeighted_, &b_startCountWeighted_);
 	fChain_.SetBranchAddress("PVCountWeighted", &PVCountWeighted_, &b_PVCountWeighted_);
-	fChain_.SetBranchAddress("JSONCountWeighted", &JSONCountWeighted_, &b_JSONCountWeighted_);
 	fChain_.SetBranchAddress("METCleaningCountWeighted", &METCleaningCountWeighted_, &b_METCleaningCountWeighted_);
 	fChain_.SetBranchAddress("TriggerCountWeighted", &TriggerCountWeighted_, &b_TriggerCountWeighted_);
 	fChain_.SetBranchAddress("numJetsCountWeighteds", &numJetsCountWeighted_, &b_numJetsCountWeighted_);
