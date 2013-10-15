@@ -21,14 +21,14 @@ public:
   void Print(const bool=false) const;
   //void PrintLatex(const bool=false) const;
   void PrintCSV(const bool=false) const;
-private:
-  TChain fChain_;
   unsigned int numCutsTotal_;
   vector<int> unscaled_;
   vector<double> scaled_;
   vector<double> error_sq_;
   vector<double> error_;
   vector<string> cutNames_;
+private:
+  TChain fChain_;
   
     // Declaration of leaf types
    UInt_t          startCount_;
@@ -37,7 +37,6 @@ private:
    UInt_t          TriggerCount_;
    UInt_t          numJetsCount_;
    UInt_t          jet2PtCount_;
-   UInt_t          JSONCount_;
    UInt_t          minDeltaPhiCount_;
    UInt_t          METSig30Count_;
    UInt_t          METCleaningCount_;
@@ -51,7 +50,6 @@ private:
    UInt_t          METSig150Count_;
    Double_t        startCountWeighted_;
    Double_t        PVCountWeighted_;
-   Double_t        JSONCountWeighted_;
    Double_t        METCleaningCountWeighted_;
    Double_t        TriggerCountWeighted_;
    Double_t        numJetsCountWeighted_;
@@ -74,7 +72,6 @@ private:
    TBranch        *b_TriggerCount_;   //!
    TBranch        *b_numJetsCount_;   //!
    TBranch        *b_jet2PtCount_;   //!
-   TBranch        *b_JSONCount_;   //!
    TBranch        *b_minDeltaPhiCount_;   //!
    TBranch        *b_METSig30Count_;   //!
    TBranch        *b_METCleaningCount_;   //!
@@ -88,7 +85,6 @@ private:
    TBranch        *b_METSig150Count_;   //!
    TBranch        *b_startCountWeighted_;   //!
    TBranch        *b_PVCountWeighted_;   //!
-   TBranch        *b_JSONCountWeighted_;   //!
    TBranch        *b_METCleaningCountWeighted_;   //!
    TBranch        *b_TriggerCountWeighted_;   //!
    TBranch        *b_numJetsCountWeighted_;   //!
