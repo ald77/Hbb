@@ -176,9 +176,10 @@ bool EventHandler::PassesMETCleaningCut() const{
 
 bool EventHandler::PassesTriggerCut() const{
   for(unsigned int a=0; a<trigger_name->size(); ++a){
-    if((trigger_name->at(a).find("HLT_DiCentralPFJet30_PFMET80_BTagCSV07_v")!=std::string::npos ||
-	trigger_name->at(a).find("HLT_PFMET150_v")!=std::string::npos) && 
-       trigger_prescalevalue->at(a)==1 && trigger_decision->at(a)==1){
+    if((trigger_name->at(a).find("HLT_DiCentralPFJet30_PFMET80_BTagCSV07_v")!=std::string::npos
+	|| trigger_name->at(a).find("HLT_PFMET150_v")!=std::string::npos
+	|| trigger_name->at(a).find("HLT_DiCentralPFJet30_PFMHT80_v")!=std::string::npos)
+       && trigger_prescalevalue->at(a)==1 && trigger_decision->at(a)==1){
       return true;
     }
   }
@@ -928,6 +929,18 @@ void EventHandler::MakePlots(const std::string &outFileName){
   unsigned int ASLsbin4Count(0), BSLsbin4Count(0), C3bSLsbin4Count(0), D3bSLsbin4Count(0), C2bSLsbin4Count(0), D2bSLsbin4Count(0);
   double ASLsbin4CountWeighted(0.0), BSLsbin4CountWeighted(0.0), C3bSLsbin4CountWeighted(0.0), D3bSLsbin4CountWeighted(0.0), C2bSLsbin4CountWeighted(0.0), D2bSLsbin4CountWeighted(0.0);
 
+  unsigned int ADRInvsbin1Count(0), BDRInvsbin1Count(0), C3bDRInvsbin1Count(0), D3bDRInvsbin1Count(0), C2bDRInvsbin1Count(0), D2bDRInvsbin1Count(0);
+  double ADRInvsbin1CountWeighted(0.0), BDRInvsbin1CountWeighted(0.0), C3bDRInvsbin1CountWeighted(0.0), D3bDRInvsbin1CountWeighted(0.0), C2bDRInvsbin1CountWeighted(0.0), D2bDRInvsbin1CountWeighted(0.0);
+
+  unsigned int ADRInvsbin2Count(0), BDRInvsbin2Count(0), C3bDRInvsbin2Count(0), D3bDRInvsbin2Count(0), C2bDRInvsbin2Count(0), D2bDRInvsbin2Count(0);
+  double ADRInvsbin2CountWeighted(0.0), BDRInvsbin2CountWeighted(0.0), C3bDRInvsbin2CountWeighted(0.0), D3bDRInvsbin2CountWeighted(0.0), C2bDRInvsbin2CountWeighted(0.0), D2bDRInvsbin2CountWeighted(0.0);
+
+  unsigned int ADRInvsbin3Count(0), BDRInvsbin3Count(0), C3bDRInvsbin3Count(0), D3bDRInvsbin3Count(0), C2bDRInvsbin3Count(0), D2bDRInvsbin3Count(0);
+  double ADRInvsbin3CountWeighted(0.0), BDRInvsbin3CountWeighted(0.0), C3bDRInvsbin3CountWeighted(0.0), D3bDRInvsbin3CountWeighted(0.0), C2bDRInvsbin3CountWeighted(0.0), D2bDRInvsbin3CountWeighted(0.0);
+
+  unsigned int ADRInvsbin4Count(0), BDRInvsbin4Count(0), C3bDRInvsbin4Count(0), D3bDRInvsbin4Count(0), C2bDRInvsbin4Count(0), D2bDRInvsbin4Count(0);
+  double ADRInvsbin4CountWeighted(0.0), BDRInvsbin4CountWeighted(0.0), C3bDRInvsbin4CountWeighted(0.0), D3bDRInvsbin4CountWeighted(0.0), C2bDRInvsbin4CountWeighted(0.0), D2bDRInvsbin4CountWeighted(0.0);
+
   unsigned int Asbin1Count(0), Bsbin1Count(0), C3bsbin1Count(0), D3bsbin1Count(0), C2bsbin1Count(0), D2bsbin1Count(0);
   double Asbin1CountWeighted(0.0), Bsbin1CountWeighted(0.0), C3bsbin1CountWeighted(0.0), D3bsbin1CountWeighted(0.0), C2bsbin1CountWeighted(0.0), D2bsbin1CountWeighted(0.0);
 
@@ -1482,37 +1495,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
       xx_metSig_D2b.Fill(pfmets_fullSignif,localWeight);
     }
 
-    if(PassesInvertedDRRegionACut()){
-      ++ADRInvCount;
-      ADRInvCountWeighted+=localWeight;
-      ADRInvUncert+=localWeight*localWeight;
-    }
-    if(PassesInvertedDRRegionBCut()){
-      ++BDRInvCount;
-      BDRInvCountWeighted+=localWeight;
-      BDRInvUncert+=localWeight*localWeight;
-    }
-    if(PassesInvertedDRRegionC3bCut()){
-      ++C3bDRInvCount;
-      C3bDRInvCountWeighted+=localWeight;
-      C3bDRInvUncert+=localWeight*localWeight;
-    }
-    if(PassesInvertedDRRegionD3bCut()){
-      ++D3bDRInvCount;
-      D3bDRInvCountWeighted+=localWeight;
-      D3bDRInvUncert+=localWeight*localWeight;
-    }
-    if(PassesInvertedDRRegionC2bCut()){
-      ++C2bDRInvCount;
-      C2bDRInvCountWeighted+=localWeight;
-      C2bDRInvUncert+=localWeight*localWeight;
-    }
-    if(PassesInvertedDRRegionD2bCut()){
-      ++D2bDRInvCount;
-      D2bDRInvCountWeighted+=localWeight;
-      D2bDRInvUncert+=localWeight*localWeight;
-    }
-
     if(PassesSingleLeptonRegionACut()){
       ++ASLCount;
       ASLCountWeighted+=localWeight;
@@ -1619,6 +1601,115 @@ void EventHandler::MakePlots(const std::string &outFileName){
 	break;
       case 4: ++D2bSLsbin4Count;
 	D2bSLsbin4CountWeighted+=localWeight;
+      }
+    }
+
+    if(PassesInvertedDRRegionACut()){
+      ++ADRInvCount;
+      ADRInvCountWeighted+=localWeight;
+      ADRInvUncert+=localWeight*localWeight;
+      switch(this_sbin){
+      case 1: ++ADRInvsbin1Count;
+	ADRInvsbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++ADRInvsbin2Count;
+	ADRInvsbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++ADRInvsbin3Count;
+	ADRInvsbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++ADRInvsbin4Count;
+	ADRInvsbin4CountWeighted+=localWeight;
+      }
+    }
+    if(PassesInvertedDRRegionBCut()){
+      ++BDRInvCount;
+      BDRInvCountWeighted+=localWeight;
+      BDRInvUncert+=localWeight*localWeight;
+      switch(this_sbin){
+      case 1: ++BDRInvsbin1Count;
+	BDRInvsbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++BDRInvsbin2Count;
+	BDRInvsbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++BDRInvsbin3Count;
+	BDRInvsbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++BDRInvsbin4Count;
+	BDRInvsbin4CountWeighted+=localWeight;
+      }
+    }
+    if(PassesInvertedDRRegionC3bCut()){
+      ++C3bDRInvCount;
+      C3bDRInvCountWeighted+=localWeight;
+      C3bDRInvUncert+=localWeight*localWeight;
+      switch(this_sbin){
+      case 1: ++C3bDRInvsbin1Count;
+	C3bDRInvsbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++C3bDRInvsbin2Count;
+	C3bDRInvsbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++C3bDRInvsbin3Count;
+	C3bDRInvsbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++C3bDRInvsbin4Count;
+	C3bDRInvsbin4CountWeighted+=localWeight;
+      }
+    }
+    if(PassesInvertedDRRegionD3bCut()){
+      ++D3bDRInvCount;
+      D3bDRInvCountWeighted+=localWeight;
+      D3bDRInvUncert+=localWeight*localWeight;
+      switch(this_sbin){
+      case 1: ++D3bDRInvsbin1Count;
+	D3bDRInvsbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++D3bDRInvsbin2Count;
+	D3bDRInvsbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++D3bDRInvsbin3Count;
+	D3bDRInvsbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++D3bDRInvsbin4Count;
+	D3bDRInvsbin4CountWeighted+=localWeight;
+      }
+    }
+    if(PassesInvertedDRRegionC2bCut()){
+      ++C2bDRInvCount;
+      C2bDRInvCountWeighted+=localWeight;
+      C2bDRInvUncert+=localWeight*localWeight;
+      switch(this_sbin){
+      case 1: ++C2bDRInvsbin1Count;
+	C2bDRInvsbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++C2bDRInvsbin2Count;
+	C2bDRInvsbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++C2bDRInvsbin3Count;
+	C2bDRInvsbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++C2bDRInvsbin4Count;
+	C2bDRInvsbin4CountWeighted+=localWeight;
+      }
+    }
+    if(PassesInvertedDRRegionD2bCut()){
+      ++D2bDRInvCount;
+      D2bDRInvCountWeighted+=localWeight;
+      D2bDRInvUncert+=localWeight*localWeight;
+      switch(this_sbin){
+      case 1: ++D2bDRInvsbin1Count;
+	D2bDRInvsbin1CountWeighted+=localWeight;
+	break;
+      case 2: ++D2bDRInvsbin2Count;
+	D2bDRInvsbin2CountWeighted+=localWeight;
+	break;
+      case 3: ++D2bDRInvsbin3Count;
+	D2bDRInvsbin3CountWeighted+=localWeight;
+	break;
+      case 4: ++D2bDRInvsbin4Count;
+	D2bDRInvsbin4CountWeighted+=localWeight;
       }
     }
 
@@ -1847,6 +1938,54 @@ void EventHandler::MakePlots(const std::string &outFileName){
   ABCD.Branch("D3bWeighted_SLsbin4", &D3bSLsbin4CountWeighted);
   ABCD.Branch("C2bWeighted_SLsbin4", &C2bSLsbin4CountWeighted);
   ABCD.Branch("D2bWeighted_SLsbin4", &D2bSLsbin4CountWeighted);
+  ABCD.Branch("A_DRInvsbin1", &ADRInvsbin1Count);
+  ABCD.Branch("B_DRInvsbin1", &BDRInvsbin1Count);
+  ABCD.Branch("C3b_DRInvsbin1", &C3bDRInvsbin1Count);
+  ABCD.Branch("D3b_DRInvsbin1", &D3bDRInvsbin1Count);
+  ABCD.Branch("C2b_DRInvsbin1", &C2bDRInvsbin1Count);
+  ABCD.Branch("D2b_DRInvsbin1", &D2bDRInvsbin1Count);
+  ABCD.Branch("AWeighted_DRInvsbin1", &ADRInvsbin1CountWeighted);
+  ABCD.Branch("BWeighted_DRInvsbin1", &BDRInvsbin1CountWeighted);
+  ABCD.Branch("C3bWeighted_DRInvsbin1", &C3bDRInvsbin1CountWeighted);
+  ABCD.Branch("D3bWeighted_DRInvsbin1", &D3bDRInvsbin1CountWeighted);
+  ABCD.Branch("C2bWeighted_DRInvsbin1", &C2bDRInvsbin1CountWeighted);
+  ABCD.Branch("D2bWeighted_DRInvsbin1", &D2bDRInvsbin1CountWeighted);
+  ABCD.Branch("A_DRInvsbin2", &ADRInvsbin2Count);
+  ABCD.Branch("B_DRInvsbin2", &BDRInvsbin2Count);
+  ABCD.Branch("C3b_DRInvsbin2", &C3bDRInvsbin2Count);
+  ABCD.Branch("D3b_DRInvsbin2", &D3bDRInvsbin2Count);
+  ABCD.Branch("C2b_DRInvsbin2", &C2bDRInvsbin2Count);
+  ABCD.Branch("D2b_DRInvsbin2", &D2bDRInvsbin2Count);
+  ABCD.Branch("AWeighted_DRInvsbin2", &ADRInvsbin2CountWeighted);
+  ABCD.Branch("BWeighted_DRInvsbin2", &BDRInvsbin2CountWeighted);
+  ABCD.Branch("C3bWeighted_DRInvsbin2", &C3bDRInvsbin2CountWeighted);
+  ABCD.Branch("D3bWeighted_DRInvsbin2", &D3bDRInvsbin2CountWeighted);
+  ABCD.Branch("C2bWeighted_DRInvsbin2", &C2bDRInvsbin2CountWeighted);
+  ABCD.Branch("D2bWeighted_DRInvsbin2", &D2bDRInvsbin2CountWeighted);
+  ABCD.Branch("A_DRInvsbin3", &ADRInvsbin3Count);
+  ABCD.Branch("B_DRInvsbin3", &BDRInvsbin3Count);
+  ABCD.Branch("C3b_DRInvsbin3", &C3bDRInvsbin3Count);
+  ABCD.Branch("D3b_DRInvsbin3", &D3bDRInvsbin3Count);
+  ABCD.Branch("C2b_DRInvsbin3", &C2bDRInvsbin3Count);
+  ABCD.Branch("D2b_DRInvsbin3", &D2bDRInvsbin3Count);
+  ABCD.Branch("AWeighted_DRInvsbin3", &ADRInvsbin3CountWeighted);
+  ABCD.Branch("BWeighted_DRInvsbin3", &BDRInvsbin3CountWeighted);
+  ABCD.Branch("C3bWeighted_DRInvsbin3", &C3bDRInvsbin3CountWeighted);
+  ABCD.Branch("D3bWeighted_DRInvsbin3", &D3bDRInvsbin3CountWeighted);
+  ABCD.Branch("C2bWeighted_DRInvsbin3", &C2bDRInvsbin3CountWeighted);
+  ABCD.Branch("D2bWeighted_DRInvsbin3", &D2bDRInvsbin3CountWeighted);
+  ABCD.Branch("A_DRInvsbin4", &ADRInvsbin4Count);
+  ABCD.Branch("B_DRInvsbin4", &BDRInvsbin4Count);
+  ABCD.Branch("C3b_DRInvsbin4", &C3bDRInvsbin4Count);
+  ABCD.Branch("D3b_DRInvsbin4", &D3bDRInvsbin4Count);
+  ABCD.Branch("C2b_DRInvsbin4", &C2bDRInvsbin4Count);
+  ABCD.Branch("D2b_DRInvsbin4", &D2bDRInvsbin4Count);
+  ABCD.Branch("AWeighted_DRInvsbin4", &ADRInvsbin4CountWeighted);
+  ABCD.Branch("BWeighted_DRInvsbin4", &BDRInvsbin4CountWeighted);
+  ABCD.Branch("C3bWeighted_DRInvsbin4", &C3bDRInvsbin4CountWeighted);
+  ABCD.Branch("D3bWeighted_DRInvsbin4", &D3bDRInvsbin4CountWeighted);
+  ABCD.Branch("C2bWeighted_DRInvsbin4", &C2bDRInvsbin4CountWeighted);
+  ABCD.Branch("D2bWeighted_DRInvsbin4", &D2bDRInvsbin4CountWeighted);
   ABCD.Branch("A_sbin1", &Asbin1Count);
   ABCD.Branch("B_sbin1", &Bsbin1Count);
   ABCD.Branch("C3b_sbin1", &C3bsbin1Count);
