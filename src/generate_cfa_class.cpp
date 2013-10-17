@@ -25,7 +25,6 @@ int main(int argc, char *argv[]){
 	hppFile << "#include <string>\n";
 	hppFile << "#include \"TChain.h\"\n";
 	hppFile << "#include \"TBranch.h\"\n\n";
-	hppFile << "#include <iostream>\n";
 
 	hppFile << "class cfA{\n";
 	hppFile << "protected:\n";
@@ -110,7 +109,6 @@ int main(int argc, char *argv[]){
 	cppFile << "    chainA.Add((fileIn+\"/configurableAnalysis/eventA\").c_str());\n";
 	cppFile << "    chainB.Add((fileIn+\"/configurableAnalysis/eventB\").c_str());\n";
 	cppFile << "  }\n";
-	cppFile << "  std::cout << chainA.GetEntries() << \" \" << chainB.GetEntries() << \": \" << (fileIn+\"/configurableAnalysis/eventA\").c_str() << std::endl;\n";
 	cppFile << "}\n\n";
 
 	cppFile << "void cfA::SetFile(const std::string& fileIn, const bool isList){\n";

@@ -22,7 +22,7 @@ int main(int argc, char *argv[]){
 
   std::string outFilename("");
   if(!isLocal){
-    outFilename="../data/"+inFilename+"_SyncedSkim.root";
+    outFilename="../data/"+inFilename+"_SyncSkim.root";
     inFilename="/net/cms2/cms2r0/cfA/"+inFilename+"/cfA_"+inFilename+"*.root";
   }else{
     std::string baseName(inFilename);
@@ -34,7 +34,7 @@ int main(int argc, char *argv[]){
     if(pos!=std::string::npos){
       baseName.erase(0,pos+1);
     }
-    outFilename="../data/"+baseName+"_SyncedSkim.root";
+    outFilename="../data/"+baseName+"_SyncSkim.root";
   }
 
   WeightCalculator w(19399);

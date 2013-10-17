@@ -2442,14 +2442,13 @@ void EventHandler::Skim(const std::string &skimFileName){
   GetTotalEntries();
 
   TFile skimFile(skimFileName.c_str(), "RECREATE");
+  TDirectory *cfA_dir(skimFile.mkdir("configurableAnalysis", "configurableAnalysis"));
+  cfA_dir->cd();
   TTree *skimTreeA(chainA.CloneTree(0));
   chainA.CopyAddresses(skimTreeA);
   TTree *skimTreeB(chainB.CloneTree(0));
   chainB.CopyAddresses(skimTreeB);
-  //skimTreeA->SetAutoFlush(0);
-  //skimTreeA->SetAutoSave(0);
-  //skimTreeB->SetAutoFlush(0);
-  //skimTreeB->SetAutoSave(0);
+  skimFile.cd();
 
   std::set<EventNumber> eventList;
   unsigned int startCount(0), PVCount(0), METCleaningCount(0), JSONCount(0), TriggerCount(0), numJetsCount(0), CSVTCount(0), jet2PtCount(0), minDeltaPhiCount(0), leptonVetoCount(0), isoTrackVetoCount(0), bTagCount(0), higgsCount(0), DRCount(0), METSig30Count(0), METSig50Count(0), METSig100Count(0), METSig150Count(0);
@@ -2476,15 +2475,6 @@ void EventHandler::Skim(const std::string &skimFileName){
     startCountWeighted+=localWeight;
 
     if(!PassesTChiZHMassCut()) continue;
-    /*if(sampleName.find("Run2012")!=std::string::npos
-      && !inJSON(VRunLumi,run,lumiblock)){
-      continue;
-      }*/
-
-    /*if(PassesPVCut() && PassesMETCleaningCut() && PassesTriggerCut() && PassesNumJetsCut() && Passes2CSVTCut() && PassesJet2PtCut() && PassesMinDeltaPhiCut() && PassesLeptonVetoCut() && PassesIsoTrackVetoCut()){
-      skimTreeA->Fill();
-      skimTreeB->Fill();
-      }*/
 
     if(Passes2CSVTCut() && PassesPVCut() && PassesJet2PtCut() && PassesMETSig30Cut()){
       skimTreeA->Fill();
@@ -2596,9 +2586,10 @@ void EventHandler::Skim(const std::string &skimFileName){
   timeInfo.Branch("second", &timer_s->tm_sec);
   timeInfo.Fill();
 
-  skimFile.cd();
+  cfA_dir->cd();
   skimTreeA->Write();
   skimTreeB->Write();
+  skimFile.cd();
   cutFlow.Write();
   timeInfo.Write();
   skimFile.Close();
