@@ -37,7 +37,7 @@ $(EXEDIR)/make_cutflow_table.exe: make_cutflow_table.o cutflow.o
 
 $(MAKEDIR)/%.d: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM -MG -MF $@ $< 
-	sed -i 's#$*.o#$(OBJDIR)/$*.o $(MAKEDIR)/$*.d#g' $@
+	sed -i'' 's#$*.o#$(OBJDIR)/$*.o $(MAKEDIR)/$*.d#g' $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
