@@ -2452,7 +2452,9 @@ double EventHandler::GetTopPtWeight() const{
   return 1;
 }
 
-void EventHandler::Skim(const std::string &skimFileName){
+void EventHandler::Skim(const std::string &skimFileName,
+			const int chargino_mass,
+			const int LSP_mass){
   GetTotalEntries();
 
   TFile skimFile(skimFileName.c_str(), "RECREATE");
@@ -2486,14 +2488,16 @@ void EventHandler::Skim(const std::string &skimFileName){
     const bool isttbar(sampleName.find("TTJets")!=std::string::npos || sampleName.find("TT_")!=std::string::npos);
     const double localWeight(GetPUWeight(lumiWeights)*scaleFactor*(isttbar?GetTopPtWeight():1.0)*GetSbinWeight());
     
-    // Select mass points for SMS-TChiHH_2b2b_2J...
-    // Default is to do nothing
-	if(!PassesTChiHHMassCut()) continue;
-	if(!PassesTChiZHMassCut()) continue;
+    // Select mass points
+    if(!PassesTChiZHMassCut()) continue;
     ++startCount;
     startCountWeighted+=localWeight;
 
-    if(Passes2CSVTCut() && PassesPVCut() && PassesJet2PtCut() && PassesMETSig30Cut()){
+    if(Passes2CSVTCut()
+       && PassesPVCut()
+       && PassesJet2PtCut()
+       && PassesMETSig30Cut()
+       && PassesTChiHHMassCut(chargino_mass, LSP_mass)){
       skimTreeA->Fill();
       skimTreeB->Fill();
     }

@@ -55,6 +55,13 @@
 ./scripts/skim_file.exe -i MET_Run2012D-PromptReco-v1_AOD_UCSB1869_v71 &> logs/make_skim_1869.log &
 ./scripts/skim_file.exe -i MET_Run2012D-PromptReco-v1_AOD_UCSB1870_v71 &> logs/make_skim_1870.log &
 
+./scripts/skim_file.exe -i SMS-TChiHH_2b2b_2J_mChargino-130to325_mLSP-1to195_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1872_v71 -M 200 -m 1 &> logs/make_skim_1872_200_1.log &
+./scripts/skim_file.exe -i SMS-TChiHH_2b2b_2J_mChargino-130to325_mLSP-1to195_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1872_v71 -M 250 -m 1 &> logs/make_skim_1872_250_1.log &
+./scripts/skim_file.exe -i SMS-TChiHH_2b2b_2J_mChargino-130to325_mLSP-1to195_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1872_v71 -M 300 -m 1 &> logs/make_skim_1872_300_1.log &
+./scripts/skim_file.exe -i SMS-TChiHH_2b2b_2J_mChargino-350to500_mLSP-1to370_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1871_v71 -M 350 -m 1 &> logs/make_skim_1871_350_1.log &
+./scripts/skim_file.exe -i SMS-TChiHH_2b2b_2J_mChargino-350to500_mLSP-1to370_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1871_v71 -M 400 -m 1 &> logs/make_skim_1871_400_1.log &
+./scripts/skim_file.exe -i SMS-TChiHH_2b2b_2J_mChargino-350to500_mLSP-1to370_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1871_v71 -M 450 -m 1 &> logs/make_skim_1871_450_1.log &
+
 wait
 
 echo "Done"
