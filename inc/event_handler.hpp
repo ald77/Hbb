@@ -44,7 +44,8 @@ public:
     kJSON = 1u<<15,
     kMETCleaning = 1u<<16,
     kPV = 1u<<17,
-    kTChiZHMassCut = 1u<<18
+    kTChiZHMassCut = 1u<<18,
+    kTChiHHMassCut = 1u<<19
   };
 
 private:
@@ -114,6 +115,7 @@ private:
   bool PassesBadJetFilter() const;
 
   bool PassesTChiZHMassCut() const;
+  bool PassesTChiHHMassCut(int=-1, int=1) const;
 
   void GetHiggsBJetPairing() const;
   void GetSortedBJets() const;

@@ -287,6 +287,7 @@ uint_least32_t EventHandler::GetCutFailCode() const{
   if(!PassesMETCleaningCut()) fail_code |= 0x10000;
   if(!PassesPVCut()) fail_code |= 0x20000;
   if(!PassesTChiZHMassCut()) fail_code |= 0x40000;
+  if(!PassesTChiHHMassCut()) fail_code |= 0x80000;
   return fail_code;
 }
 
@@ -754,6 +755,19 @@ bool EventHandler::PassesTChiZHMassCut() const{
   if(sampleName.find("TChiZH")==std::string::npos) return true;
   if(model_params->find("chargino300")==std::string::npos) return false;
   if(model_params->find("bino1_")==std::string::npos) return false;
+  return true;
+}
+
+bool EventHandler::PassesTChiHHMassCut(int mChi, int mLSP) const{
+  if (mChi<0||mLSP<0) return true;
+  // parse the model_params string in the new signal samples for mass points
+  char s_mChi[10], s_mLSP[10];
+  sprintf(s_mChi, "chargino%d_", mChi);
+  sprintf(s_mLSP, "bino%d_", mLSP);
+
+  if(sampleName.find("SMS-TChiHH")==std::string::npos) return true;
+  if(model_params->find(s_mChi)==std::string::npos) return false;
+  if(model_params->find(s_mLSP)==std::string::npos) return false;
   return true;
 }
 
@@ -2471,10 +2485,13 @@ void EventHandler::Skim(const std::string &skimFileName){
     if(!returnVal.second) continue;
     const bool isttbar(sampleName.find("TTJets")!=std::string::npos || sampleName.find("TT_")!=std::string::npos);
     const double localWeight(GetPUWeight(lumiWeights)*scaleFactor*(isttbar?GetTopPtWeight():1.0)*GetSbinWeight());
+    
+    // Select mass points for SMS-TChiHH_2b2b_2J...
+    // Default is to do nothing
+	if(!PassesTChiHHMassCut()) continue;
+	if(!PassesTChiZHMassCut()) continue;
     ++startCount;
     startCountWeighted+=localWeight;
-
-    if(!PassesTChiZHMassCut()) continue;
 
     if(Passes2CSVTCut() && PassesPVCut() && PassesJet2PtCut() && PassesMETSig30Cut()){
       skimTreeA->Fill();
