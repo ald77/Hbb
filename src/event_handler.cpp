@@ -48,35 +48,35 @@ EventHandler::EventHandler(const std::string &fileName, const bool isList, const
   betaUpToDate(false),
   scaleFactor(scaleFactorIn),
   beta(0){
-  	if (fastMode) { // turn off unnecessary branches
-		chainA.SetBranchStatus("els_*",0);
-		chainA.SetBranchStatus("triggerobject_*",0);
-		chainA.SetBranchStatus("standalone_t*",0);
-		chainA.SetBranchStatus("L1trigger_*",0);
-		chainA.SetBranchStatus("passprescale*",0);
-		chainA.SetBranchStatus("jets_AK5PFclean_*",0);
-		chainA.SetBranchStatus("softjetUp_*",0);
-		chainA.SetBranchStatus("pdfweights_*",0);
-		chainA.SetBranchStatus("photon_*",0);
-		chainB.SetBranchStatus("Ntcmets",0);
-		chainB.SetBranchStatus("tcmets_*",0);
-		chainB.SetBranchStatus("Nphotons",0);
-		chainB.SetBranchStatus("photons_*",0);
-		chainB.SetBranchStatus("Npf_photons",0);
-		chainB.SetBranchStatus("pf_photons_*",0);
-		chainB.SetBranchStatus("Nmus",0);
-		chainB.SetBranchStatus("mus_*",0);
-		chainB.SetBranchStatus("Nels",0);
-		chainB.SetBranchStatus("els_*",0);
-		chainB.SetBranchStatus("Nmets*",0);
-		chainB.SetBranchStatus("mets*",0);
-		chainB.SetBranchStatus("Njets_AK5PFclean",0);
-		chainB.SetBranchStatus("jets_AK5PFclean_*",0);
-		chainB.SetBranchStatus("Nmc*",0);
-		chainB.SetBranchStatus("mc_*",0);
-		chainB.SetBranchStatus("Nmc_doc*",1);
-		chainB.SetBranchStatus("mc_doc*",1);
-  	}
+  if (fastMode) { // turn off unnecessary branches
+    chainA.SetBranchStatus("els_*",0);
+    chainA.SetBranchStatus("triggerobject_*",0);
+    chainA.SetBranchStatus("standalone_t*",0);
+    chainA.SetBranchStatus("L1trigger_*",0);
+    chainA.SetBranchStatus("passprescale*",0);
+    chainA.SetBranchStatus("jets_AK5PFclean_*",0);
+    chainA.SetBranchStatus("softjetUp_*",0);
+    chainA.SetBranchStatus("pdfweights_*",0);
+    chainA.SetBranchStatus("photon_*",0);
+    chainB.SetBranchStatus("Ntcmets",0);
+    chainB.SetBranchStatus("tcmets_*",0);
+    chainB.SetBranchStatus("Nphotons",0);
+    chainB.SetBranchStatus("photons_*",0);
+    chainB.SetBranchStatus("Npf_photons",0);
+    chainB.SetBranchStatus("pf_photons_*",0);
+    chainB.SetBranchStatus("Nmus",0);
+    chainB.SetBranchStatus("mus_*",0);
+    chainB.SetBranchStatus("Nels",0);
+    chainB.SetBranchStatus("els_*",0);
+    chainB.SetBranchStatus("Nmets*",0);
+    chainB.SetBranchStatus("mets*",0);
+    chainB.SetBranchStatus("Njets_AK5PFclean",0);
+    chainB.SetBranchStatus("jets_AK5PFclean_*",0);
+    chainB.SetBranchStatus("Nmc*",0);
+    chainB.SetBranchStatus("mc_*",0);
+    chainB.SetBranchStatus("Nmc_doc*",1);
+    chainB.SetBranchStatus("mc_doc*",1);
+  }
 }
 
 void EventHandler::SetScaleFactor(const double crossSection, const double luminosity, int numEntries){
@@ -2253,7 +2253,7 @@ bool EventHandler::isProblemJet(const unsigned int ijet) const{
   return jets_AK5PF_pt->at(ijet)>50.0
     && fabs(jets_AK5PF_eta->at(ijet))>0.9
     && fabs(jets_AK5PF_eta->at(ijet))<1.9
-    && jets_AK5PF_chg_Mult->at(ijet)-jets_AK5PF_neutral_Mult->at(ijet)>=40;
+				      && jets_AK5PF_chg_Mult->at(ijet)-jets_AK5PF_neutral_Mult->at(ijet)>=40;
 }
 
 bool EventHandler::isGoodJet(const unsigned int ijet, const bool jetid, const double ptThresh, const double etaThresh, const bool doBeta) const{

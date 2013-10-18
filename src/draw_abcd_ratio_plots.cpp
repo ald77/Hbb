@@ -16,17 +16,17 @@
 #include "style.hpp"
 
 /*const int c_QCD(TColor::GetColor(127,255,255));
-const int c_TTJets_FullLept(TColor::GetColor(63,63,255));
-const int c_TTJets_SemiLept(TColor::GetColor(127,127,255));
-const int c_TTJets_Hadronic(TColor::GetColor(191,191,255));
-const int c_TTV(TColor::GetColor(127,255,127));
-const int c_Wbb(TColor::GetColor(255,127,255));
-const int c_ZJets(TColor::GetColor(255,127,127));
-const int c_TTH(TColor::GetColor(127,127,127));
-const int c_realData(TColor::GetColor(0,0,0));
-const int c_backgroundMC(TColor::GetColor(0,0,255));
-const int c_signal400(TColor::GetColor(255,0,0));
-const int c_signal250(TColor::GetColor(0,255,0));*/
+  const int c_TTJets_FullLept(TColor::GetColor(63,63,255));
+  const int c_TTJets_SemiLept(TColor::GetColor(127,127,255));
+  const int c_TTJets_Hadronic(TColor::GetColor(191,191,255));
+  const int c_TTV(TColor::GetColor(127,255,127));
+  const int c_Wbb(TColor::GetColor(255,127,255));
+  const int c_ZJets(TColor::GetColor(255,127,127));
+  const int c_TTH(TColor::GetColor(127,127,127));
+  const int c_realData(TColor::GetColor(0,0,0));
+  const int c_backgroundMC(TColor::GetColor(0,0,255));
+  const int c_signal400(TColor::GetColor(255,0,0));
+  const int c_signal250(TColor::GetColor(0,255,0));*/
 
 TH1D GetTH1D(std::vector<TFile*> &file, const std::string &obj_name){
   if(file.size()){

@@ -124,7 +124,7 @@ double GetRandom(const double kp1, const double weight){
 }
 
 void GetUncertaintiesOld(double &up, double &down, const double center,
-		      const std::vector<double> vals){
+			 const std::vector<double> vals){
   if(vals.size()!=0){
     const double frac(TMath::Erf(1.0/sqrt(2.0)));
     const std::vector<double>::size_type delta(static_cast<int>(ceil(frac*(vals.size()-1))));
@@ -200,7 +200,7 @@ void GetSummedVals(double &up, double &down, double &center,
 }
 
 void GetSummedKappas(double &up, double &down, double &center, const std::vector<double> &A,
-		      const std::vector<double> &B, const std::vector<double> &C,
+		     const std::vector<double> &B, const std::vector<double> &C,
 		     const std::vector<double> &D, const std::vector<double> &weights,
 		     const std::vector<double>::size_type &low,
 		     const std::vector<double>::size_type &high){
