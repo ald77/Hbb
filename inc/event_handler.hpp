@@ -17,7 +17,7 @@
 
 class EventHandler : public cfA{
 public:
-  EventHandler(const std::string &, const bool, const double=1.0);
+  EventHandler(const std::string &, const bool, const double=1.0, const bool=false);
   void Skim(const std::string &, const int=-1, const int=-1);
   void MakePlots(const std::string &);
 

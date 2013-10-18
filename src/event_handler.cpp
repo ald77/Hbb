@@ -39,8 +39,8 @@ const std::vector<std::vector<int> > VRunLumiPrompt(MakeVRunLumi("Golden"));
 const std::vector<std::vector<int> > VRunLumi24Aug(MakeVRunLumi("24Aug"));
 const std::vector<std::vector<int> > VRunLumi13Jul(MakeVRunLumi("13Jul"));
 
-EventHandler::EventHandler(const std::string &fileName, const bool isList, const double scaleFactorIn):
-  cfA(fileName, isList),
+EventHandler::EventHandler(const std::string &fileName, const bool isList, const double scaleFactorIn, const bool fastMode):
+  cfA(fileName, isList, fastMode),
   higgsBJetPairing(std::make_pair(TLorentzVector(0.0,0.0,0.0,0.0),TLorentzVector(0.0,0.0,0.0,0.0)),std::make_pair(TLorentzVector(0.0,0.0,0.0,0.0),TLorentzVector(0.0,0.0,0.0,0.0))),
   sortedBJetCache(0),
   higgsPairingUpToDate(false),
@@ -2062,7 +2062,7 @@ void EventHandler::MakePlots(const std::string &outFileName){
   cutFlow.Branch("METSig30Count", &METSig30Count);
   cutFlow.Branch("METCleaningCount", &METCleaningCount);
   cutFlow.Branch("TriggerCount", &TriggerCount);
-  cutFlow.Branch("numJetsCounts", &numJetsCount);
+  cutFlow.Branch("numJetsCount", &numJetsCount);
   cutFlow.Branch("minDeltaPhiCount", &minDeltaPhiCount);
   cutFlow.Branch("leptonVetoCount", &leptonVetoCount);
   cutFlow.Branch("isoTrackVetoCount", &isoTrackVetoCount);
@@ -2079,7 +2079,7 @@ void EventHandler::MakePlots(const std::string &outFileName){
   cutFlow.Branch("METSig30CountWeighted", &METSig30CountWeighted);
   cutFlow.Branch("METCleaningCountWeighted", &METCleaningCountWeighted);
   cutFlow.Branch("TriggerCountWeighted", &TriggerCountWeighted);
-  cutFlow.Branch("numJetsCountWeighteds", &numJetsCountWeighted);
+  cutFlow.Branch("numJetsCountWeighted", &numJetsCountWeighted);
   cutFlow.Branch("minDeltaPhiCountWeighted", &minDeltaPhiCountWeighted);
   cutFlow.Branch("leptonVetoCountWeighted", &leptonVetoCountWeighted);
   cutFlow.Branch("isoTrackVetoCountWeighted", &isoTrackVetoCountWeighted);
@@ -2093,11 +2093,12 @@ void EventHandler::MakePlots(const std::string &outFileName){
 
   std::cout << "startCount " << startCount << std::endl;
   std::cout << "PVCount " << PVCount << std::endl;
+  std::cout << "jet2PtCount " << jet2PtCount << std::endl;
+  std::cout << "CSVTCount " << CSVTCount << std::endl;
+  std::cout << "METSig30Count " << METSig30Count << std::endl;
   std::cout << "METCleaningCount " << METCleaningCount << std::endl;
   std::cout << "TriggerCount " << TriggerCount << std::endl;
-  std::cout << "numJetsCounts " << numJetsCount << std::endl;
-  std::cout << "CSVTCount " << CSVTCount << std::endl;
-  std::cout << "jet2PtCount " << jet2PtCount << std::endl;
+  std::cout << "numJetsCount " << numJetsCount << std::endl;
   std::cout << "minDeltaPhiCount " << minDeltaPhiCount << std::endl;
   std::cout << "leptonVetoCount " << leptonVetoCount << std::endl;
   std::cout << "isoTrackVetoCount " << isoTrackVetoCount << std::endl;
@@ -2109,11 +2110,12 @@ void EventHandler::MakePlots(const std::string &outFileName){
   std::cout << "METSig150Count " << METSig150Count << std::endl;
   std::cout << "startCountWeighted " << startCountWeighted << std::endl;
   std::cout << "PVCountWeighted " << PVCountWeighted << std::endl;
+  std::cout << "jet2PtCountWeighted " << jet2PtCountWeighted << std::endl;
+  std::cout << "CSVTCountWeighted " << CSVTCountWeighted << std::endl;
+  std::cout << "METSig30CountWeighted " << METSig30CountWeighted << std::endl;
   std::cout << "METCleaningCountWeighted " << METCleaningCountWeighted << std::endl;
   std::cout << "TriggerCountWeighted " << TriggerCountWeighted << std::endl;
-  std::cout << "numJetsCountWeighteds " << numJetsCountWeighted << std::endl;
-  std::cout << "CSVTCountWeighted " << CSVTCountWeighted << std::endl;
-  std::cout << "jet2PtCountWeighted " << jet2PtCountWeighted << std::endl;
+  std::cout << "numJetsCountWeighted " << numJetsCountWeighted << std::endl;
   std::cout << "minDeltaPhiCountWeighted " << minDeltaPhiCountWeighted << std::endl;
   std::cout << "leptonVetoCountWeighted " << leptonVetoCountWeighted << std::endl;
   std::cout << "isoTrackVetoCountWeighted " << isoTrackVetoCountWeighted << std::endl;
@@ -2554,15 +2556,14 @@ void EventHandler::Skim(const std::string &skimFileName,
 
   TTree cutFlow("cutFlow", "cutFlow");
   cutFlow.Branch("startCount", &startCount);
-  cutFlow.Branch("CSVTCount", &CSVTCount);
   cutFlow.Branch("PVCount", &PVCount);
-  cutFlow.Branch("TriggerCount", &TriggerCount);
-  cutFlow.Branch("numJetsCounts", &numJetsCount);
   cutFlow.Branch("jet2PtCount", &jet2PtCount);
-  cutFlow.Branch("JSONCount", &JSONCount);
-  cutFlow.Branch("minDeltaPhiCount", &minDeltaPhiCount);
+  cutFlow.Branch("CSVTCount", &CSVTCount);
   cutFlow.Branch("METSig30Count", &METSig30Count);
   cutFlow.Branch("METCleaningCount", &METCleaningCount);
+  cutFlow.Branch("TriggerCount", &TriggerCount);
+  cutFlow.Branch("numJetsCount", &numJetsCount);
+  cutFlow.Branch("minDeltaPhiCount", &minDeltaPhiCount);
   cutFlow.Branch("leptonVetoCount", &leptonVetoCount);
   cutFlow.Branch("isoTrackVetoCount", &isoTrackVetoCount);
   cutFlow.Branch("bTagCount", &bTagCount);
@@ -2573,14 +2574,13 @@ void EventHandler::Skim(const std::string &skimFileName,
   cutFlow.Branch("METSig150Count", &METSig150Count);
   cutFlow.Branch("startCountWeighted", &startCountWeighted);
   cutFlow.Branch("PVCountWeighted", &PVCountWeighted);
-  cutFlow.Branch("JSONCountWeighted", &JSONCountWeighted);
+  cutFlow.Branch("jet2PtCountWeighted", &jet2PtCountWeighted);
+  cutFlow.Branch("CSVTCountWeighted", &CSVTCountWeighted);
+  cutFlow.Branch("METSig30CountWeighted", &METSig30CountWeighted);
   cutFlow.Branch("METCleaningCountWeighted", &METCleaningCountWeighted);
   cutFlow.Branch("TriggerCountWeighted", &TriggerCountWeighted);
-  cutFlow.Branch("numJetsCountWeighteds", &numJetsCountWeighted);
-  cutFlow.Branch("CSVTCountWeighted", &CSVTCountWeighted);
-  cutFlow.Branch("jet2PtCountWeighted", &jet2PtCountWeighted);
+  cutFlow.Branch("numJetsCountWeighted", &numJetsCountWeighted);
   cutFlow.Branch("minDeltaPhiCountWeighted", &minDeltaPhiCountWeighted);
-  cutFlow.Branch("METSig30CountWeighted", &METSig30CountWeighted);
   cutFlow.Branch("leptonVetoCountWeighted", &leptonVetoCountWeighted);
   cutFlow.Branch("isoTrackVetoCountWeighted", &isoTrackVetoCountWeighted);
   cutFlow.Branch("bTagCountWeighted", &bTagCountWeighted);
@@ -2590,6 +2590,41 @@ void EventHandler::Skim(const std::string &skimFileName,
   cutFlow.Branch("METSig100CountWeighted", &METSig100CountWeighted);
   cutFlow.Branch("METSig150CountWeighted", &METSig150CountWeighted);
   cutFlow.Fill();
+
+  std::cout << "startCount " << startCount << std::endl;
+  std::cout << "PVCount " << PVCount << std::endl;
+  std::cout << "jet2PtCount " << jet2PtCount << std::endl;
+  std::cout << "CSVTCount " << CSVTCount << std::endl;
+  std::cout << "METSig30Count " << METSig30Count << std::endl;
+  std::cout << "METCleaningCount " << METCleaningCount << std::endl;
+  std::cout << "TriggerCount " << TriggerCount << std::endl;
+  std::cout << "numJetsCount " << numJetsCount << std::endl;
+  std::cout << "minDeltaPhiCount " << minDeltaPhiCount << std::endl;
+  std::cout << "leptonVetoCount " << leptonVetoCount << std::endl;
+  std::cout << "isoTrackVetoCount " << isoTrackVetoCount << std::endl;
+  std::cout << "bTagCount " << bTagCount << std::endl;
+  std::cout << "higgsCount " << higgsCount << std::endl;
+  std::cout << "DRCount " << DRCount << std::endl;
+  std::cout << "METSig50Count " << METSig50Count << std::endl;
+  std::cout << "METSig100Count " << METSig100Count << std::endl;
+  std::cout << "METSig150Count " << METSig150Count << std::endl;
+  std::cout << "startCountWeighted " << startCountWeighted << std::endl;
+  std::cout << "PVCountWeighted " << PVCountWeighted << std::endl;
+  std::cout << "jet2PtCountWeighted " << jet2PtCountWeighted << std::endl;
+  std::cout << "CSVTCountWeighted " << CSVTCountWeighted << std::endl;
+  std::cout << "METSig30CountWeighted " << METSig30CountWeighted << std::endl;
+  std::cout << "METCleaningCountWeighted " << METCleaningCountWeighted << std::endl;
+  std::cout << "TriggerCountWeighted " << TriggerCountWeighted << std::endl;
+  std::cout << "numJetsCountWeighted " << numJetsCountWeighted << std::endl;
+  std::cout << "minDeltaPhiCountWeighted " << minDeltaPhiCountWeighted << std::endl;
+  std::cout << "leptonVetoCountWeighted " << leptonVetoCountWeighted << std::endl;
+  std::cout << "isoTrackVetoCountWeighted " << isoTrackVetoCountWeighted << std::endl;
+  std::cout << "bTagCountWeighted " << bTagCountWeighted << std::endl;
+  std::cout << "higgsCountWeighted " << higgsCountWeighted << std::endl;
+  std::cout << "DRCountWeighted " << DRCountWeighted << std::endl;
+  std::cout << "METSig50CountWeighted " << METSig50CountWeighted << std::endl;
+  std::cout << "METSig100CountWeighted " << METSig100CountWeighted << std::endl;
+  std::cout << "METSig150CountWeighted " << METSig150CountWeighted << std::endl;
 
   TTree timeInfo("timeInfo", "timeInfo");
   time_t my_timer_t;

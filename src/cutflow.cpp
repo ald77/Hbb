@@ -83,7 +83,7 @@ void Cutflow::LoadValues() {
 	fChain_.SetBranchAddress("CSVTCount", &CSVTCount_, &b_CSVTCount_);
 	fChain_.SetBranchAddress("PVCount", &PVCount_, &b_PVCount_);
 	fChain_.SetBranchAddress("TriggerCount", &TriggerCount_, &b_TriggerCount_);
-	fChain_.SetBranchAddress("numJetsCounts", &numJetsCount_, &b_numJetsCount_);
+	fChain_.SetBranchAddress("numJetsCount", &numJetsCount_, &b_numJetsCount_);
 	fChain_.SetBranchAddress("jet2PtCount", &jet2PtCount_, &b_jet2PtCount_);
 	fChain_.SetBranchAddress("minDeltaPhiCount", &minDeltaPhiCount_, &b_minDeltaPhiCount_);
 	fChain_.SetBranchAddress("METSig30Count", &METSig30Count_, &b_METSig30Count_);
@@ -100,7 +100,7 @@ void Cutflow::LoadValues() {
 	fChain_.SetBranchAddress("PVCountWeighted", &PVCountWeighted_, &b_PVCountWeighted_);
 	fChain_.SetBranchAddress("METCleaningCountWeighted", &METCleaningCountWeighted_, &b_METCleaningCountWeighted_);
 	fChain_.SetBranchAddress("TriggerCountWeighted", &TriggerCountWeighted_, &b_TriggerCountWeighted_);
-	fChain_.SetBranchAddress("numJetsCountWeighteds", &numJetsCountWeighted_, &b_numJetsCountWeighted_);
+	fChain_.SetBranchAddress("numJetsCountWeighted", &numJetsCountWeighted_, &b_numJetsCountWeighted_);
 	fChain_.SetBranchAddress("CSVTCountWeighted", &CSVTCountWeighted_, &b_CSVTCountWeighted_);
 	fChain_.SetBranchAddress("jet2PtCountWeighted", &jet2PtCountWeighted_, &b_jet2PtCountWeighted_);
 	fChain_.SetBranchAddress("minDeltaPhiCountWeighted", &minDeltaPhiCountWeighted_, &b_minDeltaPhiCountWeighted_);

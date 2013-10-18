@@ -44,7 +44,7 @@ int main(int argc, char *argv[]){
   }
 
   WeightCalculator w(19399);
-  EventHandler eH(inFilename, false, w.GetWeight(inFilename));
+  EventHandler eH(inFilename, false, w.GetWeight(inFilename), true); // turning on fastMode!
   //EventHandler eH(inFilename, true, w.GetWeight("/cms2r0/cfA/TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7C-v1_AODSIM_UCSB1884_v71/cfA_TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7C-v1_AODSIM_UCSB1884_v71_f1_1_cRU.root"));
   eH.MakePlots(outFilename);
 }
