@@ -267,27 +267,26 @@ uint_least32_t EventHandler::GetCutFailCode() const{
   if(!betaUpToDate) GetBeta();
   if(!bJetsUpToDate) GetSortedBJets();
   if(!higgsPairingUpToDate) GetHiggsBJetPairing();
-  uint_least32_t fail_code(0);
-  if(!PassesMETSig150Cut()) fail_code |= 0x00001;
-  if(!PassesMETSig100Cut()) fail_code |= 0x00002;
-  if(!PassesMETSig50Cut()) fail_code |= 0x00004;
-  if(!PassesMETSig30Cut()) fail_code |= 0x00008;
-  if(!PassesDRCut()) fail_code |= 0x00010;
-  if(!PassesHiggsAvgMassCut()) fail_code |= 0x00020;
-  if(!PassesHiggsMassDiffCut()) fail_code |= 0x00040;
-  if(!PassesBTaggingCut()) fail_code |= 0x00080;
-  if(!(GetNumCSVTJets()>=2 && GetNumCSVMJets()>=3)) fail_code |= 0x00100;
-  if(!(GetNumCSVTJets()>=2)) fail_code |= 0x00200;
-  if(!PassesIsoTrackVetoCut()) fail_code |= 0x00400;
-  if(!PassesLeptonVetoCut()) fail_code |= 0x00800;
-  if(!PassesMinDeltaPhiCut()) fail_code |= 0x01000;
-  if(!PassesNumJetsCut()) fail_code |= 0x02000;
-  if(!PassesTriggerCut()) fail_code |= 0x04000;
-  if(!PassesJSONCut()) fail_code |= 0x08000;
-  if(!PassesMETCleaningCut()) fail_code |= 0x10000;
-  if(!PassesPVCut()) fail_code |= 0x20000;
-  if(!PassesTChiZHMassCut()) fail_code |= 0x40000;
-  if(!PassesTChiHHMassCut()) fail_code |= 0x80000;
+  uint_least32_t fail_code(kGood);
+  if(!PassesMETSig150Cut()) fail_code |= kMETSig150;
+  if(!PassesMETSig100Cut()) fail_code |= kMETSig100;
+  if(!PassesMETSig50Cut()) fail_code |= kMETSig50;
+  if(!PassesMETSig30Cut()) fail_code |= kMETSig30;
+  if(!PassesDRCut()) fail_code |= kDeltaR;
+  if(!PassesHiggsAvgMassCut()) fail_code |= kHiggsAvgMass;
+  if(!PassesHiggsMassDiffCut()) fail_code |= kHiggsMassDiff;
+  if(!PassesBTaggingCut()) fail_code |= k4thBTag;
+  if(!(GetNumCSVTJets()>=2 && GetNumCSVMJets()>=3)) fail_code |= k3rdBTag;
+  if(!(GetNumCSVTJets()>=2)) fail_code |= k2ndBTag;
+  if(!PassesIsoTrackVetoCut()) fail_code |= kIsoTrackVeto;
+  if(!PassesLeptonVetoCut()) fail_code |= kLeptonVeto;
+  if(!PassesMinDeltaPhiCut()) fail_code |= kMinDeltaPhi;
+  if(!PassesNumJetsCut()) fail_code |= kNumJets;
+  if(!PassesTriggerCut()) fail_code |= kTrigger;
+  if(!PassesJSONCut()) fail_code |= kJSON;
+  if(!PassesMETCleaningCut()) fail_code |= kMETCleaning;
+  if(!PassesPVCut()) fail_code |= kPV;
+  if(!PassesTChiMassCut()) fail_code |= kTChiMassCut;
   return fail_code;
 }
 
@@ -751,21 +750,17 @@ double EventHandler::GetHighestCSV(unsigned int pos) const{
   }
 }
 
-bool EventHandler::PassesTChiZHMassCut() const{
-  if(sampleName.find("TChiZH")==std::string::npos) return true;
-  if(model_params->find("chargino300")==std::string::npos) return false;
-  if(model_params->find("bino1_")==std::string::npos) return false;
-  return true;
-}
-
-bool EventHandler::PassesTChiHHMassCut(int mChi, int mLSP) const{
+bool EventHandler::PassesTChiMassCut(int mChi, int mLSP) const{
   if (mChi<0||mLSP<0) return true;
   // parse the model_params string in the new signal samples for mass points
-  char s_mChi[10], s_mLSP[10];
+  char s_mChi[64], s_mLSP[64];
   sprintf(s_mChi, "chargino%d_", mChi);
   sprintf(s_mLSP, "bino%d_", mLSP);
 
-  if(sampleName.find("SMS-TChiHH")==std::string::npos) return true;
+  if(sampleName.find("SMS-TChiHH")==std::string::npos
+     && sampleName.find("SMS_TChiZH")){
+    return true;
+  }
   if(model_params->find(s_mChi)==std::string::npos) return false;
   if(model_params->find(s_mLSP)==std::string::npos) return false;
   return true;
@@ -1158,7 +1153,10 @@ void EventHandler::MakePlots(const std::string &outFileName){
     const double notopweight((isRealData?1.0:GetPUWeight(lumiWeights))*scaleFactor*GetSbinWeight());
 
     if(!PassesJSONCut()) continue;
-    if(!PassesTChiZHMassCut()) continue;
+    if(!PassesTChiMassCut(300,1)
+       && sampleName.find("SMS-TChiZH")!=std::string::npos){
+      continue;
+    }
 
     std::pair<std::set<EventNumber>::iterator, bool> returnVal(eventList.insert(EventNumber(run, event, lumiblock)));
     if(!returnVal.second) continue;
@@ -2489,8 +2487,6 @@ void EventHandler::Skim(const std::string &skimFileName,
     const bool isttbar(sampleName.find("TTJets")!=std::string::npos || sampleName.find("TT_")!=std::string::npos);
     const double localWeight(GetPUWeight(lumiWeights)*scaleFactor*(isttbar?GetTopPtWeight():1.0)*GetSbinWeight());
     
-    // Select mass points
-    if(!PassesTChiZHMassCut()) continue;
     ++startCount;
     startCountWeighted+=localWeight;
 
@@ -2498,7 +2494,7 @@ void EventHandler::Skim(const std::string &skimFileName,
        && PassesPVCut()
        && PassesJet2PtCut()
        && PassesMETSig30Cut()
-       && PassesTChiHHMassCut(chargino_mass, LSP_mass)){
+       && PassesTChiMassCut(chargino_mass, LSP_mass)){
       skimTreeA->Fill();
       skimTreeB->Fill();
     }
