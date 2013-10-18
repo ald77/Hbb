@@ -62,7 +62,7 @@ TH2D operator+(const TH2D &h1, const TH2D &h2){
     TH2D h(h1);
     for(int x(1); x<=h1.GetNbinsX(); ++x){
       for(int y(1); y<h1.GetNbinsY(); ++y){
-	h.SetBinContent(x,y,h1.GetBinContent(x,y)+h2.GetBinContent(x,y));
+        h.SetBinContent(x,y,h1.GetBinContent(x,y)+h2.GetBinContent(x,y));
       }
     }
     return h;

@@ -52,8 +52,8 @@ void GetTrees(std::vector<TTree*> &trees, const std::vector<TFile*> &files){
 }
 
 void GetValues(std::vector<double> &A, std::vector<double> &B, std::vector<double> &C3,
-	       std::vector<double> &D3, std::vector<double> &C2, std::vector<double> &D2,
-	       const std::vector<TTree*> &trees, const std::string &str=""){
+               std::vector<double> &D3, std::vector<double> &C2, std::vector<double> &D2,
+               const std::vector<TTree*> &trees, const std::string &str=""){
   A.clear();
   B.clear();
   C3.clear();
@@ -81,7 +81,7 @@ void GetValues(std::vector<double> &A, std::vector<double> &B, std::vector<doubl
 }
 
 void GetWeights(std::vector<double> &weights, const std::vector<std::string> &names,
-		const WeightCalculator &weightCalc){
+                const WeightCalculator &weightCalc){
   weights.clear();
   weights.resize(names.size(), 0.0);
   for(std::vector<std::string>::size_type name(0); name<names.size(); ++name){
@@ -124,7 +124,7 @@ double GetRandom(const double kp1, const double weight){
 }
 
 void GetUncertaintiesOld(double &up, double &down, const double center,
-			 const std::vector<double> vals){
+                         const std::vector<double> vals){
   if(vals.size()!=0){
     const double frac(TMath::Erf(1.0/sqrt(2.0)));
     const std::vector<double>::size_type delta(static_cast<int>(ceil(frac*(vals.size()-1))));
@@ -134,9 +134,9 @@ void GetUncertaintiesOld(double &up, double &down, const double center,
       std::vector<double>::size_type val2(val+delta);
       const double diff(vals.at(val2)-vals.at(val));
       if(diff<min_diff){
-	min_diff=diff;
-	right=vals.at(val2);
-	left=vals.at(val);
+        min_diff=diff;
+        right=vals.at(val2);
+        left=vals.at(val);
       }
     }
     if(center<left || center>right){
@@ -153,7 +153,7 @@ void GetUncertaintiesOld(double &up, double &down, const double center,
 }
 
 void GetUncertainties(double &up, double &down, const double center,
-		      const std::vector<double> vals){
+                      const std::vector<double> vals){
   unsigned int best_pos(-1);
   double best_diff(DBL_MAX);
   for(unsigned int pos(0); pos<vals.size(); ++pos){
@@ -173,11 +173,11 @@ void GetUncertainties(double &up, double &down, const double center,
 }
 
 void GetSummedVals(double &up, double &down, double &center,
-		   const std::vector<double> &val,
-		   const std::vector<double> &weights,
-		   const std::vector<double>::size_type &low,
-		   const std::vector<double>::size_type &high,
-		   const bool verbose=false){
+                   const std::vector<double> &val,
+                   const std::vector<double> &weights,
+                   const std::vector<double>::size_type &low,
+                   const std::vector<double>::size_type &high,
+                   const bool verbose=false){
   center=0.0;
   for(std::vector<double>::size_type sample(low); sample<high; ++sample){
     center+=val.at(sample);
@@ -188,7 +188,7 @@ void GetSummedVals(double &up, double &down, double &center,
     for(std::vector<double>::size_type sample(low); sample<high; ++sample){
       const double blah(GetRandom(val.at(sample)/weights.at(sample), weights.at(sample)));
       if(verbose){
-	std::cout << sample << " " << val.at(sample) << " " <<  weights.at(sample) << " " << blah << std::endl;
+        std::cout << sample << " " << val.at(sample) << " " <<  weights.at(sample) << " " << blah << std::endl;
       }
       thisVal+=blah;
     }
@@ -200,10 +200,10 @@ void GetSummedVals(double &up, double &down, double &center,
 }
 
 void GetSummedKappas(double &up, double &down, double &center, const std::vector<double> &A,
-		     const std::vector<double> &B, const std::vector<double> &C,
-		     const std::vector<double> &D, const std::vector<double> &weights,
-		     const std::vector<double>::size_type &low,
-		     const std::vector<double>::size_type &high){
+                     const std::vector<double> &B, const std::vector<double> &C,
+                     const std::vector<double> &D, const std::vector<double> &weights,
+                     const std::vector<double>::size_type &low,
+                     const std::vector<double>::size_type &high){
   std::vector<double> draws(0);
   for(unsigned int draw(0); draw<max_draws; ++draw){
     double sumA(0.0), sumB(0.0), sumC(0.0), sumD(0.0);
@@ -237,11 +237,11 @@ void GetSummedKappas(double &up, double &down, double &center, const std::vector
 }
 
 void GetSummedAPred(double &up, double &down, double &center,
-		    const std::vector<double> &B, const std::vector<double> &C,
-		    const std::vector<double> &D, const std::vector<double> &weights,
-		    const std::vector<double>::size_type &low,
-		    const std::vector<double>::size_type &high,
-		    const bool verbose=false){
+                    const std::vector<double> &B, const std::vector<double> &C,
+                    const std::vector<double> &D, const std::vector<double> &weights,
+                    const std::vector<double>::size_type &low,
+                    const std::vector<double>::size_type &high,
+                    const bool verbose=false){
   std::vector<double> draws(0);
   for(unsigned int draw(0); draw<max_draws; ++draw){
     double sumB(0.0), sumC(0.0), sumD(0.0);
@@ -275,29 +275,29 @@ void GetSummedAPred(double &up, double &down, double &center,
 
 void PrintLine(std::string name, const double A, const double Aup, const double Adown, const double B, const double Bup, const double Bdown, const double C3, const double C3up, const double C3down, const double D3, const double D3up, const double D3down, const double C2, const double C2up, const double C2down, const double D2, const double D2up, const double D2down, const double kappa3, const double kappa3up, const double kappa3down, const double kappa2, const double kappa2up, const double kappa2down, const double pred23, const double predup23, const double preddown23, const double pred24, const double predup24, const double preddown24, const double pred34, const double predup34, const double preddown34){
   std::cout << name << " & $"
-	    << std::setprecision(3) << A << "_{-"
-	    << std::setprecision(2) << Adown << "}^{+" << Aup << "}$ & $"
-	    << std::setprecision(3) << B << "_{-"
-	    << std::setprecision(2) << Bdown << "}^{+" << Bup << "}$ & $"
-	    << std::setprecision(3) << C3 << "_{-"
-	    << std::setprecision(2) << C3down << "}^{+" << C3up << "}$ & $"
-	    << std::setprecision(3) << D3 << "_{-"
-	    << std::setprecision(2) << D3down << "}^{+" << D3up << "}$ & $"
-	    << std::setprecision(3) << C2 << "_{-"
-	    << std::setprecision(2) << C2down << "}^{+" << C2up << "}$ & $"
-	    << std::setprecision(3) << D2 << "_{-"
-	    << std::setprecision(2) << D2down << "}^{+" << D2up << "}$ & $"
-	    << std::setprecision(3) << kappa3 << "_{-"
-	    << std::setprecision(2) << kappa3down << "}^{+" << kappa3up << "}$ & $"
-	    << std::setprecision(3) << kappa2 << "_{-"
-	    << std::setprecision(2) << kappa2down << "}^{+" << kappa2up << "}$ & $"
-	    << std::setprecision(3) << pred23 << "_{-"
-	    << std::setprecision(2) << preddown23 << "}^{+" << predup23 << "}$ & $"
-	    << std::setprecision(3) << pred24 << "_{-"
-	    << std::setprecision(2) << preddown24 << "}^{+" << predup24 << "}$ & $"
-	    << std::setprecision(3) << pred34 << "_{-"
-	    << std::setprecision(2) << preddown34 << "}^{+" << predup34 << "}$"
-	    << std::endl;
+            << std::setprecision(3) << A << "_{-"
+            << std::setprecision(2) << Adown << "}^{+" << Aup << "}$ & $"
+            << std::setprecision(3) << B << "_{-"
+            << std::setprecision(2) << Bdown << "}^{+" << Bup << "}$ & $"
+            << std::setprecision(3) << C3 << "_{-"
+            << std::setprecision(2) << C3down << "}^{+" << C3up << "}$ & $"
+            << std::setprecision(3) << D3 << "_{-"
+            << std::setprecision(2) << D3down << "}^{+" << D3up << "}$ & $"
+            << std::setprecision(3) << C2 << "_{-"
+            << std::setprecision(2) << C2down << "}^{+" << C2up << "}$ & $"
+            << std::setprecision(3) << D2 << "_{-"
+            << std::setprecision(2) << D2down << "}^{+" << D2up << "}$ & $"
+            << std::setprecision(3) << kappa3 << "_{-"
+            << std::setprecision(2) << kappa3down << "}^{+" << kappa3up << "}$ & $"
+            << std::setprecision(3) << kappa2 << "_{-"
+            << std::setprecision(2) << kappa2down << "}^{+" << kappa2up << "}$ & $"
+            << std::setprecision(3) << pred23 << "_{-"
+            << std::setprecision(2) << preddown23 << "}^{+" << predup23 << "}$ & $"
+            << std::setprecision(3) << pred24 << "_{-"
+            << std::setprecision(2) << preddown24 << "}^{+" << predup24 << "}$ & $"
+            << std::setprecision(3) << pred34 << "_{-"
+            << std::setprecision(2) << preddown34 << "}^{+" << predup34 << "}$"
+            << std::endl;
 }
 
 int main(int argc, char *argv[]){
@@ -314,7 +314,7 @@ int main(int argc, char *argv[]){
       break;
     default:
       std::cerr << "Error in " << argv[0] << ": '" << opt
-		<< "' is not a valid option." << std::endl;
+                << "' is not a valid option." << std::endl;
     }
   }
 
@@ -472,155 +472,155 @@ int main(int argc, char *argv[]){
 
   for(unsigned int i(0); i<Aval.size(); ++i){
     GetSummedVals(Aup.at(i), Adown.at(i), Aval.at(i), A,
-		  weights, lower.at(i), upper.at(i));
+                  weights, lower.at(i), upper.at(i));
     GetSummedVals(Bup.at(i), Bdown.at(i), Bval.at(i), B,
-		  weights, lower.at(i), upper.at(i));
+                  weights, lower.at(i), upper.at(i));
     GetSummedVals(C3up.at(i), C3down.at(i), C3val.at(i), C3,
-		  weights, lower.at(i), upper.at(i));
+                  weights, lower.at(i), upper.at(i));
     GetSummedVals(D3up.at(i), D3down.at(i), D3val.at(i), D3,
-		  weights, lower.at(i), upper.at(i));
+                  weights, lower.at(i), upper.at(i));
     GetSummedVals(C2up.at(i), C2down.at(i), C2val.at(i), C2,
-		  weights, lower.at(i), upper.at(i));
+                  weights, lower.at(i), upper.at(i));
     GetSummedVals(D2up.at(i), D2down.at(i), D2val.at(i), D2,
-		  weights, lower.at(i), upper.at(i));
+                  weights, lower.at(i), upper.at(i));
 
     if(plot_only){
       GetSummedVals(Aup_sbin1.at(i), Adown_sbin1.at(i), Aval_sbin1.at(i), A_sbin1,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(Bup_sbin1.at(i), Bdown_sbin1.at(i), Bval_sbin1.at(i), B_sbin1,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(C3up_sbin1.at(i), C3down_sbin1.at(i), C3val_sbin1.at(i), C3_sbin1,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(D3up_sbin1.at(i), D3down_sbin1.at(i), D3val_sbin1.at(i), D3_sbin1,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(C2up_sbin1.at(i), C2down_sbin1.at(i), C2val_sbin1.at(i), C2_sbin1,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(D2up_sbin1.at(i), D2down_sbin1.at(i), D2val_sbin1.at(i), D2_sbin1,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       
       GetSummedVals(Aup_sbin2.at(i), Adown_sbin2.at(i), Aval_sbin2.at(i), A_sbin2,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(Bup_sbin2.at(i), Bdown_sbin2.at(i), Bval_sbin2.at(i), B_sbin2,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(C3up_sbin2.at(i), C3down_sbin2.at(i), C3val_sbin2.at(i), C3_sbin2,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(D3up_sbin2.at(i), D3down_sbin2.at(i), D3val_sbin2.at(i), D3_sbin2,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(C2up_sbin2.at(i), C2down_sbin2.at(i), C2val_sbin2.at(i), C2_sbin2,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(D2up_sbin2.at(i), D2down_sbin2.at(i), D2val_sbin2.at(i), D2_sbin2,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       
       GetSummedVals(Aup_sbin3.at(i), Adown_sbin3.at(i), Aval_sbin3.at(i), A_sbin3,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(Bup_sbin3.at(i), Bdown_sbin3.at(i), Bval_sbin3.at(i), B_sbin3,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(C3up_sbin3.at(i), C3down_sbin3.at(i), C3val_sbin3.at(i), C3_sbin3,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(D3up_sbin3.at(i), D3down_sbin3.at(i), D3val_sbin3.at(i), D3_sbin3,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(C2up_sbin3.at(i), C2down_sbin3.at(i), C2val_sbin3.at(i), C2_sbin3,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(D2up_sbin3.at(i), D2down_sbin3.at(i), D2val_sbin3.at(i), D2_sbin3,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       
       GetSummedVals(Aup_sbin4.at(i), Adown_sbin4.at(i), Aval_sbin4.at(i), A_sbin4,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(Bup_sbin4.at(i), Bdown_sbin4.at(i), Bval_sbin4.at(i), B_sbin4,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(C3up_sbin4.at(i), C3down_sbin4.at(i), C3val_sbin4.at(i), C3_sbin4,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(D3up_sbin4.at(i), D3down_sbin4.at(i), D3val_sbin4.at(i), D3_sbin4,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(C2up_sbin4.at(i), C2down_sbin4.at(i), C2val_sbin4.at(i), C2_sbin4,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
       GetSummedVals(D2up_sbin4.at(i), D2down_sbin4.at(i), D2val_sbin4.at(i), D2_sbin4,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
     }
 
     GetSummedKappas(kappa3up.at(i), kappa3down.at(i), kappa3val.at(i), A, B, C3, D3,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
     GetSummedKappas(kappa2up.at(i), kappa2down.at(i), kappa2val.at(i), A, B, C2, D2,
-		    weights, lower.at(i), upper.at(i));
+                    weights, lower.at(i), upper.at(i));
 
     GetSummedAPred(predup23.at(i), preddown23.at(i), pred23.at(i), D3, C2, D2, weights,
-		   lower.at(i), upper.at(i));
+                   lower.at(i), upper.at(i));
     GetSummedAPred(predup24.at(i), preddown24.at(i), pred24.at(i), B, C2, D2, weights,
-		   lower.at(i), upper.at(i));
+                   lower.at(i), upper.at(i));
     GetSummedAPred(predup34.at(i), preddown34.at(i), pred34.at(i), B, C3, D3, weights,
-		   lower.at(i), upper.at(i));
+                   lower.at(i), upper.at(i));
     if(plot_only){
       GetSummedAPred(predup32.at(i), preddown32.at(i), pred32.at(i), D2, C3, D3, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup42.at(i), preddown42.at(i), pred42.at(i), D2, A, B, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup43.at(i), preddown43.at(i), pred43.at(i), D3, A, B, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
     }
 
     if(plot_only){
       GetSummedAPred(predup23_sbin1.at(i), preddown23_sbin1.at(i), pred23_sbin1.at(i), D3_sbin1, C2_sbin1, D2_sbin1, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup24_sbin1.at(i), preddown24_sbin1.at(i), pred24_sbin1.at(i), B_sbin1, C2_sbin1, D2_sbin1, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup34_sbin1.at(i), preddown34_sbin1.at(i), pred34_sbin1.at(i), B_sbin1, C3_sbin1, D3_sbin1, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup32_sbin1.at(i), preddown32_sbin1.at(i), pred32_sbin1.at(i), D2_sbin1, C3_sbin1, D3_sbin1, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup42_sbin1.at(i), preddown42_sbin1.at(i), pred42_sbin1.at(i), D2_sbin1, A_sbin1, B_sbin1, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup43_sbin1.at(i), preddown43_sbin1.at(i), pred43_sbin1.at(i), D3_sbin1, A_sbin1, B_sbin1, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       
       GetSummedAPred(predup23_sbin2.at(i), preddown23_sbin2.at(i), pred23_sbin2.at(i), D3_sbin2, C2_sbin2, D2_sbin2, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup24_sbin2.at(i), preddown24_sbin2.at(i), pred24_sbin2.at(i), B_sbin2, C2_sbin2, D2_sbin2, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup34_sbin2.at(i), preddown34_sbin2.at(i), pred34_sbin2.at(i), B_sbin2, C3_sbin2, D3_sbin2, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup32_sbin2.at(i), preddown32_sbin2.at(i), pred32_sbin2.at(i), D2_sbin2, C3_sbin2, D3_sbin2, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup42_sbin2.at(i), preddown42_sbin2.at(i), pred42_sbin2.at(i), D2_sbin2, A_sbin2, B_sbin2, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup43_sbin2.at(i), preddown43_sbin2.at(i), pred43_sbin2.at(i), D3_sbin2, A_sbin2, B_sbin2, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       
       GetSummedAPred(predup23_sbin3.at(i), preddown23_sbin3.at(i), pred23_sbin3.at(i), D3_sbin3, C2_sbin3, D2_sbin3, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup24_sbin3.at(i), preddown24_sbin3.at(i), pred24_sbin3.at(i), B_sbin3, C2_sbin3, D2_sbin3, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup34_sbin3.at(i), preddown34_sbin3.at(i), pred34_sbin3.at(i), B_sbin3, C3_sbin3, D3_sbin3, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup32_sbin3.at(i), preddown32_sbin3.at(i), pred32_sbin3.at(i), D2_sbin3, C3_sbin3, D3_sbin3, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup42_sbin3.at(i), preddown42_sbin3.at(i), pred42_sbin3.at(i), D2_sbin3, A_sbin3, B_sbin3, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup43_sbin3.at(i), preddown43_sbin3.at(i), pred43_sbin3.at(i), D3_sbin3, A_sbin3, B_sbin3, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       
       GetSummedAPred(predup23_sbin4.at(i), preddown23_sbin4.at(i), pred23_sbin4.at(i), D3_sbin4, C2_sbin4, D2_sbin4, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup24_sbin4.at(i), preddown24_sbin4.at(i), pred24_sbin4.at(i), B_sbin4, C2_sbin4, D2_sbin4, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup34_sbin4.at(i), preddown34_sbin4.at(i), pred34_sbin4.at(i), B_sbin4, C3_sbin4, D3_sbin4, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup32_sbin4.at(i), preddown32_sbin4.at(i), pred32_sbin4.at(i), D2_sbin4, C3_sbin4, D3_sbin4, weights,
-		     lower.at(i), upper.at(i), true);
+                     lower.at(i), upper.at(i), true);
       GetSummedAPred(predup42_sbin4.at(i), preddown42_sbin4.at(i), pred42_sbin4.at(i), D2_sbin4, A_sbin4, B_sbin4, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
       GetSummedAPred(predup43_sbin4.at(i), preddown43_sbin4.at(i), pred43_sbin4.at(i), D3_sbin4, A_sbin4, B_sbin4, weights,
-		     lower.at(i), upper.at(i));
+                     lower.at(i), upper.at(i));
     }
 
     if(!plot_only){
       PrintLine(tex.at(i), Aval.at(i), Aup.at(i), Adown.at(i), Bval.at(i), Bup.at(i),
-		Bdown.at(i), C3val.at(i), C3up.at(i), C3down.at(i), D3val.at(i),
-		D3up.at(i), D3down.at(i), C2val.at(i), C2up.at(i), C2down.at(i),
-		D2val.at(i), D2up.at(i), D2down.at(i), kappa3val.at(i), kappa3up.at(i),
-		kappa3down.at(i), kappa2val.at(i), kappa2up.at(i), kappa2down.at(i),
-		pred23.at(i), predup23.at(i), preddown23.at(i), pred24.at(i),
-		predup24.at(i), preddown24.at(i), pred34.at(i), predup34.at(i),
-		preddown34.at(i));
+                Bdown.at(i), C3val.at(i), C3up.at(i), C3down.at(i), D3val.at(i),
+                D3up.at(i), D3down.at(i), C2val.at(i), C2up.at(i), C2down.at(i),
+                D2val.at(i), D2up.at(i), D2down.at(i), kappa3val.at(i), kappa3up.at(i),
+                kappa3down.at(i), kappa2val.at(i), kappa2up.at(i), kappa2down.at(i),
+                pred23.at(i), predup23.at(i), preddown23.at(i), pred24.at(i),
+                predup24.at(i), preddown24.at(i), pred34.at(i), predup34.at(i),
+                preddown34.at(i));
     }
   }
 

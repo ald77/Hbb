@@ -34,9 +34,9 @@ int main(int argc, char *argv[]){
     pos=baseName.rfind("/");
     if(pos!=std::string::npos){
       if(pos!=baseName.size()-1){
-	baseName.erase(0,pos+1);
+        baseName.erase(0,pos+1);
       }else{
-	baseName.append("file_name_ended_with_slash");
+        baseName.append("file_name_ended_with_slash");
       }
     }
     outFilename="raw_plots_and_values/"+baseName+".root";

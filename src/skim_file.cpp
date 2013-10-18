@@ -56,26 +56,26 @@ int main(int argc, char *argv[]){
       const std::string::size_type chargino_start(outFilename_tmp.find("-",chargino_pos));
       const std::string::size_type chargino_end(outFilename_tmp.find("_",chargino_pos));
       if(chargino_pos!=std::string::npos
-	 && chargino_start!=std::string::npos
-	 && chargino_end!=std::string::npos){
-	const std::string::size_type chargino_delta(chargino_end-chargino_start-1);
-	outFilename_tmp.replace(chargino_start+1,chargino_delta,chargino_mass_string);
+         && chargino_start!=std::string::npos
+         && chargino_end!=std::string::npos){
+        const std::string::size_type chargino_delta(chargino_end-chargino_start-1);
+        outFilename_tmp.replace(chargino_start+1,chargino_delta,chargino_mass_string);
       }else{
-	failed=true;
+        failed=true;
       }
       const std::string::size_type LSP_pos(outFilename_tmp.find("mLSP"));
       const std::string::size_type LSP_start(outFilename_tmp.find("-",LSP_pos));
       const std::string::size_type LSP_end(outFilename_tmp.find("_",LSP_pos));
       if(LSP_pos!=std::string::npos
-	 && LSP_start!=std::string::npos
-	 && LSP_end!=std::string::npos){
-	const std::string::size_type LSP_delta(LSP_end-LSP_start-1);
-	outFilename_tmp.replace(LSP_start+1,LSP_delta,LSP_mass_string);
+         && LSP_start!=std::string::npos
+         && LSP_end!=std::string::npos){
+        const std::string::size_type LSP_delta(LSP_end-LSP_start-1);
+        outFilename_tmp.replace(LSP_start+1,LSP_delta,LSP_mass_string);
       }else{
-	failed=true;
+        failed=true;
       }
       if(!failed){
-	outFilename=outFilename_tmp;
+        outFilename=outFilename_tmp;
       }
     }else{
       std::cerr << "Error: Must specify both chargino and LSP mass or neither; cannot specify only one." << std::endl;

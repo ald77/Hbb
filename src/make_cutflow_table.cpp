@@ -24,7 +24,7 @@ void MakeDefaultTable() { // Creates an AN-ready table of all the SM backgrounds
   ofile << "\\begin{table}[h]" << endl;
   ofile << "\\centering" << endl;
   ofile << "\\caption{Complete cutflow for SM MC and data. "
-	<< "Preselection includes primary vertex, jet-$\\pt$, $\\MET-$cleaning, and $\\metsig>30$.}"<< endl;
+        << "Preselection includes primary vertex, jet-$\\pt$, $\\MET-$cleaning, and $\\metsig>30$.}"<< endl;
   ofile << "\\label{tab:full_cutflow}" << endl;
   ofile << "\\begin{tabular}{cccccccc}" << endl;
   ofile << "\\hline" << endl;
@@ -34,7 +34,7 @@ void MakeDefaultTable() { // Creates an AN-ready table of all the SM backgrounds
     ofile << categories[cat].second.c_str();
   }
   ofile << " \\\\ \\hline" << endl;
-  	
+        
   uint nCuts = categories[0].first->numCutsTotal_;
   for (uint n(5);n<nCuts;n++) { // loop over cuts
     ofile << categories[0].first->cutNames_[n].c_str();
@@ -43,37 +43,37 @@ void MakeDefaultTable() { // Creates an AN-ready table of all the SM backgrounds
       int oome = (int)floor(log10(categories[cat].first->error_[n]));
       //printf("%f/%d/%f/%d\n",categories[cat].first->scaled_[n],oomv,categories[cat].first->error_[n],oome);
       if (categories[cat].second != "Data") { // MC formatting
-	if (oomv>2) {
-	  ofile << "& $" << std::setprecision(oomv+1) << categories[cat].first->scaled_[n] 
-		<< "\\pm" << std::setprecision(oome+1) << categories[cat].first->error_[n]
-		<< "$";
-	}
-	else if (oomv>=-1&&oomv<=2) {
-	  ofile << "& $" << std::setprecision(oomv+2) << categories[cat].first->scaled_[n] 
-		<< "\\pm" << std::setprecision(oome+2) << categories[cat].first->error_[n]
-		<< "$";
-	}
-	else {
-	  ofile << "& $<0.1$";
-	}
+        if (oomv>2) {
+          ofile << "& $" << std::setprecision(oomv+1) << categories[cat].first->scaled_[n] 
+                << "\\pm" << std::setprecision(oome+1) << categories[cat].first->error_[n]
+                << "$";
+        }
+        else if (oomv>=-1&&oomv<=2) {
+          ofile << "& $" << std::setprecision(oomv+2) << categories[cat].first->scaled_[n] 
+                << "\\pm" << std::setprecision(oome+2) << categories[cat].first->error_[n]
+                << "$";
+        }
+        else {
+          ofile << "& $<0.1$";
+        }
       }
       else { // Data only
-	ofile << "& $" << std::setprecision(oomv+1) << categories[cat].first->scaled_[n] 
-	      << "$";
+        ofile << "& $" << std::setprecision(oomv+1) << categories[cat].first->scaled_[n] 
+              << "$";
       }
     } // loop over samples
     ofile << " \\\\" << endl;
   } // loop over cuts
-	
-	
+        
+        
   //}
-	
+        
   // Table footer
   ofile << "\\hline" << endl;
   ofile << "\\hline" << endl;
   ofile << "\\end{tabular}" << endl;
   ofile << "\\end{table}" << endl;
-	
+        
   // aliases
   ofile << endl << endl << "%Aliases" << endl ;
   ofile << "\\newcommand{\\pt}{{p_T}}" << endl;
@@ -81,12 +81,12 @@ void MakeDefaultTable() { // Creates an AN-ready table of all the SM backgrounds
   ofile << "\\newcommand{\\mdR}{\\Delta R_{\\mathrm{max}}}" << endl;
   ofile << "\\newcommand{\\metsig}{\\mathcal{S}}" << endl;
   ofile << "\\newcommand{\\MET}{E_T^{\\mathrm{miss}}}" << endl;
-	
+        
 
 }
 
 int main(int argc, char* argv[]) {
-	
+        
   // Option 1: print the cutflow from vectors of root files
   vector<TFile*> ttbar, qcd, wt, other, znn, SM, data;
 
@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
   qcd.push_back(new TFile("raw_plots_and_values/BJets_HT-250To500_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1893_v71_SyncSkim.root","read"));
   qcd.push_back(new TFile("raw_plots_and_values/BJets_HT-500To1000_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1894_v71_SyncSkim.root","read"));
   qcd.push_back(new TFile("raw_plots_and_values/BJets_HT-1000ToInf_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1895_v71_SyncSkim.root","read"));
-	
+        
   wt.push_back(new TFile("raw_plots_and_values/Tbar_s-channel_TuneZ2star_8TeV-powheg-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1864_v71_SyncSkim.root","read"));
   wt.push_back(new TFile("raw_plots_and_values/Tbar_t-channel_TuneZ2star_8TeV-powheg-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1865_v71_SyncSkim.root","read"));
   wt.push_back(new TFile("raw_plots_and_values/Tbar_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1866_v71_SyncSkim.root","read"));
@@ -145,7 +145,7 @@ int main(int argc, char* argv[]) {
   data.push_back(new TFile("raw_plots_and_values/MET_Run2012C-PromptReco-v2_AOD_UCSB1867_v71_SyncSkim.root","read"));
   data.push_back(new TFile("raw_plots_and_values/MET_Run2012D-PromptReco-v1_AOD_UCSB1869_v71_SyncSkim.root","read"));
   data.push_back(new TFile("raw_plots_and_values/MET_Run2012D-PromptReco-v1_AOD_UCSB1870_v71_SyncSkim.root","read"));    
-  // buggy! other.push_back(new TFile("raw_plots_and_values/ZH","read"));	
+  // buggy! other.push_back(new TFile("raw_plots_and_values/ZH","read"));       
     
   Cutflow* ttbar_cutflow = new Cutflow(ttbar);
   //ttbar_cutflow->PrintCSV();
@@ -186,7 +186,7 @@ int main(int argc, char* argv[]) {
     Cutflow* in_cutflow = new Cutflow(in_filename,fileList);
     in_cutflow->Print();  
   }
-	
+        
   // Option 3: Make the default table
   categories.push_back(make_pair(ttbar_cutflow,"$t\\bar{t}$"));
   categories.push_back(make_pair(qcd_cutflow,"QCD"));

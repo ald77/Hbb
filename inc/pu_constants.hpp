@@ -72,7 +72,7 @@ namespace pu {
   // command run for all pre technical stop data (ku):
   // pileupCalc.py -i /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions12/8TeV/Prompt/Cert_190456-203002_8TeV_PromptReco_Collisions12_JSON.txt --inputLumiJSON /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions12/8TeV/PileUp/pileup_JSON_DCSONLY_190389-203002_corr.txt --calcMode true --minBiasXsec 73500 --maxPileupBin 60 --numPileupBins 60 MyDataPileupHistogram.root
 
-  const extern float RunsThrough203002[60];		      
+  const extern float RunsThrough203002[60];                   
 
   // consider lower min bias cross section for systematic variation: https://twiki.cern.ch/twiki/bin/view/CMS/PileupJSONFileforData
   // pileupCalc.py -i /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions12/8TeV/Prompt/Cert_190456-203002_8TeV_PromptReco_Collisions12_JSON.txt --inputLumiJSON /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions12/8TeV/PileUp/pileup_JSON_DCSONLY_190389-203002_corr.txt --calcMode true --minBiasXsec 69400 --maxPileupBin 60 --numPileupBins 60 MyDataPileupHistogram.root

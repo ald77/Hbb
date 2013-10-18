@@ -29,7 +29,7 @@ double WeightCalculator::GetCrossSection(const std::string &process) const{
 }
 
 double WeightCalculator::GetCrossSection(const std::string &process, const int m1,
-					 const int m2) const{
+                                         const int m2) const{
   if(m1>=0 && m2>=0){
     return GetCrossSection(process);
   }else{
@@ -48,7 +48,7 @@ int WeightCalculator::GetTotalEvents(const std::string &process) const{
 }
 
 int WeightCalculator::GetTotalEvents(const std::string &process, const int m1,
-				     const int m2) const{
+                                     const int m2) const{
   if(m1>=0 && m2>=0){
     return GetTotalEvents(process);
   }else{
@@ -66,7 +66,7 @@ double WeightCalculator::GetWeight(const std::string &process) const{
 }
 
 double WeightCalculator::GetWeight(const std::string &process, const int m1,
-				   const int m2) const{
+                                   const int m2) const{
   if(m1>=0 && m2>=0){
     return GetWeight(process);
   }else{

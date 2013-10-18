@@ -141,26 +141,26 @@ void EventHandler::GetBeta(const std::string which) const{
         float result = 0;
         float tmp1 = 0, tmp2 = 0, tmp3 = 0, tmp4 = 0;
         for ( std::vector<float>::const_iterator it = itr->begin(); it != itr->end(); ++it, ++j) {
-	  
+          
           if ( (j%6)==0 ) mypt = *it;  
           if ( (j%6)==1 ) myeta = fabs(*it); 
           if ( (j%6)==2 ) tmp1 = *it;  
           if ( (j%6)==3 ) tmp2 = *it;  
           if ( (j%6)==4 ) tmp3 = *it;  
           if ( (j%6)==5 ) tmp4 = *it;  
-	  
+          
           //if ( which == "beta" )                 result = tmp1; 
           //else if ( which == "betaStar" )        result = tmp2; 
           //else if ( which == "betaClassic" )     result = tmp3; 
           //else if ( which == "betaStarClassic" ) result = tmp4; 
           //else result = -5; //Don't assert..
-	  
+          
           if ( which.compare("beta")==0 )                 result = tmp1; 
           else if ( which.compare("betaStar")==0 )        result = tmp2; 
-	  else if ( which.compare("betaClassic")==0 )     result = tmp3; 
-	  else if ( which.compare("betaStarClassic")==0 ) result = tmp4; 
+          else if ( which.compare("betaClassic")==0 )     result = tmp3; 
+          else if ( which.compare("betaStarClassic")==0 ) result = tmp4; 
           else result = -5; //Don't assert..
-	  
+          
         }//vector of info of each jet
         if ( mypt == pt && myeta == eta ) {
           matches++;
@@ -206,8 +206,8 @@ bool EventHandler::PassesMETCleaningCut() const{
 bool EventHandler::PassesTriggerCut() const{
   for(unsigned int a=0; a<trigger_name->size(); ++a){
     if((trigger_name->at(a).find("HLT_DiCentralPFJet30_PFMET80_BTagCSV07_v")!=std::string::npos
-	|| trigger_name->at(a).find("HLT_PFMET150_v")!=std::string::npos
-	|| trigger_name->at(a).find("HLT_DiCentralPFJet30_PFMHT80_v")!=std::string::npos)
+        || trigger_name->at(a).find("HLT_PFMET150_v")!=std::string::npos
+        || trigger_name->at(a).find("HLT_DiCentralPFJet30_PFMHT80_v")!=std::string::npos)
        && trigger_prescalevalue->at(a)==1 && trigger_decision->at(a)==1){
       return true;
     }
@@ -731,8 +731,8 @@ void EventHandler::GetSortedBJets() const{
     sortedBJetCache.clear();
     for(unsigned int i(0); i<jets_AK5PF_pt->size(); ++i){
       if(isGoodJet(i)){
-	sortedBJetCache.push_back(BJet(TLorentzVector(jets_AK5PF_px->at(i),jets_AK5PF_py->at(i),jets_AK5PF_pz->at(i),jets_AK5PF_energy->at(i)),jets_AK5PF_btag_secVertexCombined->at(i))) \
-	  ;
+        sortedBJetCache.push_back(BJet(TLorentzVector(jets_AK5PF_px->at(i),jets_AK5PF_py->at(i),jets_AK5PF_pz->at(i),jets_AK5PF_energy->at(i)),jets_AK5PF_btag_secVertexCombined->at(i))) \
+          ;
       }
     }
     std::sort(sortedBJetCache.begin(),sortedBJetCache.end(), std::greater<BJet>());
@@ -758,11 +758,11 @@ void EventHandler::GetHiggsBJetPairing() const{
       const double delta1(fabs(m1a-m1b)), delta2(fabs(m2a-m2b)), delta3(fabs(m3a-m3b));
       
       if(delta1<=delta2 && delta1<=delta3){
-	higgsBJetPairing=std::make_pair(std::make_pair(sortedBJetCache.at(0).GetLorentzVector(),sortedBJetCache.at(1).GetLorentzVector()),std::make_pair(sortedBJetCache.at(2).GetLorentzVector(),sortedBJetCache.at(3).GetLorentzVector()));
+        higgsBJetPairing=std::make_pair(std::make_pair(sortedBJetCache.at(0).GetLorentzVector(),sortedBJetCache.at(1).GetLorentzVector()),std::make_pair(sortedBJetCache.at(2).GetLorentzVector(),sortedBJetCache.at(3).GetLorentzVector()));
       }else if(delta2<=delta1 && delta2<=delta3){
-	higgsBJetPairing=std::make_pair(std::make_pair(sortedBJetCache.at(0).GetLorentzVector(),sortedBJetCache.at(2).GetLorentzVector()),std::make_pair(sortedBJetCache.at(1).GetLorentzVector(),sortedBJetCache.at(3).GetLorentzVector()));
+        higgsBJetPairing=std::make_pair(std::make_pair(sortedBJetCache.at(0).GetLorentzVector(),sortedBJetCache.at(2).GetLorentzVector()),std::make_pair(sortedBJetCache.at(1).GetLorentzVector(),sortedBJetCache.at(3).GetLorentzVector()));
       }else if(delta3<=delta1 && delta3<=delta2){
-	higgsBJetPairing=std::make_pair(std::make_pair(sortedBJetCache.at(0).GetLorentzVector(),sortedBJetCache.at(3).GetLorentzVector()),std::make_pair(sortedBJetCache.at(1).GetLorentzVector(),sortedBJetCache.at(2).GetLorentzVector()));
+        higgsBJetPairing=std::make_pair(std::make_pair(sortedBJetCache.at(0).GetLorentzVector(),sortedBJetCache.at(3).GetLorentzVector()),std::make_pair(sortedBJetCache.at(1).GetLorentzVector(),sortedBJetCache.at(2).GetLorentzVector()));
       }
     }
   }
@@ -841,12 +841,12 @@ std::vector<std::pair<int, int> > EventHandler::GetBOrigins() const{
     unsigned int bestJet(-1);
     for(unsigned int mc(0); mc<mc_doc_pt->size(); ++mc){
       const double thisDeltaR(Math::GetDeltaR(sortedBJetCache.at(jet).GetLorentzVector().Phi(),
-					      sortedBJetCache.at(jet).GetLorentzVector().Eta(),
-					      mc_doc_phi->at(mc),
-					      mc_doc_eta->at(mc)));
+                                              sortedBJetCache.at(jet).GetLorentzVector().Eta(),
+                                              mc_doc_phi->at(mc),
+                                              mc_doc_eta->at(mc)));
       if(thisDeltaR<minDeltaR){
-	minDeltaR=thisDeltaR;
-	bestJet=mc;
+        minDeltaR=thisDeltaR;
+        bestJet=mc;
       }
     }
     if(bestJet<mc_doc_id->size()){
@@ -1195,15 +1195,15 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesPVCut() && PassesJet2PtCut() && Passes2CSVTCut() && PassesMETSig30Cut() && PassesMETCleaningCut() && PassesTriggerCut() && PassesNumJetsCut() && PassesMinDeltaPhiCut() && PassesLeptonVetoCut() && PassesIsoTrackVetoCut() && PassesDRCut()){
       double npv(-1.0);
       for(unsigned int bc(0); bc<PU_bunchCrossing->size(); ++bc){
-	if(PU_bunchCrossing->at(bc)==0){
-	  npv = PU_TrueNumInteractions->at(bc);
-	}
+        if(PU_bunchCrossing->at(bc)==0){
+          npv = PU_TrueNumInteractions->at(bc);
+        }
       }
       npv_before.Fill(npv, nonpileupweight);
       npv_after.Fill(npv, localWeight);
       double topPt(-1.0);
       for ( unsigned int mc=0; mc< mc_doc_id->size(); mc++ ) {
-	if ( mc_doc_id->at(mc)==6 ) { topPt = mc_doc_pt->at(mc); break; }
+        if ( mc_doc_id->at(mc)==6 ) { topPt = mc_doc_pt->at(mc); break; }
       }
       topPt_before.Fill(topPt, notopweight);
       topPt_after.Fill(topPt, localWeight);
@@ -1218,10 +1218,10 @@ void EventHandler::MakePlots(const std::string &outFileName){
       xx_origin4.Fill(GetType(bo.at(3)),localWeight);
       std::vector<std::pair<double, double> > CSV_beta(0);
       for(unsigned int jet(0); jet<jets_AK5PF_pt->size(); ++jet){
-	if(isGoodJet(jet, true, 20.0, 2.4, false)){
-	  CSV_beta.push_back(std::pair<double,double>(beta.at(jet),
-						      jets_AK5PF_btag_secVertexCombined->at(jet)));
-	}
+        if(isGoodJet(jet, true, 20.0, 2.4, false)){
+          CSV_beta.push_back(std::pair<double,double>(beta.at(jet),
+                                                      jets_AK5PF_btag_secVertexCombined->at(jet)));
+        }
       }
       std::sort(CSV_beta.begin(), CSV_beta.end(), std::greater<std::pair<double, double> >());
       xx_beta1.Fill(CSV_beta.at(0).first,localWeight);
@@ -1238,10 +1238,10 @@ void EventHandler::MakePlots(const std::string &outFileName){
       yy_origin4.Fill(GetType(bo.at(3)),localWeight);
       std::vector<std::pair<double, double> > CSV_beta(0);
       for(unsigned int jet(0); jet<jets_AK5PF_pt->size(); ++jet){
-	if(isGoodJet(jet, true, 20.0, 2.4, false)){
-	  CSV_beta.push_back(std::pair<double,double>(beta.at(jet),
-						      jets_AK5PF_btag_secVertexCombined->at(jet)));
-	}
+        if(isGoodJet(jet, true, 20.0, 2.4, false)){
+          CSV_beta.push_back(std::pair<double,double>(beta.at(jet),
+                                                      jets_AK5PF_btag_secVertexCombined->at(jet)));
+        }
       }
       std::sort(CSV_beta.begin(), CSV_beta.end(), std::greater<std::pair<double, double> >());
       yy_beta1.Fill(CSV_beta.at(0).first,localWeight);
@@ -1298,49 +1298,49 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesPVCut() && PassesMETCleaningCut() && PassesTriggerCut() && PassesNumJetsCut() && Passes2CSVTCut() && PassesJet2PtCut() && PassesMinDeltaPhiCut() && PassesLeptonVetoCut() && PassesIsoTrackVetoCut()){
 
       if(PassesBTaggingCut() && PassesHiggsMassCut() && PassesDRCut()){
-	//MET S/sqrt(B) plots go here!
-	sorb_MET.Fill(pfmets_et->at(0), localWeight);
-	sorb_METSig.Fill(pfmets_fullSignif, localWeight);
-	if(GetcfAVersion()>=69){
-	  sorb_METSig.Fill(pfmets_fullSignif, localWeight);
-	}
-	sorb_METOverSqrtHT.Fill(pfmets_et->at(0)/sqrt(GetHT()),localWeight);
+        //MET S/sqrt(B) plots go here!
+        sorb_MET.Fill(pfmets_et->at(0), localWeight);
+        sorb_METSig.Fill(pfmets_fullSignif, localWeight);
+        if(GetcfAVersion()>=69){
+          sorb_METSig.Fill(pfmets_fullSignif, localWeight);
+        }
+        sorb_METOverSqrtHT.Fill(pfmets_et->at(0)/sqrt(GetHT()),localWeight);
       }
 
       if(GetNumCSVMJets()<=2 && GetNumCSVLJets()<=3){
-	//2b control region plots go here!
-	if(PassesMETSig30Cut() && PassesHiggsMassCut() && PassesDRCut()){
-	  twoB_nm1_thirdBTag.Fill(GetHighestCSV(3),localWeight);
-	  twoB_nm1_fourthBTag.Fill(GetHighestCSV(4),localWeight);
-	}
-	if(PassesMETSig30Cut() && PassesHiggsMassDiffCut() && PassesDRCut()){
-	  twoB_nm1_avgHiggsMass.Fill(0.5*(higgsMasses.first+higgsMasses.second),localWeight);
-	}
-	if(PassesMETSig30Cut() && PassesHiggsAvgMassCut() && PassesDRCut()){
-	  twoB_nm1_higgsMassDiff.Fill(fabs(higgsMasses.first-higgsMasses.second),localWeight);
-	}
-	if(PassesMETSig30Cut() && PassesHiggsMassCut()){
-	  twoB_nm1_maxDeltaR.Fill(GetMaxDR(),localWeight);
-	}
-	if(PassesHiggsMassCut() && PassesDRCut()){
-	  twoB_nm1_metSig.Fill(pfmets_fullSignif,localWeight);
-	  twoB_nm1_met.Fill(pfmets_et->at(0),localWeight);
-	  twoB_METOverSqrtHT_vs_METSig.Fill(pfmets_fullSignif, pfmets_et->at(0)/sqrt(GetHT()), localWeight);
-	  twoB_METOverSqrtHT_Over_METSig.Fill((pfmets_et->at(0)/sqrt(GetHT()))/pfmets_fullSignif, localWeight);
-	  twoB_MET.Fill(pfmets_et->at(0),localWeight);
-	  twoB_MET_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_et->at(0),localWeight);
-	  twoB_METSig_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_fullSignif,localWeight);
-	  twoB_METToMETSigRatio_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_et->at(0)/pfmets_fullSignif,localWeight);
-	  twoB_MET_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_et->at(0),localWeight);
-	  twoB_METSig_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_fullSignif,localWeight);
-	  twoB_METToMETSigRatio_vs_fracMETFromLowPt.Fill(GetMETOfLowPtPfCands(20.0)/pfmets_et->at(0),pfmets_et->at(0)/pfmets_fullSignif,localWeight);
-	  twoB_MET_vs_fracMETFromLowPt.Fill(GetMETOfLowPtPfCands(20.0)/pfmets_et->at(0),pfmets_et->at(0),localWeight);
-	  twoB_METSig_vs_fracMETFromLowPt.Fill(GetMETOfLowPtPfCands(20.0)/pfmets_et->at(0),pfmets_fullSignif,localWeight);
-	}
+        //2b control region plots go here!
+        if(PassesMETSig30Cut() && PassesHiggsMassCut() && PassesDRCut()){
+          twoB_nm1_thirdBTag.Fill(GetHighestCSV(3),localWeight);
+          twoB_nm1_fourthBTag.Fill(GetHighestCSV(4),localWeight);
+        }
+        if(PassesMETSig30Cut() && PassesHiggsMassDiffCut() && PassesDRCut()){
+          twoB_nm1_avgHiggsMass.Fill(0.5*(higgsMasses.first+higgsMasses.second),localWeight);
+        }
+        if(PassesMETSig30Cut() && PassesHiggsAvgMassCut() && PassesDRCut()){
+          twoB_nm1_higgsMassDiff.Fill(fabs(higgsMasses.first-higgsMasses.second),localWeight);
+        }
+        if(PassesMETSig30Cut() && PassesHiggsMassCut()){
+          twoB_nm1_maxDeltaR.Fill(GetMaxDR(),localWeight);
+        }
+        if(PassesHiggsMassCut() && PassesDRCut()){
+          twoB_nm1_metSig.Fill(pfmets_fullSignif,localWeight);
+          twoB_nm1_met.Fill(pfmets_et->at(0),localWeight);
+          twoB_METOverSqrtHT_vs_METSig.Fill(pfmets_fullSignif, pfmets_et->at(0)/sqrt(GetHT()), localWeight);
+          twoB_METOverSqrtHT_Over_METSig.Fill((pfmets_et->at(0)/sqrt(GetHT()))/pfmets_fullSignif, localWeight);
+          twoB_MET.Fill(pfmets_et->at(0),localWeight);
+          twoB_MET_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_et->at(0),localWeight);
+          twoB_METSig_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_fullSignif,localWeight);
+          twoB_METToMETSigRatio_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_et->at(0)/pfmets_fullSignif,localWeight);
+          twoB_MET_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_et->at(0),localWeight);
+          twoB_METSig_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_fullSignif,localWeight);
+          twoB_METToMETSigRatio_vs_fracMETFromLowPt.Fill(GetMETOfLowPtPfCands(20.0)/pfmets_et->at(0),pfmets_et->at(0)/pfmets_fullSignif,localWeight);
+          twoB_MET_vs_fracMETFromLowPt.Fill(GetMETOfLowPtPfCands(20.0)/pfmets_et->at(0),pfmets_et->at(0),localWeight);
+          twoB_METSig_vs_fracMETFromLowPt.Fill(GetMETOfLowPtPfCands(20.0)/pfmets_et->at(0),pfmets_fullSignif,localWeight);
+        }
       }
 
       if(0.5*(higgsMasses.first+higgsMasses.second)<75.0){
-	//Higgs mass control region plots go here!
+        //Higgs mass control region plots go here!
         if(PassesMETSig30Cut() && PassesHiggsMassDiffCut() && PassesDRCut()){
           lightHiggs_nm1_thirdBTag.Fill(GetHighestCSV(3),localWeight);
           lightHiggs_nm1_fourthBTag.Fill(GetHighestCSV(4),localWeight);
@@ -1355,46 +1355,46 @@ void EventHandler::MakePlots(const std::string &outFileName){
           lightHiggs_nm1_maxDeltaR.Fill(GetMaxDR(),localWeight);
         }
         if(PassesHiggsMassDiffCut() && PassesDRCut() && PassesBTaggingCut()){
-	  lightHiggs_METOverSqrtHT_vs_METSig.Fill(pfmets_fullSignif, pfmets_et->at(0)/sqrt(GetHT()), localWeight);
+          lightHiggs_METOverSqrtHT_vs_METSig.Fill(pfmets_fullSignif, pfmets_et->at(0)/sqrt(GetHT()), localWeight);
           lightHiggs_nm1_metSig.Fill(pfmets_fullSignif,localWeight);
           lightHiggs_nm1_met.Fill(pfmets_et->at(0),localWeight);
-	  lightHiggs_METOverSqrtHT_Over_METSig.Fill((pfmets_et->at(0)/sqrt(GetHT()))/pfmets_fullSignif, localWeight);
-	  lightHiggs_MET.Fill(pfmets_et->at(0),localWeight);
-	  lightHiggs_MET_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_et->at(0),localWeight);
-	  lightHiggs_METSig_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_fullSignif,localWeight);
-	  lightHiggs_METToMETSigRatio_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_et->at(0)/pfmets_fullSignif,localWeight);
-	  lightHiggs_MET_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_et->at(0),localWeight);
-	  lightHiggs_METSig_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_fullSignif,localWeight);
-	  lightHiggs_METToMETSigRatio_vs_fracMETFromLowPt.Fill(GetMETOfLowPtPfCands(20.0)/pfmets_et->at(0),pfmets_et->at(0)/pfmets_fullSignif,localWeight);
-	  lightHiggs_MET_vs_fracMETFromLowPt.Fill(GetMETOfLowPtPfCands(20.0)/pfmets_et->at(0),pfmets_et->at(0),localWeight);
-	  lightHiggs_METSig_vs_fracMETFromLowPt.Fill(GetMETOfLowPtPfCands(20.0)/pfmets_et->at(0),pfmets_fullSignif,localWeight);
+          lightHiggs_METOverSqrtHT_Over_METSig.Fill((pfmets_et->at(0)/sqrt(GetHT()))/pfmets_fullSignif, localWeight);
+          lightHiggs_MET.Fill(pfmets_et->at(0),localWeight);
+          lightHiggs_MET_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_et->at(0),localWeight);
+          lightHiggs_METSig_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_fullSignif,localWeight);
+          lightHiggs_METToMETSigRatio_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_et->at(0)/pfmets_fullSignif,localWeight);
+          lightHiggs_MET_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_et->at(0),localWeight);
+          lightHiggs_METSig_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_fullSignif,localWeight);
+          lightHiggs_METToMETSigRatio_vs_fracMETFromLowPt.Fill(GetMETOfLowPtPfCands(20.0)/pfmets_et->at(0),pfmets_et->at(0)/pfmets_fullSignif,localWeight);
+          lightHiggs_MET_vs_fracMETFromLowPt.Fill(GetMETOfLowPtPfCands(20.0)/pfmets_et->at(0),pfmets_et->at(0),localWeight);
+          lightHiggs_METSig_vs_fracMETFromLowPt.Fill(GetMETOfLowPtPfCands(20.0)/pfmets_et->at(0),pfmets_fullSignif,localWeight);
         }
       }
 
       //Signal region plots go here!
       if(PassesMETSig30Cut() && PassesHiggsMassCut() && PassesDRCut()){
-	xx_nm1_thirdBTag.Fill(GetHighestCSV(3),localWeight);
-	if(GetNumCSVMJets()>=3){
-	  xx_nm1_fourthBTag.Fill(GetHighestCSV(4),localWeight);
-	}
+        xx_nm1_thirdBTag.Fill(GetHighestCSV(3),localWeight);
+        if(GetNumCSVMJets()>=3){
+          xx_nm1_fourthBTag.Fill(GetHighestCSV(4),localWeight);
+        }
       }
       if(PassesMETSig30Cut() && PassesHiggsMassDiffCut() && PassesBTaggingCut() && PassesDRCut()){
-	xx_nm1_avgHiggsMass.Fill(0.5*(higgsMasses.first+higgsMasses.second),localWeight);
+        xx_nm1_avgHiggsMass.Fill(0.5*(higgsMasses.first+higgsMasses.second),localWeight);
       }
       if(PassesMETSig30Cut() && PassesHiggsAvgMassCut() && PassesBTaggingCut() && PassesDRCut()){
-	xx_nm1_higgsMassDiff.Fill(fabs(higgsMasses.first-higgsMasses.second),localWeight);
+        xx_nm1_higgsMassDiff.Fill(fabs(higgsMasses.first-higgsMasses.second),localWeight);
       }
       if(PassesMETSig30Cut() && PassesHiggsMassCut() && PassesBTaggingCut()){
-	xx_nm1_maxDeltaR.Fill(GetMaxDR(),localWeight);
+        xx_nm1_maxDeltaR.Fill(GetMaxDR(),localWeight);
       }
       if(PassesHiggsMassCut() && PassesBTaggingCut() && PassesDRCut()){
-	xx_METOverSqrtHT_vs_METSig.Fill(pfmets_fullSignif, pfmets_et->at(0)/sqrt(GetHT()), localWeight);
-	xx_METOverSqrtHT_Over_METSig.Fill((pfmets_et->at(0)/sqrt(GetHT()))/pfmets_fullSignif, localWeight);
-	xx_nm1_metSig.Fill(pfmets_fullSignif,localWeight);
-	xx_nm1_met.Fill(pfmets_et->at(0),localWeight);
-	xx_MET.Fill(pfmets_et->at(0),localWeight);
-	xx_MET_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_et->at(0),localWeight);
-	xx_METSig_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_fullSignif,localWeight);
+        xx_METOverSqrtHT_vs_METSig.Fill(pfmets_fullSignif, pfmets_et->at(0)/sqrt(GetHT()), localWeight);
+        xx_METOverSqrtHT_Over_METSig.Fill((pfmets_et->at(0)/sqrt(GetHT()))/pfmets_fullSignif, localWeight);
+        xx_nm1_metSig.Fill(pfmets_fullSignif,localWeight);
+        xx_nm1_met.Fill(pfmets_et->at(0),localWeight);
+        xx_MET.Fill(pfmets_et->at(0),localWeight);
+        xx_MET_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_et->at(0),localWeight);
+        xx_METSig_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_fullSignif,localWeight);
       }
     }
 
@@ -1418,16 +1418,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesRegionACut()){
       switch(this_sbin){
       case 1: ++Asbin1Count;
-	Asbin1CountWeighted+=localWeight;
-	break;
+        Asbin1CountWeighted+=localWeight;
+        break;
       case 2: ++Asbin2Count;
-	Asbin2CountWeighted+=localWeight;
-	break;
+        Asbin2CountWeighted+=localWeight;
+        break;
       case 3: ++Asbin3Count;
-	Asbin3CountWeighted+=localWeight;
-	break;
+        Asbin3CountWeighted+=localWeight;
+        break;
       case 4: ++Asbin4Count;
-	Asbin4CountWeighted+=localWeight;
+        Asbin4CountWeighted+=localWeight;
       }
       ++ACount;
       ACountWeighted+=localWeight;
@@ -1438,16 +1438,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesRegionBCut()){
       switch(this_sbin){
       case 1: ++Bsbin1Count;
-	Bsbin1CountWeighted+=localWeight;
-	break;
+        Bsbin1CountWeighted+=localWeight;
+        break;
       case 2: ++Bsbin2Count;
-	Bsbin2CountWeighted+=localWeight;
-	break;
+        Bsbin2CountWeighted+=localWeight;
+        break;
       case 3: ++Bsbin3Count;
-	Bsbin3CountWeighted+=localWeight;
-	break;
+        Bsbin3CountWeighted+=localWeight;
+        break;
       case 4: ++Bsbin4Count;
-	Bsbin4CountWeighted+=localWeight;
+        Bsbin4CountWeighted+=localWeight;
       }
       ++BCount;
       BCountWeighted+=localWeight;
@@ -1458,16 +1458,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesRegionC3bCut()){
       switch(this_sbin){
       case 1: ++C3bsbin1Count;
-	C3bsbin1CountWeighted+=localWeight;
-	break;
+        C3bsbin1CountWeighted+=localWeight;
+        break;
       case 2: ++C3bsbin2Count;
-	C3bsbin2CountWeighted+=localWeight;
-	break;
+        C3bsbin2CountWeighted+=localWeight;
+        break;
       case 3: ++C3bsbin3Count;
-	C3bsbin3CountWeighted+=localWeight;
-	break;
+        C3bsbin3CountWeighted+=localWeight;
+        break;
       case 4: ++C3bsbin4Count;
-	C3bsbin4CountWeighted+=localWeight;
+        C3bsbin4CountWeighted+=localWeight;
       }
       ++C3bCount;
       C3bCountWeighted+=localWeight;
@@ -1478,16 +1478,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesRegionD3bCut()){
       switch(this_sbin){
       case 1: ++D3bsbin1Count;
-	D3bsbin1CountWeighted+=localWeight;
-	break;
+        D3bsbin1CountWeighted+=localWeight;
+        break;
       case 2: ++D3bsbin2Count;
-	D3bsbin2CountWeighted+=localWeight;
-	break;
+        D3bsbin2CountWeighted+=localWeight;
+        break;
       case 3: ++D3bsbin3Count;
-	D3bsbin3CountWeighted+=localWeight;
-	break;
+        D3bsbin3CountWeighted+=localWeight;
+        break;
       case 4: ++D3bsbin4Count;
-	D3bsbin4CountWeighted+=localWeight;
+        D3bsbin4CountWeighted+=localWeight;
       }
       ++D3bCount;
       D3bCountWeighted+=localWeight;
@@ -1498,16 +1498,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesRegionC2bCut()){
       switch(this_sbin){
       case 1: ++C2bsbin1Count;
-	C2bsbin1CountWeighted+=localWeight;
-	break;
+        C2bsbin1CountWeighted+=localWeight;
+        break;
       case 2: ++C2bsbin2Count;
-	C2bsbin2CountWeighted+=localWeight;
-	break;
+        C2bsbin2CountWeighted+=localWeight;
+        break;
       case 3: ++C2bsbin3Count;
-	C2bsbin3CountWeighted+=localWeight;
-	break;
+        C2bsbin3CountWeighted+=localWeight;
+        break;
       case 4: ++C2bsbin4Count;
-	C2bsbin4CountWeighted+=localWeight;
+        C2bsbin4CountWeighted+=localWeight;
       }
       ++C2bCount;
       C2bCountWeighted+=localWeight;
@@ -1518,16 +1518,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesRegionD2bCut()){
       switch(this_sbin){
       case 1: ++D2bsbin1Count;
-	D2bsbin1CountWeighted+=localWeight;
-	break;
+        D2bsbin1CountWeighted+=localWeight;
+        break;
       case 2: ++D2bsbin2Count;
-	D2bsbin2CountWeighted+=localWeight;
-	break;
+        D2bsbin2CountWeighted+=localWeight;
+        break;
       case 3: ++D2bsbin3Count;
-	D2bsbin3CountWeighted+=localWeight;
-	break;
+        D2bsbin3CountWeighted+=localWeight;
+        break;
       case 4: ++D2bsbin4Count;
-	D2bsbin4CountWeighted+=localWeight;
+        D2bsbin4CountWeighted+=localWeight;
       }
       ++D2bCount;
       D2bCountWeighted+=localWeight;
@@ -1542,16 +1542,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
       ASLUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++ASLsbin1Count;
-	ASLsbin1CountWeighted+=localWeight;
-	break;
+        ASLsbin1CountWeighted+=localWeight;
+        break;
       case 2: ++ASLsbin2Count;
-	ASLsbin2CountWeighted+=localWeight;
-	break;
+        ASLsbin2CountWeighted+=localWeight;
+        break;
       case 3: ++ASLsbin3Count;
-	ASLsbin3CountWeighted+=localWeight;
-	break;
+        ASLsbin3CountWeighted+=localWeight;
+        break;
       case 4: ++ASLsbin4Count;
-	ASLsbin4CountWeighted+=localWeight;
+        ASLsbin4CountWeighted+=localWeight;
       }
     }
     if(PassesSingleLeptonRegionBCut()){
@@ -1560,16 +1560,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
       BSLUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++BSLsbin1Count;
-	BSLsbin1CountWeighted+=localWeight;
-	break;
+        BSLsbin1CountWeighted+=localWeight;
+        break;
       case 2: ++BSLsbin2Count;
-	BSLsbin2CountWeighted+=localWeight;
-	break;
+        BSLsbin2CountWeighted+=localWeight;
+        break;
       case 3: ++BSLsbin3Count;
-	BSLsbin3CountWeighted+=localWeight;
-	break;
+        BSLsbin3CountWeighted+=localWeight;
+        break;
       case 4: ++BSLsbin4Count;
-	BSLsbin4CountWeighted+=localWeight;
+        BSLsbin4CountWeighted+=localWeight;
       }
     }
     if(PassesSingleLeptonRegionC3bCut()){
@@ -1578,16 +1578,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
       C3bSLUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++C3bSLsbin1Count;
-	C3bSLsbin1CountWeighted+=localWeight;
-	break;
+        C3bSLsbin1CountWeighted+=localWeight;
+        break;
       case 2: ++C3bSLsbin2Count;
-	C3bSLsbin2CountWeighted+=localWeight;
-	break;
+        C3bSLsbin2CountWeighted+=localWeight;
+        break;
       case 3: ++C3bSLsbin3Count;
-	C3bSLsbin3CountWeighted+=localWeight;
-	break;
+        C3bSLsbin3CountWeighted+=localWeight;
+        break;
       case 4: ++C3bSLsbin4Count;
-	C3bSLsbin4CountWeighted+=localWeight;
+        C3bSLsbin4CountWeighted+=localWeight;
       }
     }
     if(PassesSingleLeptonRegionD3bCut()){
@@ -1596,16 +1596,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
       D3bSLUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++D3bSLsbin1Count;
-	D3bSLsbin1CountWeighted+=localWeight;
-	break;
+        D3bSLsbin1CountWeighted+=localWeight;
+        break;
       case 2: ++D3bSLsbin2Count;
-	D3bSLsbin2CountWeighted+=localWeight;
-	break;
+        D3bSLsbin2CountWeighted+=localWeight;
+        break;
       case 3: ++D3bSLsbin3Count;
-	D3bSLsbin3CountWeighted+=localWeight;
-	break;
+        D3bSLsbin3CountWeighted+=localWeight;
+        break;
       case 4: ++D3bSLsbin4Count;
-	D3bSLsbin4CountWeighted+=localWeight;
+        D3bSLsbin4CountWeighted+=localWeight;
       }
     }
     if(PassesSingleLeptonRegionC2bCut()){
@@ -1614,16 +1614,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
       C2bSLUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++C2bSLsbin1Count;
-	C2bSLsbin1CountWeighted+=localWeight;
-	break;
+        C2bSLsbin1CountWeighted+=localWeight;
+        break;
       case 2: ++C2bSLsbin2Count;
-	C2bSLsbin2CountWeighted+=localWeight;
-	break;
+        C2bSLsbin2CountWeighted+=localWeight;
+        break;
       case 3: ++C2bSLsbin3Count;
-	C2bSLsbin3CountWeighted+=localWeight;
-	break;
+        C2bSLsbin3CountWeighted+=localWeight;
+        break;
       case 4: ++C2bSLsbin4Count;
-	C2bSLsbin4CountWeighted+=localWeight;
+        C2bSLsbin4CountWeighted+=localWeight;
       }
     }
     if(PassesSingleLeptonRegionD2bCut()){
@@ -1632,16 +1632,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
       D2bSLUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++D2bSLsbin1Count;
-	D2bSLsbin1CountWeighted+=localWeight;
-	break;
+        D2bSLsbin1CountWeighted+=localWeight;
+        break;
       case 2: ++D2bSLsbin2Count;
-	D2bSLsbin2CountWeighted+=localWeight;
-	break;
+        D2bSLsbin2CountWeighted+=localWeight;
+        break;
       case 3: ++D2bSLsbin3Count;
-	D2bSLsbin3CountWeighted+=localWeight;
-	break;
+        D2bSLsbin3CountWeighted+=localWeight;
+        break;
       case 4: ++D2bSLsbin4Count;
-	D2bSLsbin4CountWeighted+=localWeight;
+        D2bSLsbin4CountWeighted+=localWeight;
       }
     }
 
@@ -1651,16 +1651,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
       ADRInvUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++ADRInvsbin1Count;
-	ADRInvsbin1CountWeighted+=localWeight;
-	break;
+        ADRInvsbin1CountWeighted+=localWeight;
+        break;
       case 2: ++ADRInvsbin2Count;
-	ADRInvsbin2CountWeighted+=localWeight;
-	break;
+        ADRInvsbin2CountWeighted+=localWeight;
+        break;
       case 3: ++ADRInvsbin3Count;
-	ADRInvsbin3CountWeighted+=localWeight;
-	break;
+        ADRInvsbin3CountWeighted+=localWeight;
+        break;
       case 4: ++ADRInvsbin4Count;
-	ADRInvsbin4CountWeighted+=localWeight;
+        ADRInvsbin4CountWeighted+=localWeight;
       }
     }
     if(PassesInvertedDRRegionBCut()){
@@ -1669,16 +1669,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
       BDRInvUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++BDRInvsbin1Count;
-	BDRInvsbin1CountWeighted+=localWeight;
-	break;
+        BDRInvsbin1CountWeighted+=localWeight;
+        break;
       case 2: ++BDRInvsbin2Count;
-	BDRInvsbin2CountWeighted+=localWeight;
-	break;
+        BDRInvsbin2CountWeighted+=localWeight;
+        break;
       case 3: ++BDRInvsbin3Count;
-	BDRInvsbin3CountWeighted+=localWeight;
-	break;
+        BDRInvsbin3CountWeighted+=localWeight;
+        break;
       case 4: ++BDRInvsbin4Count;
-	BDRInvsbin4CountWeighted+=localWeight;
+        BDRInvsbin4CountWeighted+=localWeight;
       }
     }
     if(PassesInvertedDRRegionC3bCut()){
@@ -1687,16 +1687,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
       C3bDRInvUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++C3bDRInvsbin1Count;
-	C3bDRInvsbin1CountWeighted+=localWeight;
-	break;
+        C3bDRInvsbin1CountWeighted+=localWeight;
+        break;
       case 2: ++C3bDRInvsbin2Count;
-	C3bDRInvsbin2CountWeighted+=localWeight;
-	break;
+        C3bDRInvsbin2CountWeighted+=localWeight;
+        break;
       case 3: ++C3bDRInvsbin3Count;
-	C3bDRInvsbin3CountWeighted+=localWeight;
-	break;
+        C3bDRInvsbin3CountWeighted+=localWeight;
+        break;
       case 4: ++C3bDRInvsbin4Count;
-	C3bDRInvsbin4CountWeighted+=localWeight;
+        C3bDRInvsbin4CountWeighted+=localWeight;
       }
     }
     if(PassesInvertedDRRegionD3bCut()){
@@ -1705,16 +1705,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
       D3bDRInvUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++D3bDRInvsbin1Count;
-	D3bDRInvsbin1CountWeighted+=localWeight;
-	break;
+        D3bDRInvsbin1CountWeighted+=localWeight;
+        break;
       case 2: ++D3bDRInvsbin2Count;
-	D3bDRInvsbin2CountWeighted+=localWeight;
-	break;
+        D3bDRInvsbin2CountWeighted+=localWeight;
+        break;
       case 3: ++D3bDRInvsbin3Count;
-	D3bDRInvsbin3CountWeighted+=localWeight;
-	break;
+        D3bDRInvsbin3CountWeighted+=localWeight;
+        break;
       case 4: ++D3bDRInvsbin4Count;
-	D3bDRInvsbin4CountWeighted+=localWeight;
+        D3bDRInvsbin4CountWeighted+=localWeight;
       }
     }
     if(PassesInvertedDRRegionC2bCut()){
@@ -1723,16 +1723,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
       C2bDRInvUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++C2bDRInvsbin1Count;
-	C2bDRInvsbin1CountWeighted+=localWeight;
-	break;
+        C2bDRInvsbin1CountWeighted+=localWeight;
+        break;
       case 2: ++C2bDRInvsbin2Count;
-	C2bDRInvsbin2CountWeighted+=localWeight;
-	break;
+        C2bDRInvsbin2CountWeighted+=localWeight;
+        break;
       case 3: ++C2bDRInvsbin3Count;
-	C2bDRInvsbin3CountWeighted+=localWeight;
-	break;
+        C2bDRInvsbin3CountWeighted+=localWeight;
+        break;
       case 4: ++C2bDRInvsbin4Count;
-	C2bDRInvsbin4CountWeighted+=localWeight;
+        C2bDRInvsbin4CountWeighted+=localWeight;
       }
     }
     if(PassesInvertedDRRegionD2bCut()){
@@ -1741,16 +1741,16 @@ void EventHandler::MakePlots(const std::string &outFileName){
       D2bDRInvUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++D2bDRInvsbin1Count;
-	D2bDRInvsbin1CountWeighted+=localWeight;
-	break;
+        D2bDRInvsbin1CountWeighted+=localWeight;
+        break;
       case 2: ++D2bDRInvsbin2Count;
-	D2bDRInvsbin2CountWeighted+=localWeight;
-	break;
+        D2bDRInvsbin2CountWeighted+=localWeight;
+        break;
       case 3: ++D2bDRInvsbin3Count;
-	D2bDRInvsbin3CountWeighted+=localWeight;
-	break;
+        D2bDRInvsbin3CountWeighted+=localWeight;
+        break;
       case 4: ++D2bDRInvsbin4Count;
-	D2bDRInvsbin4CountWeighted+=localWeight;
+        D2bDRInvsbin4CountWeighted+=localWeight;
       }
     }
 
@@ -2253,7 +2253,7 @@ bool EventHandler::isProblemJet(const unsigned int ijet) const{
   return jets_AK5PF_pt->at(ijet)>50.0
     && fabs(jets_AK5PF_eta->at(ijet))>0.9
     && fabs(jets_AK5PF_eta->at(ijet))<1.9
-				      && jets_AK5PF_chg_Mult->at(ijet)-jets_AK5PF_neutral_Mult->at(ijet)>=40;
+    && jets_AK5PF_chg_Mult->at(ijet)-jets_AK5PF_neutral_Mult->at(ijet)>=40;
 }
 
 bool EventHandler::isGoodJet(const unsigned int ijet, const bool jetid, const double ptThresh, const double etaThresh, const bool doBeta) const{
@@ -2272,14 +2272,14 @@ bool EventHandler::jetPassLooseID(const unsigned int ijet) const{
   
   if (jetenergy>0.0) {
     if (jets_AK5PF_neutralHadE->at(ijet) /jetenergy <= 0.99
-	&& jets_AK5PF_neutralEmE->at(ijet) / jetenergy <= 0.99
-	&& numConst >= 2
-	&& ( fabs(jets_AK5PF_eta->at(ijet))>=2.4
-	     || (fabs(jets_AK5PF_eta->at(ijet))<2.4 && jets_AK5PF_chgHadE->at(ijet)/jetenergy>0))
-	&& ( fabs(jets_AK5PF_eta->at(ijet))>=2.4
-	     || (fabs(jets_AK5PF_eta->at(ijet))<2.4 && jets_AK5PF_chgEmE->at(ijet)/jetenergy<0.99))
-	&& ( fabs(jets_AK5PF_eta->at(ijet))>=2.4
-	     || (fabs(jets_AK5PF_eta->at(ijet))<2.4 && jets_AK5PF_chg_Mult->at(ijet)>0))){
+        && jets_AK5PF_neutralEmE->at(ijet) / jetenergy <= 0.99
+        && numConst >= 2
+        && ( fabs(jets_AK5PF_eta->at(ijet))>=2.4
+             || (fabs(jets_AK5PF_eta->at(ijet))<2.4 && jets_AK5PF_chgHadE->at(ijet)/jetenergy>0))
+        && ( fabs(jets_AK5PF_eta->at(ijet))>=2.4
+             || (fabs(jets_AK5PF_eta->at(ijet))<2.4 && jets_AK5PF_chgEmE->at(ijet)/jetenergy<0.99))
+        && ( fabs(jets_AK5PF_eta->at(ijet))>=2.4
+             || (fabs(jets_AK5PF_eta->at(ijet))<2.4 && jets_AK5PF_chg_Mult->at(ijet)>0))){
       return true;
     }
   }
@@ -2420,7 +2420,7 @@ int EventHandler::NewGetNumIsoTracks(const double ptThresh) const{
          (isotk_iso->at(itrack) /isotk_pt->at(itrack) < 0.1 ) &&
          ( fabs(isotk_dzpv->at(itrack)) <0.1) && //important to apply this; was not applied at ntuple creation
          ( fabs(isotk_eta->at(itrack)) < 2.4 ) //this is more of a sanity check
-	 ){
+         ){
       ++nisotracks;
     }
   }
@@ -2483,8 +2483,8 @@ double EventHandler::GetTopPtWeight() const{
 }
 
 void EventHandler::Skim(const std::string &skimFileName,
-			const int chargino_mass,
-			const int LSP_mass){
+                        const int chargino_mass,
+                        const int LSP_mass){
   GetTotalEntries();
 
   TFile skimFile(skimFileName.c_str(), "RECREATE");

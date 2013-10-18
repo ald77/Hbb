@@ -50,9 +50,9 @@ bool EventNumber::operator>(const EventNumber &eventIn) const{
       return true;
     }else if(eventIn.run==run){
       if(eventIn.lumi<lumi){
-	return true;
+        return true;
       }else{
-	return false;
+        return false;
       }
     }else{
       return false;
@@ -70,9 +70,9 @@ bool EventNumber::operator<(const EventNumber &eventIn) const{
       return true;
     }else if(eventIn.run==run){
       if(eventIn.lumi>lumi){
-	return true;
+        return true;
       }else{
-	return false;
+        return false;
       }
     }else{
       return false;
