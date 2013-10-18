@@ -2229,9 +2229,10 @@ bool EventHandler::isProblemJet(const unsigned int ijet) const{
 
 bool EventHandler::isGoodJet(const unsigned int ijet, const bool jetid, const double ptThresh, const double etaThresh, const bool doBeta) const{
   if(jets_AK5PF_pt->at(ijet)<ptThresh || fabs(jets_AK5PF_eta->at(ijet))>etaThresh) return false;
-  if ( jetid && !jetPassLooseID(ijet) ) return false;
+  if( jetid && !jetPassLooseID(ijet) ) return false;
+  if(GetcfAVersion()<69||sampleName.find("SMS-TChiHH")!=std::string::npos) return true;
   if(!betaUpToDate) GetBeta();
-  if(GetcfAVersion()>=69 && beta.at(ijet)<0.2 && doBeta) return false;
+  if(beta.at(ijet)<0.2 && doBeta) return false;
   return true;
 }
 
