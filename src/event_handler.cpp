@@ -40,7 +40,7 @@ const std::vector<std::vector<int> > VRunLumi24Aug(MakeVRunLumi("24Aug"));
 const std::vector<std::vector<int> > VRunLumi13Jul(MakeVRunLumi("13Jul"));
 
 EventHandler::EventHandler(const std::string &fileName, const bool isList, const double scaleFactorIn, const bool fastMode):
-  cfA(fileName, isList, fastMode),
+  cfA(fileName, isList),
   higgsBJetPairing(std::make_pair(TLorentzVector(0.0,0.0,0.0,0.0),TLorentzVector(0.0,0.0,0.0,0.0)),std::make_pair(TLorentzVector(0.0,0.0,0.0,0.0),TLorentzVector(0.0,0.0,0.0,0.0))),
   sortedBJetCache(0),
   higgsPairingUpToDate(false),
@@ -48,6 +48,35 @@ EventHandler::EventHandler(const std::string &fileName, const bool isList, const
   betaUpToDate(false),
   scaleFactor(scaleFactorIn),
   beta(0){
+  	if (fastMode) { // turn off unnecessary branches
+		chainA.SetBranchStatus("els_*",0);
+		chainA.SetBranchStatus("triggerobject_*",0);
+		chainA.SetBranchStatus("standalone_t*",0);
+		chainA.SetBranchStatus("L1trigger_*",0);
+		chainA.SetBranchStatus("passprescale*",0);
+		chainA.SetBranchStatus("jets_AK5PFclean_*",0);
+		chainA.SetBranchStatus("softjetUp_*",0);
+		chainA.SetBranchStatus("pdfweights_*",0);
+		chainA.SetBranchStatus("photon_*",0);
+		chainB.SetBranchStatus("Ntcmets",0);
+		chainB.SetBranchStatus("tcmets_*",0);
+		chainB.SetBranchStatus("Nphotons",0);
+		chainB.SetBranchStatus("photons_*",0);
+		chainB.SetBranchStatus("Npf_photons",0);
+		chainB.SetBranchStatus("pf_photons_*",0);
+		chainB.SetBranchStatus("Nmus",0);
+		chainB.SetBranchStatus("mus_*",0);
+		chainB.SetBranchStatus("Nels",0);
+		chainB.SetBranchStatus("els_*",0);
+		chainB.SetBranchStatus("Nmets*",0);
+		chainB.SetBranchStatus("mets*",0);
+		chainB.SetBranchStatus("Njets_AK5PFclean",0);
+		chainB.SetBranchStatus("jets_AK5PFclean_*",0);
+		chainB.SetBranchStatus("Nmc*",0);
+		chainB.SetBranchStatus("mc_*",0);
+		chainB.SetBranchStatus("Nmc_doc*",1);
+		chainB.SetBranchStatus("mc_doc*",1);
+  	}
 }
 
 void EventHandler::SetScaleFactor(const double crossSection, const double luminosity, int numEntries){
