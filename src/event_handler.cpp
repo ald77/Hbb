@@ -945,15 +945,12 @@ void EventHandler::MakePlots(const std::string &outFileName){
 
   unsigned int ACount(0), BCount(0), C3bCount(0), D3bCount(0), C2bCount(0), D2bCount(0);
   double ACountWeighted(0.0), BCountWeighted(0.0), C3bCountWeighted(0.0), D3bCountWeighted(0.0), C2bCountWeighted(0.0), D2bCountWeighted(0.0);
-  double AUncert(0.0), BUncert(0.0), C3bUncert(0.0), D3bUncert(0.0), C2bUncert(0.0), D2bUncert(0.0);
 
   unsigned int ADRInvCount(0), BDRInvCount(0), C3bDRInvCount(0), D3bDRInvCount(0), C2bDRInvCount(0), D2bDRInvCount(0);
   double ADRInvCountWeighted(0.0), BDRInvCountWeighted(0.0), C3bDRInvCountWeighted(0.0), D3bDRInvCountWeighted(0.0), C2bDRInvCountWeighted(0.0), D2bDRInvCountWeighted(0.0);
-  double ADRInvUncert(0.0), BDRInvUncert(0.0), C3bDRInvUncert(0.0), D3bDRInvUncert(0.0), C2bDRInvUncert(0.0), D2bDRInvUncert(0.0);
 
   unsigned int ASLCount(0), BSLCount(0), C3bSLCount(0), D3bSLCount(0), C2bSLCount(0), D2bSLCount(0);
   double ASLCountWeighted(0.0), BSLCountWeighted(0.0), C3bSLCountWeighted(0.0), D3bSLCountWeighted(0.0), C2bSLCountWeighted(0.0), D2bSLCountWeighted(0.0);
-  double ASLUncert(0.0), BSLUncert(0.0), C3bSLUncert(0.0), D3bSLUncert(0.0), C2bSLUncert(0.0), D2bSLUncert(0.0);
 
   unsigned int ASLsbin1Count(0), BSLsbin1Count(0), C3bSLsbin1Count(0), D3bSLsbin1Count(0), C2bSLsbin1Count(0), D2bSLsbin1Count(0);
   double ASLsbin1CountWeighted(0.0), BSLsbin1CountWeighted(0.0), C3bSLsbin1CountWeighted(0.0), D3bSLsbin1CountWeighted(0.0), C2bSLsbin1CountWeighted(0.0), D2bSLsbin1CountWeighted(0.0);
@@ -1431,7 +1428,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
       }
       ++ACount;
       ACountWeighted+=localWeight;
-      AUncert+=localWeight*localWeight;
       xx_ABCD.Fill(0.0,localWeight);
       xx_metSig_A.Fill(pfmets_fullSignif,localWeight);
     }
@@ -1451,7 +1447,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
       }
       ++BCount;
       BCountWeighted+=localWeight;
-      BUncert+=localWeight*localWeight;
       xx_ABCD.Fill(1.0,localWeight);
       xx_metSig_B.Fill(pfmets_fullSignif,localWeight);
     }
@@ -1471,7 +1466,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
       }
       ++C3bCount;
       C3bCountWeighted+=localWeight;
-      C3bUncert+=localWeight*localWeight;
       xx_ABCD.Fill(2.0,localWeight);
       xx_metSig_C3b.Fill(pfmets_fullSignif,localWeight);
     }
@@ -1491,7 +1485,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
       }
       ++D3bCount;
       D3bCountWeighted+=localWeight;
-      D3bUncert+=localWeight*localWeight;
       xx_ABCD.Fill(3.0,localWeight);
       xx_metSig_D3b.Fill(pfmets_fullSignif,localWeight);
     }
@@ -1511,7 +1504,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
       }
       ++C2bCount;
       C2bCountWeighted+=localWeight;
-      C2bUncert+=localWeight*localWeight;
       xx_ABCD.Fill(4.0,localWeight);
       xx_metSig_C2b.Fill(pfmets_fullSignif,localWeight);
     }
@@ -1531,7 +1523,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
       }
       ++D2bCount;
       D2bCountWeighted+=localWeight;
-      D2bUncert+=localWeight*localWeight;
       xx_ABCD.Fill(5.0,localWeight);
       xx_metSig_D2b.Fill(pfmets_fullSignif,localWeight);
     }
@@ -1539,7 +1530,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesSingleLeptonRegionACut()){
       ++ASLCount;
       ASLCountWeighted+=localWeight;
-      ASLUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++ASLsbin1Count;
         ASLsbin1CountWeighted+=localWeight;
@@ -1557,7 +1547,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesSingleLeptonRegionBCut()){
       ++BSLCount;
       BSLCountWeighted+=localWeight;
-      BSLUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++BSLsbin1Count;
         BSLsbin1CountWeighted+=localWeight;
@@ -1575,7 +1564,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesSingleLeptonRegionC3bCut()){
       ++C3bSLCount;
       C3bSLCountWeighted+=localWeight;
-      C3bSLUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++C3bSLsbin1Count;
         C3bSLsbin1CountWeighted+=localWeight;
@@ -1593,7 +1581,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesSingleLeptonRegionD3bCut()){
       ++D3bSLCount;
       D3bSLCountWeighted+=localWeight;
-      D3bSLUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++D3bSLsbin1Count;
         D3bSLsbin1CountWeighted+=localWeight;
@@ -1611,7 +1598,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesSingleLeptonRegionC2bCut()){
       ++C2bSLCount;
       C2bSLCountWeighted+=localWeight;
-      C2bSLUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++C2bSLsbin1Count;
         C2bSLsbin1CountWeighted+=localWeight;
@@ -1629,7 +1615,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesSingleLeptonRegionD2bCut()){
       ++D2bSLCount;
       D2bSLCountWeighted+=localWeight;
-      D2bSLUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++D2bSLsbin1Count;
         D2bSLsbin1CountWeighted+=localWeight;
@@ -1648,7 +1633,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesInvertedDRRegionACut()){
       ++ADRInvCount;
       ADRInvCountWeighted+=localWeight;
-      ADRInvUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++ADRInvsbin1Count;
         ADRInvsbin1CountWeighted+=localWeight;
@@ -1666,7 +1650,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesInvertedDRRegionBCut()){
       ++BDRInvCount;
       BDRInvCountWeighted+=localWeight;
-      BDRInvUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++BDRInvsbin1Count;
         BDRInvsbin1CountWeighted+=localWeight;
@@ -1684,7 +1667,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesInvertedDRRegionC3bCut()){
       ++C3bDRInvCount;
       C3bDRInvCountWeighted+=localWeight;
-      C3bDRInvUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++C3bDRInvsbin1Count;
         C3bDRInvsbin1CountWeighted+=localWeight;
@@ -1702,7 +1684,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesInvertedDRRegionD3bCut()){
       ++D3bDRInvCount;
       D3bDRInvCountWeighted+=localWeight;
-      D3bDRInvUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++D3bDRInvsbin1Count;
         D3bDRInvsbin1CountWeighted+=localWeight;
@@ -1720,7 +1701,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesInvertedDRRegionC2bCut()){
       ++C2bDRInvCount;
       C2bDRInvCountWeighted+=localWeight;
-      C2bDRInvUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++C2bDRInvsbin1Count;
         C2bDRInvsbin1CountWeighted+=localWeight;
@@ -1738,7 +1718,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(PassesInvertedDRRegionD2bCut()){
       ++D2bDRInvCount;
       D2bDRInvCountWeighted+=localWeight;
-      D2bDRInvUncert+=localWeight*localWeight;
       switch(this_sbin){
       case 1: ++D2bDRInvsbin1Count;
         D2bDRInvsbin1CountWeighted+=localWeight;
@@ -1826,51 +1805,10 @@ void EventHandler::MakePlots(const std::string &outFileName){
 
   double CtotCountWeighted(C3bCountWeighted+C2bCountWeighted);
   double DtotCountWeighted(D3bCountWeighted+D2bCountWeighted);
-  double CtotUncert(C3bUncert+C2bUncert);
-  double DtotUncert(D3bUncert+D2bUncert);
-
-  double Asq(ACountWeighted*ACountWeighted);
-  double Bsq(BCountWeighted*BCountWeighted);
-  double C3bsq(C3bCountWeighted*C3bCountWeighted);
-  double D3bsq(D3bCountWeighted*D3bCountWeighted);
-  double C2bsq(C2bCountWeighted*C2bCountWeighted);
-  double D2bsq(D2bCountWeighted*D2bCountWeighted);
-  double Ctotsq(CtotCountWeighted*CtotCountWeighted);
-  double Dtotsq(DtotCountWeighted*DtotCountWeighted);
 
   double kappa3b((ACountWeighted/BCountWeighted)/(C3bCountWeighted/D3bCountWeighted));
   double kappa2b((ACountWeighted/BCountWeighted)/(C2bCountWeighted/D2bCountWeighted));
   double kappatot((ACountWeighted/BCountWeighted)/(CtotCountWeighted/DtotCountWeighted));
-
-  double numeratorA3b(AUncert*Bsq*C3bsq*D3bsq);
-  double numeratorB3b(Asq*BUncert*C3bsq*D3bsq);
-  double numeratorC3b(Asq*Bsq*C3bUncert*D3bsq);
-  double numeratorD3b(Asq*Bsq*C3bsq*D3bUncert);
-  double denominator3b(Bsq*Bsq*C3bsq*C3bsq);
-  double kappaUncert3b((numeratorA3b+numeratorB3b+numeratorC3b+numeratorD3b)/denominator3b);
-
-  double numeratorA2b(AUncert*Bsq*C2bsq*D2bsq);
-  double numeratorB2b(Asq*BUncert*C2bsq*D2bsq);
-  double numeratorC2b(Asq*Bsq*C2bUncert*D2bsq);
-  double numeratorD2b(Asq*Bsq*C2bsq*D2bUncert);
-  double denominator2b(Bsq*Bsq*C2bsq*C2bsq);
-  double kappaUncert2b((numeratorA2b+numeratorB2b+numeratorC2b+numeratorD2b)/denominator2b);
-
-  double numeratorAtot(AUncert*Bsq*Ctotsq*Dtotsq);
-  double numeratorBtot(Asq*BUncert*Ctotsq*Dtotsq);
-  double numeratorCtot(Asq*Bsq*CtotUncert*Dtotsq);
-  double numeratorDtot(Asq*Bsq*Ctotsq*DtotUncert);
-  double denominatortot(Bsq*Bsq*Ctotsq*Ctotsq);
-  double kappaUncerttot((numeratorAtot+numeratorBtot+numeratorCtot+numeratorDtot)/denominatortot);
-
-  AUncert=sqrt(AUncert);
-  BUncert=sqrt(BUncert);
-  C3bUncert=sqrt(C3bUncert);
-  D3bUncert=sqrt(D3bUncert);
-  C2bUncert=sqrt(C2bUncert);
-  D2bUncert=sqrt(D2bUncert);
-  CtotUncert=sqrt(CtotUncert);
-  DtotUncert=sqrt(DtotUncert);
 
   TTree ABCD("ABCD","ABCD");
   ABCD.Branch("A", &ACount);
@@ -1887,14 +1825,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
   ABCD.Branch("D2bWeighted", &D2bCountWeighted);
   ABCD.Branch("CtotWeighted", &CtotCountWeighted);
   ABCD.Branch("DtotWeighted", &DtotCountWeighted);
-  ABCD.Branch("AUncert", &AUncert);
-  ABCD.Branch("BUncert", &BUncert);
-  ABCD.Branch("C3bUncert", &C3bUncert);
-  ABCD.Branch("D3bUncert", &D3bUncert);
-  ABCD.Branch("C2bUncert", &C2bUncert);
-  ABCD.Branch("D2bUncert", &D2bUncert);
-  ABCD.Branch("CtotUncert", &CtotUncert);
-  ABCD.Branch("DtotUncert", &DtotUncert);
   ABCD.Branch("A_DRInv", &ADRInvCount);
   ABCD.Branch("B_DRInv", &BDRInvCount);
   ABCD.Branch("C3b_DRInv", &C3bDRInvCount);
@@ -1907,12 +1837,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
   ABCD.Branch("D3bWeighted_DRInv", &D3bDRInvCountWeighted);
   ABCD.Branch("C2bWeighted_DRInv", &C2bDRInvCountWeighted);
   ABCD.Branch("D2bWeighted_DRInv", &D2bDRInvCountWeighted);
-  ABCD.Branch("AUncert_DRInv", &ADRInvUncert);
-  ABCD.Branch("BDRInvUncert_DRInv", &BDRInvUncert);
-  ABCD.Branch("C3bUncert_DRInv", &C3bDRInvUncert);
-  ABCD.Branch("D3bUncert_DRInv", &D3bDRInvUncert);
-  ABCD.Branch("C2bUncert_DRInv", &C2bDRInvUncert);
-  ABCD.Branch("D2bUncert_DRInv", &D2bDRInvUncert);
   ABCD.Branch("A_SL", &ASLCount);
   ABCD.Branch("B_SL", &BSLCount);
   ABCD.Branch("C3b_SL", &C3bSLCount);
@@ -1925,12 +1849,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
   ABCD.Branch("D3bWeighted_SL", &D3bSLCountWeighted);
   ABCD.Branch("C2bWeighted_SL", &C2bSLCountWeighted);
   ABCD.Branch("D2bWeighted_SL", &D2bSLCountWeighted);
-  ABCD.Branch("AUncert_SL", &ASLUncert);
-  ABCD.Branch("BSLUncert_SL", &BSLUncert);
-  ABCD.Branch("C3bUncert_SL", &C3bSLUncert);
-  ABCD.Branch("D3bUncert_SL", &D3bSLUncert);
-  ABCD.Branch("C2bUncert_SL", &C2bSLUncert);
-  ABCD.Branch("D2bUncert_SL", &D2bSLUncert);
   ABCD.Branch("A_SLsbin1", &ASLsbin1Count);
   ABCD.Branch("B_SLsbin1", &BSLsbin1Count);
   ABCD.Branch("C3b_SLsbin1", &C3bSLsbin1Count);
@@ -2078,9 +1996,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
   ABCD.Branch("kappa3b", &kappa3b);
   ABCD.Branch("kappa2b", &kappa2b);
   ABCD.Branch("kappatot", &kappatot);
-  ABCD.Branch("kappaUncert3b", &kappaUncert3b);
-  ABCD.Branch("kappaUncert2b", &kappaUncert2b);
-  ABCD.Branch("kappaUncerttot", &kappaUncerttot);
   ABCD.Fill();
 
   TTree cutFlow("cutFlow", "cutFlow");
