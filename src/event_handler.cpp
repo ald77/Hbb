@@ -1162,7 +1162,17 @@ void EventHandler::MakePlots(const std::string &outFileName){
   TH1D single_lepton_nm1_met("single_lepton_nm1_met", "N-1 MET;MET [GeV];Events/19.4 fb^{-1}/25", 40, 0.0, 1000.0);
   TH1D single_lepton_nm1_numJets("single_lepton_nm1_numJets", "N-1 Number of Jets;Number of Jets;Events/19.4 fb^{-1}", 16, -0.5, 15.5);
   TH1D single_lepton_nm1_minDeltaPhi("single_lepton_nm1_minDeltaPhi", "N-1 min. #Delta#phi;min. #Delta#phi;Events/19.4 fb^{-1}", 30, 0.0, 4.0*atan(1.0));
-  
+
+  TH1D sig_sb_nm1_thirdCSV("sig_sb_nm1_thirdCSV", "N-1 Third CSV;CSV;Events/19.4 fb^{-1}/0.04", 25, 0.0, 1.0);
+  TH1D sig_sb_nm1_fourthCSV("sig_sb_nm1_fourthCSV", "N-1 Fourth CSV;CSV;Events/19.4 fb^{-1}/0.04", 25, 0.0, 1.0);
+  TH1D sig_sb_nm1_avgHiggsMass("sig_sb_nm1_avgHiggsMass", "N-1 Avg. Higgs Mass;Avg. Higgs Mass [GeV];Events/19.4 fb^{-1}/10 GeV", 30, 0, 300.0);
+  TH1D sig_sb_nm1_higgsMassDiff("sig_sb_nm1_higgsMassDiff", "N-1 Higgs Mass Diff.;Higgs Mass Diff [GeV];Events/19.4 fb^{-1}/5 GeV", 20, 0, 100.0);
+  TH1D sig_sb_nm1_maxDeltaR("sig_sb_nm1_maxDeltaR", "N-1 Max #Delta R;Max #Delta R;Events/19.4 fb^{-1}/0.2", 25, 0.0, 5.0);
+  TH1D sig_sb_nm1_metSig("sig_sb_nm1_metSig", "N-1 MET Significance;MET Significance;Events/19.4 fb^{-1}/10", 30, 0.0, 300.0);
+  TH1D sig_sb_nm1_met("sig_sb_nm1_met", "N-1 MET;MET [GeV];Events/19.4 fb^{-1}/25", 40, 0.0, 1000.0);
+  TH1D sig_sb_nm1_numJets("sig_sb_nm1_numJets", "N-1 Number of Jets;Number of Jets;Events/19.4 fb^{-1}", 16, -0.5, 15.5);
+  TH1D sig_sb_nm1_minDeltaPhi("sig_sb_nm1_minDeltaPhi", "N-1 min. #Delta#phi;min. #Delta#phi;Events/19.4 fb^{-1}", 30, 0.0, 4.0*atan(1.0));
+
   Timer timer(GetTotalEntries());
   timer.Start();
   for(int i(0); i<GetTotalEntries(); ++i){
@@ -1269,7 +1279,7 @@ void EventHandler::MakePlots(const std::string &outFileName){
     const uint_least32_t failure_code(GetCutFailCode());
     uint_least32_t masked_fc(failure_code & ~kMETSig100 & ~kMETSig150);
     if((masked_fc & ~kNumJets) == kMETSig50) sbin1_4b_sb_nm1_numJets.Fill(GetNumGoodJets(),localWeight);
-    if((masked_fc & ~kMinDeltaPhi) == kMETSig50) sbin1_4b_sb_nm1_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),localWeight);
+    if((masked_fc & ~kMinDeltaPhi) == kMETSig50) sbin1_4b_sb_nm1_minDeltaPhi.Fill(GetMinDeltaPhiMET(UINT_MAX),localWeight);
     if((masked_fc & ~k3rdBTag & ~k4thBTag) == kMETSig50) sbin1_4b_sb_nm1_thirdCSV.Fill(GetHighestCSV(3),localWeight);
     if((masked_fc & ~k4thBTag) == kMETSig50) sbin1_4b_sb_nm1_fourthCSV.Fill(GetHighestCSV(4),localWeight);
     const std::pair<double,double> higgsMasses(GetHiggsMasses());
@@ -1282,7 +1292,7 @@ void EventHandler::MakePlots(const std::string &outFileName){
     masked_fc=(failure_code & ~kMETSig50 & ~kMETSig100 & ~kMETSig150);
     if(PassesSingleLeptonCut()){
       if((masked_fc & ~kNumJets) == kGood) single_lepton_nm1_numJets.Fill(GetNumGoodJets(),localWeight);
-      if((masked_fc & ~kMinDeltaPhi) == kGood) single_lepton_nm1_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),localWeight);
+      if((masked_fc & ~kMinDeltaPhi) == kGood) single_lepton_nm1_minDeltaPhi.Fill(GetMinDeltaPhiMET(UINT_MAX),localWeight);
       if((masked_fc & ~k3rdBTag & ~k4thBTag) == kGood) single_lepton_nm1_thirdCSV.Fill(GetHighestCSV(3),localWeight);
       if((masked_fc & ~k4thBTag) == kGood) single_lepton_nm1_fourthCSV.Fill(GetHighestCSV(4),localWeight);
       if((masked_fc & ~kHiggsMassDiff) == kGood) single_lepton_nm1_higgsMassDiff.Fill(fabs(higgsMasses.first-higgsMasses.second),localWeight);
@@ -1291,6 +1301,19 @@ void EventHandler::MakePlots(const std::string &outFileName){
       if((masked_fc & ~kMETSig30) == kGood) single_lepton_nm1_met.Fill(pfmets_et->at(0),localWeight);
       if((masked_fc & ~kMETSig30) == kGood) single_lepton_nm1_metSig.Fill(pfmets_fullSignif,localWeight);
     }
+
+    masked_fc = failure_code & ~(kMETSig150 | kMETSig100 | kMETSig50 | kHiggsAvgMass | kHiggsMassDiff | k4thBTag | k3rdBTag);
+    if(!(masked_fc & ~k3rdBTag)) sig_sb_nm1_thirdCSV.Fill(GetHighestCSV(3),localWeight);
+    if(!(masked_fc & ~k4thBTag)) sig_sb_nm1_fourthCSV.Fill(GetHighestCSV(4),localWeight);
+    if(!(masked_fc & ~kHiggsAvgMass)) sig_sb_nm1_avgHiggsMass.Fill(0.5*(higgsMasses.first+higgsMasses.second),localWeight);
+    if(!(masked_fc & ~kHiggsMassDiff)) sig_sb_nm1_higgsMassDiff.Fill(fabs(higgsMasses.first-higgsMasses.second),localWeight);
+    if(!(masked_fc & ~kDeltaR)) sig_sb_nm1_maxDeltaR.Fill(GetMaxDR(),localWeight);
+    if(!masked_fc){
+      sig_sb_nm1_met.Fill(pfmets_et->at(0),localWeight);
+      sig_sb_nm1_metSig.Fill(pfmets_fullSignif,localWeight);
+    }
+    if(!(masked_fc & ~kNumJets)) sig_sb_nm1_numJets.Fill(GetNumGoodJets(),localWeight);
+    if(!(masked_fc & ~kMinDeltaPhi)) sig_sb_nm1_minDeltaPhi.Fill(GetMinDeltaPhiMET(UINT_MAX),localWeight);
 
     if(PassesPVCut() && PassesMETCleaningCut() && PassesTriggerCut() && PassesNumJetsCut() && Passes2CSVTCut() && PassesJet2PtCut() && PassesMinDeltaPhiCut() && PassesLeptonVetoCut() && PassesIsoTrackVetoCut()){
 
@@ -1325,8 +1348,8 @@ void EventHandler::MakePlots(const std::string &outFileName){
           twoB_METOverSqrtHT_vs_METSig.Fill(pfmets_fullSignif, pfmets_et->at(0)/sqrt(GetHT()), localWeight);
           twoB_METOverSqrtHT_Over_METSig.Fill((pfmets_et->at(0)/sqrt(GetHT()))/pfmets_fullSignif, localWeight);
           twoB_MET.Fill(pfmets_et->at(0),localWeight);
-          twoB_MET_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_et->at(0),localWeight);
-          twoB_METSig_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_fullSignif,localWeight);
+          twoB_MET_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(UINT_MAX),pfmets_et->at(0),localWeight);
+          twoB_METSig_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(UINT_MAX),pfmets_fullSignif,localWeight);
           twoB_METToMETSigRatio_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_et->at(0)/pfmets_fullSignif,localWeight);
           twoB_MET_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_et->at(0),localWeight);
           twoB_METSig_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_fullSignif,localWeight);
@@ -1357,8 +1380,8 @@ void EventHandler::MakePlots(const std::string &outFileName){
           lightHiggs_nm1_met.Fill(pfmets_et->at(0),localWeight);
           lightHiggs_METOverSqrtHT_Over_METSig.Fill((pfmets_et->at(0)/sqrt(GetHT()))/pfmets_fullSignif, localWeight);
           lightHiggs_MET.Fill(pfmets_et->at(0),localWeight);
-          lightHiggs_MET_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_et->at(0),localWeight);
-          lightHiggs_METSig_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_fullSignif,localWeight);
+          lightHiggs_MET_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(UINT_MAX),pfmets_et->at(0),localWeight);
+          lightHiggs_METSig_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(UINT_MAX),pfmets_fullSignif,localWeight);
           lightHiggs_METToMETSigRatio_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_et->at(0)/pfmets_fullSignif,localWeight);
           lightHiggs_MET_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_et->at(0),localWeight);
           lightHiggs_METSig_vs_numLowPtPfCands.Fill(static_cast<double>(GetNumLowPtPfCands(20.0)),pfmets_fullSignif,localWeight);
@@ -1390,8 +1413,8 @@ void EventHandler::MakePlots(const std::string &outFileName){
         xx_nm1_metSig.Fill(pfmets_fullSignif,localWeight);
         xx_nm1_met.Fill(pfmets_et->at(0),localWeight);
         xx_MET.Fill(pfmets_et->at(0),localWeight);
-        xx_MET_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_et->at(0),localWeight);
-        xx_METSig_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(3),pfmets_fullSignif,localWeight);
+        xx_MET_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(UINT_MAX),pfmets_et->at(0),localWeight);
+        xx_METSig_vs_minDeltaPhi.Fill(GetMinDeltaPhiMET(UINT_MAX),pfmets_fullSignif,localWeight);
       }
     }
 
