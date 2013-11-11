@@ -2443,7 +2443,7 @@ void EventHandler::Skim(const std::string &skimFileName,
   double startCountWeighted(0), PVCountWeighted(0), METCleaningCountWeighted(0), JSONCountWeighted(0), TriggerCountWeighted(0), numJetsCountWeighted(0), CSVTCountWeighted(0), jet2PtCountWeighted(0), minDeltaPhiCountWeighted(0), leptonVetoCountWeighted(0), isoTrackVetoCountWeighted(0), bTagCountWeighted(0), higgsCountWeighted(0), DRCountWeighted(0), METSig30CountWeighted(0), METSig50CountWeighted(0), METSig100CountWeighted(0), METSig150CountWeighted(0);
 
   std::vector<float> dataDist(pu::RunsThrough203002, pu::RunsThrough203002+60);
-  std::vector<float> MCDist(pu::Summer2012, pu::Summer2012+60);//QQQ this needs to change later for general pileup scenario
+  std::vector<float> MCDist(pu::Summer2012_S10, pu::Summer2012_S10+60);//QQQ this needs to change later for general pileup scenario
   reweight::LumiReWeighting lumiWeights(MCDist, dataDist);
 
   Timer timer(GetTotalEntries());
