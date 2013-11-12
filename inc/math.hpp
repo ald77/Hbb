@@ -4,7 +4,6 @@
 #include <cmath>
 #include <iterator>
 #include <algorithm>
-#include <iostream>
 
 namespace Math{
   const double pi(4.0*atan(1.0));
@@ -15,6 +14,7 @@ namespace Math{
 
   template<typename T>
   typename T::value_type Sum(T begin, T end){
+    //Performs Kahan summation (more precise than naive summation for long lists of numbers)
     typename T::value_type sum(0.0);
     volatile typename T::value_type correction(0.0);
     for(; begin!=end; ++begin){
@@ -52,7 +52,6 @@ namespace Math{
     std::sort(begin, end);
     const typename T::difference_type separation(std::distance(begin, end));
     if(separation<=1){
-      std::cout << "Inner: " << separation << " " << *begin << " " << *end << std::endl;
       return 0.5*((*begin)+(*end));
     }else{
       T inner_begin(begin), inner_end(begin);
@@ -71,7 +70,6 @@ namespace Math{
 	++inner_begin;
 	++inner_end;
       }
-      std::cout << "Inner: " << separation << " " << *min_begin << " " << *min_end << std::endl;
       return HalfSampleMode(min_begin, min_end);
     }
   }
