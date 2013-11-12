@@ -2390,34 +2390,38 @@ double EventHandler::GetSbinWeight() const{
 }
 
 double EventHandler::GetTopPtWeight() const{
-  double topPt(-1.0);
+  double topweight(-1.0);
 
-  //only for use with ttbar
+  //official recipe from
+  // https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopPtReweighting
   //(2 string comparisons for every event is not so good for performance, but oh well)
   if (sampleName.find("TTJets")!=std::string::npos || sampleName.find("TT_")!=std::string::npos) {
-
-    //code from Darren converted to cfA
-    for ( unsigned int i=0; i< mc_doc_id->size(); i++ ) {
+    double topPt(-1);
+    double topbarPt(-1);
+    for(unsigned int i(0); i<mc_doc_id->size(); ++i){
       // look for the *top* (not antitop) pT
-      if ( mc_doc_id->at(i)==6 ) { topPt = mc_doc_pt->at(i); break; }
+      if(mc_doc_id->at(i)==6) topPt = mc_doc_pt->at(i);
+      if(mc_doc_id->at(i)==-6) topbarPt = mc_doc_pt->at(i);
+      if(topPt>=0 && topbarPt>=0) break; //check to see if we're done
     }
 
-    if (topPt<0) return 1;
-    // note -- we should remove this, now that it is demonstrated that powheg and mc@nlo behave the same as MG
-    if ( sampleName.find("madgraph")!=std::string::npos) { //only return weight for madgraph
+    //SF(x)=exp(a+bx)
+    const double a(0.156); //combined 8 TeV values
+    const double b(-0.00137);
 
-      const  double p0 = 1.18246e+00;
-      const  double p1 = 4.63312e+02;
-      const  double p2 = 2.10061e-06;
+    //important choice -- I've decided to use the 400 GeV value for values above 400 GeV
+    //an alternative would be to just blindly use the formula
+    if (topPt >400) topPt=400;
+    if (topbarPt >400) topbarPt=400;
 
-      double x=topPt;
-      if ( x>p1 ) x = p1; //use flat factor above 463 GeV
-      double result = p0 + p2 * x * ( x - 2 * p1 );
-      return double(result);
-    }
+    const double SFt(exp(a + b*topPt));
+    const double SFtbar(exp(a + b*topbarPt));
+
+    topweight = sqrt( SFt * SFtbar );
   }
 
-  return 1;
+  if(topweight<0) topweight=1;
+  return topweight;
 }
 
 void EventHandler::Skim(const std::string &skimFileName,
@@ -2439,7 +2443,7 @@ void EventHandler::Skim(const std::string &skimFileName,
   double startCountWeighted(0), PVCountWeighted(0), METCleaningCountWeighted(0), JSONCountWeighted(0), TriggerCountWeighted(0), numJetsCountWeighted(0), CSVTCountWeighted(0), jet2PtCountWeighted(0), minDeltaPhiCountWeighted(0), leptonVetoCountWeighted(0), isoTrackVetoCountWeighted(0), bTagCountWeighted(0), higgsCountWeighted(0), DRCountWeighted(0), METSig30CountWeighted(0), METSig50CountWeighted(0), METSig100CountWeighted(0), METSig150CountWeighted(0);
 
   std::vector<float> dataDist(pu::RunsThrough203002, pu::RunsThrough203002+60);
-  std::vector<float> MCDist(pu::Summer2012, pu::Summer2012+60);//QQQ this needs to change later for general pileup scenario
+  std::vector<float> MCDist(pu::Summer2012_S10, pu::Summer2012_S10+60);//QQQ this needs to change later for general pileup scenario
   reweight::LumiReWeighting lumiWeights(MCDist, dataDist);
 
   Timer timer(GetTotalEntries());
