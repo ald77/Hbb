@@ -70,6 +70,7 @@ EventHandler::EventHandler(const std::string &fileName, const bool isList, const
     chainB.SetBranchStatus("els_*",0);
     chainB.SetBranchStatus("Nmets*",0);
     chainB.SetBranchStatus("mets*",0);
+    chainB.SetBranchStatus("mets_AK5_et",1);
     chainB.SetBranchStatus("Njets_AK5PFclean",0);
     chainB.SetBranchStatus("jets_AK5PFclean_*",0);
     chainB.SetBranchStatus("Nmc*",0);
@@ -188,7 +189,8 @@ bool EventHandler::PassesMETCleaningCut() const{
   for(unsigned int jet(0); jet<jets_AK5PF_pt->size(); ++jet){
     if(isProblemJet(jet)) return false;
   }
-  if(pfTypeImets_et->at(0)>2.0*pfmets_et->at(0)) return false;
+  //if(pfTypeImets_et->at(0)>2.0*pfmets_et->at(0)) return false;
+  if(pfTypeImets_et->at(0)>2.0*mets_AK5_et->at(0)) return false; // updated 11/14 (JB-F)
   return cschalofilter_decision
     && (hbhefilter_decision || sampleName.find("TChihh")!=std::string::npos || sampleName.find("HbbHbb")!=std::string::npos)
     && hcallaserfilter_decision 
