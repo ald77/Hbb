@@ -1,3 +1,4 @@
+#include <utility>
 #include "b_jet.hpp"
 #include "TLorentzVector.h"
 
@@ -29,11 +30,15 @@ bool BJet::operator!=(const BJet &jet) const{
 }
 
 bool BJet::operator<(const BJet &jet) const{
-  return bTag<jet.bTag || (bTag==jet.bTag && vec.Pt()<jet.vec.Pt());
+  std::pair<double, double> this_one(bTag, -vec.Pt());
+  std::pair<double, double> that_one(jet.bTag, -jet.vec.Pt());
+  return this_one<that_one;
 }
 
 bool BJet::operator>(const BJet &jet) const{
-  return bTag>jet.bTag || (bTag==jet.bTag && vec.Pt()>jet.vec.Pt());
+  std::pair<double, double> this_one(bTag, -vec.Pt());
+  std::pair<double, double> that_one(jet.bTag, -jet.vec.Pt());
+  return this_one>that_one;
 }
 
 bool BJet::operator<=(const BJet &jet) const{
