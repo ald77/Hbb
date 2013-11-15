@@ -2392,6 +2392,37 @@ double EventHandler::GetSbinWeight() const{
 }
 
 double EventHandler::GetTopPtWeight() const{
+  double topPt(-1.0);
+
+  //only for use with ttbar
+  //(2 string comparisons for every event is not so good for performance, but oh well)
+  if (sampleName.find("TTJets")!=std::string::npos || sampleName.find("TT_")!=std::string::npos) {
+
+    //code from Darren converted to cfA
+    for ( unsigned int i=0; i< mc_doc_id->size(); i++ ) {
+      // look for the *top* (not antitop) pT
+      if ( mc_doc_id->at(i)==6 ) { topPt = mc_doc_pt->at(i); break; }
+    }
+
+    if (topPt<0) return 1;
+    // note -- we should remove this, now that it is demonstrated that powheg and mc@nlo behave the same as MG
+    if ( sampleName.find("madgraph")!=std::string::npos) { //only return weight for madgraph
+
+      const  double p0 = 1.18246e+00;
+      const  double p1 = 4.63312e+02;
+      const  double p2 = 2.10061e-06;
+
+      double x=topPt;
+      if ( x>p1 ) x = p1; //use flat factor above 463 GeV
+      double result = p0 + p2 * x * ( x - 2 * p1 );
+      return double(result);
+    }
+  }
+
+  return 1;
+}
+
+double EventHandler::GetTopPtWeightOfficial() const{ // New 11/07
   double topweight(-1.0);
 
   //official recipe from

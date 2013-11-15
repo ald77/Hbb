@@ -154,6 +154,7 @@ private:
 
   double GetSbinWeight() const;
   double GetTopPtWeight() const;
+  double GetTopPtWeightOfficial() const;
 
   double GetMaxDR() const;
   double GetHT(const bool=true, const bool=false) const;
