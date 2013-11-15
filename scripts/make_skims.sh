@@ -6,7 +6,7 @@
 ./scripts/skim_file.exe -i TTJets_HadronicMGDecays_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A_ext-v1_AODSIM_UCSB1880_v71 &> logs/make_skim_1880.log &
 ./scripts/skim_file.exe -i TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7C-v1_AODSIM_UCSB1884_v71 &> logs/make_skim_1884.log &
 ./scripts/skim_file.exe -i TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V19_ext2-v1_AODSIM_UCSB1959_v71 &> logs/make_skim_1959.log &
-./scripts/skim_file.exe -i TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V19_ext1-v1_AODSIM_UCSB1962_v71 &> logs/make_skim_1959.log &
+./scripts/skim_file.exe -i TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V19_ext1-v1_AODSIM_UCSB1962_v71 &> logs/make_skim_1962.log &
 
 ./scripts/skim_file.exe -i TTWJets_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1857_v71 &> logs/make_skim_1857.log &
 ./scripts/skim_file.exe -i TTZJets_8TeV-madgraph_v2_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1856_v71 &> logs/make_skim_1856.log &
