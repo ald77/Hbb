@@ -1175,6 +1175,27 @@ void EventHandler::MakePlots(const std::string &outFileName){
   TH1D sig_sb_nm1_numJets("sig_sb_nm1_numJets", "N-1 Number of Jets;Number of Jets;Events/19.4 fb^{-1}", 16, -0.5, 15.5);
   TH1D sig_sb_nm1_minDeltaPhi("sig_sb_nm1_minDeltaPhi", "N-1 min. #Delta#phi;min. #Delta#phi;Events/19.4 fb^{-1}", 30, 0.0, 4.0*atan(1.0));
 
+
+  // Define reduced tree and all variables to save
+  file.cd();
+  TTree reducedTree("reducedTree","reducedTree");
+  bool passesPVCut(false), passesJet2PtCut(false), passes2CSVTCut(false), passesMETSig30Cut(false),
+       passesMETCleaningCut(false), passesTriggerCut(false), passesNumJetsCut(false),
+       passesMinDeltaPhiCut(false), passesLeptonVetoCut(false), passesIsoTrackVetoCut(false), passesDRCut(false);
+  reducedTree.Branch("passesPVCut",&passesPVCut,"passesPVCut/O");
+  reducedTree.Branch("passesJet2PtCut",&passesJet2PtCut,"passesJet2PtCut/O");
+  reducedTree.Branch("passes2CSVTCut",&passes2CSVTCut,"passes2CSVTCut/O");
+  reducedTree.Branch("passesMETSig30Cut",&passesMETSig30Cut,"passesMETSig30Cut/O");
+  reducedTree.Branch("passesMETCleaningCut",&passesMETCleaningCut,"passesMETCleaningCut/O");
+  reducedTree.Branch("passesTriggerCut",&passesTriggerCut,"passesTriggerCut/O");
+  reducedTree.Branch("passesNumJetsCut",&passesNumJetsCut,"passesNumJetsCut/O");
+  reducedTree.Branch("passesMinDeltaPhiCut",&passesMinDeltaPhiCut,"passesMinDeltaPhiCut/O");
+  reducedTree.Branch("passesLeptonVetoCut",&passesLeptonVetoCut,"passesLeptonVetoCut/O");
+  reducedTree.Branch("passesIsoTrackVetoCut",&passesIsoTrackVetoCut,"passesIsoTrackVetoCut/O");
+  reducedTree.Branch("passesDRCut",&passesDRCut,"passesDRCut/O");
+  
+  // Now we're ready to go
+  
   Timer timer(GetTotalEntries());
   timer.Start();
   for(int i(0); i<GetTotalEntries(); ++i){
@@ -1200,7 +1221,23 @@ void EventHandler::MakePlots(const std::string &outFileName){
     if(!returnVal.second) continue;
     ++startCount;
     startCountWeighted+=localWeight;
-
+	
+	// Saving our cuts for the reduced tree
+	passesPVCut = PassesPVCut() ? true : false;
+	passesJet2PtCut = PassesJet2PtCut() ? true : false;
+	passes2CSVTCut = Passes2CSVTCut() ? true : false;
+	passesMETSig30Cut = PassesMETSig30Cut() ? true : false;
+	passesMETCleaningCut = PassesMETCleaningCut() ? true : false;
+	passesTriggerCut = PassesTriggerCut() ? true : false;
+	passesNumJetsCut = PassesNumJetsCut() ? true : false;
+	passesMinDeltaPhiCut = PassesMinDeltaPhiCut() ? true : false;
+	passesLeptonVetoCut = PassesLeptonVetoCut() ? true : false;
+	passesIsoTrackVetoCut = PassesIsoTrackVetoCut() ? true : false;
+	passesDRCut = PassesDRCut() ? true : false;
+	reducedTree.Fill(); 
+	// As it stands, we can't fill any more branches beyond this point .
+	// We might want a separate function for reduced tree making, outside of MakePlots.
+	
     if(PassesPVCut() && PassesJet2PtCut() && Passes2CSVTCut() && PassesMETSig30Cut() && PassesMETCleaningCut() && PassesTriggerCut() && PassesNumJetsCut() && PassesMinDeltaPhiCut() && PassesLeptonVetoCut() && PassesIsoTrackVetoCut() && PassesDRCut()){
       double npv(-1.0);
       for(unsigned int bc(0); bc<PU_bunchCrossing->size(); ++bc){
@@ -1807,7 +1844,6 @@ void EventHandler::MakePlots(const std::string &outFileName){
     ++METSig150Count;
     METSig150CountWeighted+=localWeight;
   }
-
   for(int i(1); i<=xx_metSig_A.GetNbinsX(); ++i){
     xx_metSig_A.SetBinContent(i,xx_metSig_A.GetBinContent(i)*10.0/xx_metSig_A.GetBinWidth(i));
     xx_metSig_B.SetBinContent(i,xx_metSig_B.GetBinContent(i)*10.0/xx_metSig_B.GetBinWidth(i));
