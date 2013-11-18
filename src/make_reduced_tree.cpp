@@ -1,13 +1,10 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
-#include "TH1.h"
-#include "event_handler.hpp"
-#include "cfa_plotter.hpp"
+#include "reduced_tree_maker.hpp"
 #include "weights.hpp"
 
 int main(int argc, char *argv[]){
-  TH1::SetDefaultSumw2(true);
   std::string inFilename("");
   bool iscfA(false);
   int c(0);
@@ -45,7 +42,6 @@ int main(int argc, char *argv[]){
   }
 
   WeightCalculator w(19399);
-  CfAPlotter cp(inFilename, false, w.GetWeight(inFilename));
-  //EventHandler eH(inFilename, true, w.GetWeight("/cms2r0/cfA/TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7C-v1_AODSIM_UCSB1884_v71/cfA_TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7C-v1_AODSIM_UCSB1884_v71_f1_1_cRU.root"));
-  cp.MakePlots(outFilename);
+  ReducedTreeMaker rtm(inFilename, false, w.GetWeight(inFilename));
+  rtm.MakeReducedTree(outFilename);
 }

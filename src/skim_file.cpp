@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <unistd.h>
+#include "cfa_skimmer.hpp"
 #include "event_handler.hpp"
 #include "weights.hpp"
 
@@ -85,6 +86,6 @@ int main(int argc, char *argv[]){
   }
 
   WeightCalculator w(19399);
-  EventHandler eH(inFilename, false, w.GetWeight(outFilename));
-  eH.Skim(outFilename, chargino_mass, LSP_mass);
+  CfASkimmer cs(inFilename, false, w.GetWeight(outFilename));
+  cs.Skim(outFilename, chargino_mass, LSP_mass);
 }

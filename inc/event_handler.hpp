@@ -18,8 +18,6 @@
 class EventHandler : public cfA{
 public:
   EventHandler(const std::string &, const bool, const double=1.0, const bool=false);
-  void Skim(const std::string &, const int=-1, const int=-1);
-  void MakePlots(const std::string &);
 
   void SetScaleFactor(const double);
   void SetScaleFactor(const double, const double, const int);
@@ -47,7 +45,7 @@ public:
     kTChiMassCut = 1u<<18
   };
 
-private:
+protected:
   mutable std::pair<std::pair<TLorentzVector, TLorentzVector>, std::pair<TLorentzVector, TLorentzVector> > higgsBJetPairing;//caching for efficiency
   mutable std::vector<BJet> sortedBJetCache;//caching for efficiency
   mutable bool higgsPairingUpToDate, bJetsUpToDate;//cached value correct
