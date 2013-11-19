@@ -5,7 +5,7 @@
 using namespace std;
 
 Cutflow::Cutflow(const vector<TFile*> files) : 
-  numCutsTotal_(13),
+  numCutsTotal_(14),
   unscaled_(numCutsTotal_,0),
   scaled_(numCutsTotal_,0.0),
   error_sq_(numCutsTotal_,0.0),
@@ -19,7 +19,7 @@ Cutflow::Cutflow(const vector<TFile*> files) :
 }
 
 Cutflow::Cutflow(const string in_filename, bool filelist)  : 
-  numCutsTotal_(13),
+  numCutsTotal_(14),
   unscaled_(numCutsTotal_,0),
   scaled_(numCutsTotal_,0.0),
   error_sq_(numCutsTotal_,0.0),
@@ -50,34 +50,22 @@ Cutflow::Cutflow(const string in_filename, bool filelist)  :
 
 
 void Cutflow::PrepareVectors() {
-  /*char *cutNames[numCutsTotal_]  = {"Start", // 0 (cutflow index)
-    "Primary Vertex", // 1
-    "Jet 2 pT > 50 GeV", // 2
-    "METsig>30", // 3
-    "MET Cleaning", // 4
-    "Trigger", // 5
-    "nJets = 4 || 5", // 6
-    "Min. Delta Phi >0.3", // 7
-    "Lepton Veto", // 8
-    "Isolated Track Veto", // 9
-    "4 b-Jets", // 10
-    "Higgs mass window cuts", // 11
-    "Max. delta R<2.2"}; // 12*/
   cutNames_.push_back("Start"); // 0 (cutflow index)
   cutNames_.push_back("PV"); // 1
   cutNames_.push_back("$\\pt_{j_2}>50$ GeV"); // 2
-  cutNames_.push_back("Cleaning"); // 3
+  cutNames_.push_back("$\\mathrm{CSV}_{2}>0.898$"); // 3
   cutNames_.push_back("$\\metsig>30$"); // 4
-  cutNames_.push_back("Presel."); // 5 (trigger)
-  cutNames_.push_back("nJets $= 4 || 5$"); // 6
-  cutNames_.push_back("$\\mdp>0.3$"); // 7
-  cutNames_.push_back("Lepton Veto"); // 8
-  cutNames_.push_back("IsoTk. Veto"); // 9
-  cutNames_.push_back("4 b-Jets"); // 10
-  cutNames_.push_back("$\\left<m_{bb}\\right>,\\Delta m_{bb}$"); // 11
-  cutNames_.push_back("$\\mdR<2.2$"); // 12
-
+  cutNames_.push_back("$\\MET$ Cleaning"); // 5
+  cutNames_.push_back("Presel."); // 6 (trigger)
+  cutNames_.push_back("nJets $= 4 || 5$"); // 7
+  cutNames_.push_back("$\\mdp>0.3$"); // 8
+  cutNames_.push_back("Lepton Veto"); // 9
+  cutNames_.push_back("IsoTk. Veto"); // 10
+  cutNames_.push_back("4 b-Jets"); // 11
+  cutNames_.push_back("$\\left<m_{bb}\\right>,\\Delta m_{bb}$"); // 12
+  cutNames_.push_back("$\\mdR<2.2$"); // 13
 }
+
 void Cutflow::LoadValues() {
   fChain_.SetBranchAddress("startCount", &startCount_, &b_startCount_);
   fChain_.SetBranchAddress("CSVTCount", &CSVTCount_, &b_CSVTCount_);
@@ -119,29 +107,31 @@ void Cutflow::LoadValues() {
     unscaled_[0]+=startCount_;
     unscaled_[1]+=PVCount_;
     unscaled_[2]+=jet2PtCount_;
-    unscaled_[3]+=METSig30Count_;
-    unscaled_[4]+=METCleaningCount_;
-    unscaled_[5]+=TriggerCount_;
-    unscaled_[6]+=numJetsCount_;
-    unscaled_[7]+=minDeltaPhiCount_;
-    unscaled_[8]+=leptonVetoCount_;
-    unscaled_[9]+=isoTrackVetoCount_;
-    unscaled_[10]+=bTagCount_;
-    unscaled_[11]+=higgsCount_;
-    unscaled_[12]+=DRCount_;
+    unscaled_[3]+=CSVTCount_;
+    unscaled_[4]+=METSig30Count_;
+    unscaled_[5]+=METCleaningCount_;
+    unscaled_[6]+=TriggerCount_;
+    unscaled_[7]+=numJetsCount_;
+    unscaled_[8]+=minDeltaPhiCount_;
+    unscaled_[9]+=leptonVetoCount_;
+    unscaled_[10]+=isoTrackVetoCount_;
+    unscaled_[11]+=bTagCount_;
+    unscaled_[12]+=higgsCount_;
+    unscaled_[13]+=DRCount_;
     scaled_[0]+=startCountWeighted_;
     scaled_[1]+=PVCountWeighted_;
     scaled_[2]+=jet2PtCountWeighted_;
-    scaled_[3]+=METSig30CountWeighted_;
-    scaled_[4]+=METCleaningCountWeighted_;
-    scaled_[5]+=TriggerCountWeighted_;
-    scaled_[6]+=numJetsCountWeighted_;
-    scaled_[7]+=minDeltaPhiCountWeighted_;
-    scaled_[8]+=leptonVetoCountWeighted_;
-    scaled_[9]+=isoTrackVetoCountWeighted_;
-    scaled_[10]+=bTagCountWeighted_;
-    scaled_[11]+=higgsCountWeighted_;
-    scaled_[12]+=DRCountWeighted_;
+    scaled_[3]+=CSVTCountWeighted_;
+    scaled_[4]+=METSig30CountWeighted_;
+    scaled_[5]+=METCleaningCountWeighted_;
+    scaled_[6]+=TriggerCountWeighted_;
+    scaled_[7]+=numJetsCountWeighted_;
+    scaled_[8]+=minDeltaPhiCountWeighted_;
+    scaled_[9]+=leptonVetoCountWeighted_;
+    scaled_[10]+=isoTrackVetoCountWeighted_;
+    scaled_[11]+=bTagCountWeighted_;
+    scaled_[12]+=higgsCountWeighted_;
+    scaled_[13]+=DRCountWeighted_;
     for (unsigned int e = 0; e < error_sq_.size(); e++) {
       if (unscaled_[e]>0) error_sq_[e]+=(scaled_[e]*scaled_[e])/(double)unscaled_[e];
     }

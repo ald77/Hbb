@@ -43,7 +43,7 @@ void MakeCompositionTable() { // Creates an AN-ready table of all the SM backgro
   ofile << " \\\\ \\hline" << endl;
     
   uint nCuts = categories[0].first->numCutsTotal_;
-  for (uint n(5);n<nCuts;n++) { // loop over cuts
+  for (uint n(4);n<nCuts;n++) { // loop over cuts
     ofile << categories[0].first->cutNames_[n].c_str();
     for (uint cat(0);cat<categories.size();cat++) { // loop over samples
       int oomv = (int)floor(log10(categories[cat].first->scaled_[n]));
@@ -99,7 +99,7 @@ void MakeSumTable() { // Creates an AN-ready table comparing the total SM backgr
   ofile << " \\\\ \\hline" << endl;
     
   uint nCuts = categories_sum[0].first->numCutsTotal_;
-  for (uint n(5);n<nCuts;n++) { // loop over cuts
+  for (uint n(4);n<nCuts;n++) { // loop over cuts
     ofile << categories_sum[0].first->cutNames_[n].c_str();
     for (uint cat(0);cat<categories_sum.size();cat++) { // loop over samples
       int oomv = (int)floor(log10(categories_sum[cat].first->scaled_[n]));
@@ -154,7 +154,7 @@ void MakeSUSYTable() { // Creates an AN-ready table of select signal mass points
   ofile << " \\\\ \\hline" << endl;
     
   uint nCuts = categories_susy[0].first->numCutsTotal_;
-  for (uint n(5);n<nCuts;n++) { // loop over cuts
+  for (uint n(4);n<nCuts;n++) { // loop over cuts
     ofile << categories_susy[0].first->cutNames_[n].c_str();
     for (uint cat(0);cat<categories_susy.size();cat++) { // loop over samples
       int oomv = (int)floor(log10(categories_susy[cat].first->scaled_[n]));
@@ -183,13 +183,19 @@ void MakeSUSYTable() { // Creates an AN-ready table of select signal mass points
     ofile << " \\\\" << endl;
   } // loop over cuts
 
+  // Table footer
+  ofile << "\\hline" << endl;
+  ofile << "\\hline" << endl;
+  ofile << "\\end{tabular}" << endl;
+  ofile << "\\end{table}" << endl;
+  
 }
 
 int main(int argc, char* argv[]) {
   
   // Option 1: print the cutflow from vectors of root files
   vector<TFile*> ttbar, qcd, wt, other, znn, SM, data;
-  vector<TFile*> m200, m300, m400;
+  vector<TFile*> m200, m250, m300, m350, m400, m450;
 
   ttbar.push_back(new TFile("raw_plots_and_values/TTJets_FullLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7C-v2_AODSIM_UCSB1883_v71_SyncSkim.root","read"));
   ttbar.push_back(new TFile("raw_plots_and_values/TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7C-v1_AODSIM_UCSB1884_v71_SyncSkim.root","read"));
@@ -243,10 +249,13 @@ int main(int argc, char* argv[]) {
   data.push_back(new TFile("raw_plots_and_values/MET_Run2012D-PromptReco-v1_AOD_UCSB1870_v71_SyncSkim.root","read"));    
   // buggy! other.push_back(new TFile("raw_plots_and_values/ZH","read"));       
     
-  m200.push_back(new TFile("raw_plots_and_values/SMS-TChiHH_2b2b_2J_mChargino-200_mLSP-1_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1872_v71_SyncSkim.root","read"));
-  m300.push_back(new TFile("raw_plots_and_values/SMS-TChiHH_2b2b_2J_mChargino-300_mLSP-1_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1872_v71_SyncSkim.root","read"));
+  //m200.push_back(new TFile("raw_plots_and_values/SMS-TChiHH_2b2b_2J_mChargino-200_mLSP-1_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1872_v71_SyncSkim.root","read"));
+  m250.push_back(new TFile("raw_plots_and_values/SMS-TChiHH_2b2b_2J_mChargino-250_mLSP-1_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1872_v71_SyncSkim.root","read"));
+  //m300.push_back(new TFile("raw_plots_and_values/SMS-TChiHH_2b2b_2J_mChargino-300_mLSP-1_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1872_v71_SyncSkim.root","read"));
+  //m350.push_back(new TFile("raw_plots_and_values/SMS-TChiHH_2b2b_2J_mChargino-350_mLSP-1_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1871_v71_SyncSkim.root","read"));
   m400.push_back(new TFile("raw_plots_and_values/SMS-TChiHH_2b2b_2J_mChargino-400_mLSP-1_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1871_v71_SyncSkim.root","read"));
-    
+  //m450.push_back(new TFile("raw_plots_and_values/SMS-TChiHH_2b2b_2J_mChargino-450_mLSP-1_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1871_v71_SyncSkim.root","read"));    
+
   Cutflow* ttbar_cutflow = new Cutflow(ttbar);
   //ttbar_cutflow->PrintCSV();
   Cutflow* qcd_cutflow = new Cutflow(qcd);
@@ -262,12 +271,12 @@ int main(int argc, char* argv[]) {
   Cutflow* data_cutflow = new Cutflow(data);
   //data_cutflow->PrintCSV();
     
-  Cutflow* m200_cutflow = new Cutflow(m200);
-  //m200_cutflow->PrintCSV();
-  Cutflow* m300_cutflow = new Cutflow(m300);
-  //m300_cutflow->PrintCSV();
+  //Cutflow* m200_cutflow = new Cutflow(m200);
+  Cutflow* m250_cutflow = new Cutflow(m250);
+  //Cutflow* m300_cutflow = new Cutflow(m300);
+  //Cutflow* m350_cutflow = new Cutflow(m350);
   Cutflow* m400_cutflow = new Cutflow(m400);
-  //m400_cutflow->PrintCSV();
+  //Cutflow* m450_cutflow = new Cutflow(m450);
     
   // Option 2: use a list of files specified by the 'i' flag
   char in_filename[1024]="";
@@ -304,8 +313,8 @@ int main(int argc, char* argv[]) {
   categories_sum.push_back(make_pair(SM_cutflow,"SM total"));
   categories_sum.push_back(make_pair(data_cutflow,"Data"));
   
-  categories_susy.push_back(make_pair(m200_cutflow,"$m_{\\chi}=200$ GeV"));
-  categories_susy.push_back(make_pair(m300_cutflow,"$m_{\\chi}=300$ GeV"));
+  categories_susy.push_back(make_pair(m250_cutflow,"$m_{\\chi}=250$ GeV"));
+  //categories_susy.push_back(make_pair(m300_cutflow,"$m_{\\chi}=300$ GeV"));
   categories_susy.push_back(make_pair(m400_cutflow,"$m_{\\chi}=400$ GeV"));
   
   ofile.open ("default_tables.tex"); 
