@@ -263,7 +263,7 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
   TH1D jet_parton_Id_CSV3("jet_parton_Id_CSV3",";jets_AK5PF_partonId;Jets",5,0.5,5.5);
   TH1D jet_parton_Id_CSV4("jet_parton_Id_CSV4",";jets_AK5PF_partonId;Jets",5,0.5,5.5);
   const int n_Ids(5);
-  char *partonFlavour_names[n_Ids] = {"X","lf","c","b","g"};
+  char partonFlavour_names[n_Ids][32] = {"X","lf","c","b","g"};
   for (int i=1;i<=n_Ids;i++) {
     jet_parton_Id_CSV1.GetXaxis()->SetBinLabel(i,partonFlavour_names[i-1]);
     jet_parton_Id_CSV2.GetXaxis()->SetBinLabel(i,partonFlavour_names[i-1]);
