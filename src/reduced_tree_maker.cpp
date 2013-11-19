@@ -1,5 +1,6 @@
 #include "reduced_tree_maker.hpp"
 #include <string>
+#include <set>
 #include "timer.hpp"
 #include "event_handler.hpp"
 
