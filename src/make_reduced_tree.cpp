@@ -21,7 +21,7 @@ int main(int argc, char *argv[]){
   
   std::string outFilename("");
   if(iscfA){
-    outFilename="raw_plots_and_values/"+inFilename+".root";
+    outFilename="reduced_trees/"+inFilename+".root";
     inFilename="/net/cms2/cms2r0/cfA/"+inFilename+"/cfA_"+inFilename+"*.root";
   }else{
     std::string baseName(inFilename);
@@ -37,7 +37,7 @@ int main(int argc, char *argv[]){
         baseName.append("file_name_ended_with_slash");
       }
     }
-    outFilename="raw_plots_and_values/"+baseName+".root";
+    outFilename="reduced_trees/"+baseName+".root";
     std::cout << inFilename << "\n" << baseName << "\n" << outFilename << "\n";
   }
 
