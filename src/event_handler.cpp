@@ -733,8 +733,7 @@ void EventHandler::GetSortedBJets() const{
     sortedBJetCache.clear();
     for(unsigned int i(0); i<jets_AK5PF_pt->size(); ++i){
       if(isGoodJet(i)){
-        sortedBJetCache.push_back(BJet(TLorentzVector(jets_AK5PF_px->at(i),jets_AK5PF_py->at(i),jets_AK5PF_pz->at(i),jets_AK5PF_energy->at(i)),jets_AK5PF_btag_secVertexCombined->at(i))) \
-          ;
+        sortedBJetCache.push_back(BJet(TLorentzVector(jets_AK5PF_px->at(i),jets_AK5PF_py->at(i),jets_AK5PF_pz->at(i),jets_AK5PF_energy->at(i)),jets_AK5PF_btag_secVertexCombined->at(i),i));
       }
     }
     std::sort(sortedBJetCache.begin(),sortedBJetCache.end(), std::greater<BJet>());
@@ -779,6 +778,14 @@ double EventHandler::GetHighestCSV(unsigned int pos) const{
   }else{
     return sortedBJetCache.at(pos).GetBTag();
   }
+}
+
+int EventHandler::GetPartonIdBin(float partonId) const{
+	if (fabs(partonId)>=1.&&fabs(partonId)<=3.) return 2;
+	else if (fabs(partonId)==4.) return 3;
+	else if (fabs(partonId)==5.) return 4;
+	else if (fabs(partonId)==21.) return 5;
+	else return 1;
 }
 
 bool EventHandler::PassesTChiMassCut(int mChi, int mLSP) const{

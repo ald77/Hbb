@@ -257,6 +257,20 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
   TH1D sig_sb_nm1_numJets("sig_sb_nm1_numJets", "N-1 Number of Jets;Number of Jets;Events/19.4 fb^{-1}", 16, -0.5, 15.5);
   TH1D sig_sb_nm1_minDeltaPhi("sig_sb_nm1_minDeltaPhi", "N-1 min. #Delta#phi;min. #Delta#phi;Events/19.4 fb^{-1}", 30, 0.0, 4.0*atan(1.0));
 
+  // jet flavor comparisons
+  TH1D jet_parton_Id_CSV1("jet_parton_Id_CSV1",";jets_AK5PF_partonId;Jets",5,0.5,5.5);
+  TH1D jet_parton_Id_CSV2("jet_parton_Id_CSV2",";jets_AK5PF_partonId;Jets",5,0.5,5.5);
+  TH1D jet_parton_Id_CSV3("jet_parton_Id_CSV3",";jets_AK5PF_partonId;Jets",5,0.5,5.5);
+  TH1D jet_parton_Id_CSV4("jet_parton_Id_CSV4",";jets_AK5PF_partonId;Jets",5,0.5,5.5);
+  const int n_Ids(5);
+  char *partonFlavour_names[n_Ids] = {"X","lf","c","b","g"};
+  for (int i=1;i<=n_Ids;i++) {
+    jet_parton_Id_CSV1.GetXaxis()->SetBinLabel(i,partonFlavour_names[i-1]);
+    jet_parton_Id_CSV2.GetXaxis()->SetBinLabel(i,partonFlavour_names[i-1]);
+    jet_parton_Id_CSV3.GetXaxis()->SetBinLabel(i,partonFlavour_names[i-1]);
+    jet_parton_Id_CSV4.GetXaxis()->SetBinLabel(i,partonFlavour_names[i-1]);
+  }
+  
 
   // Define reduced tree and all variables to save
   file.cd();
@@ -498,6 +512,12 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
 
       //Signal region plots go here!
       if(PassesMETSig30Cut() && PassesHiggsMassCut() && PassesDRCut()){
+        unsigned int CSV1(sortedBJetCache[0].GetIndex()), CSV2(sortedBJetCache[1].GetIndex()),
+                     CSV3(sortedBJetCache[2].GetIndex()), CSV4(sortedBJetCache[3].GetIndex());
+        jet_parton_Id_CSV1.Fill(GetPartonIdBin(jets_AK5PF_parton_Id->at(CSV1)),localWeight);
+        jet_parton_Id_CSV2.Fill(GetPartonIdBin(jets_AK5PF_parton_Id->at(CSV2)),localWeight);
+        jet_parton_Id_CSV3.Fill(GetPartonIdBin(jets_AK5PF_parton_Id->at(CSV3)),localWeight);
+        jet_parton_Id_CSV4.Fill(GetPartonIdBin(jets_AK5PF_parton_Id->at(CSV4)),localWeight);
         xx_nm1_thirdBTag.Fill(GetHighestCSV(3),localWeight);
         if(GetNumCSVMJets()>=3){
           xx_nm1_fourthBTag.Fill(GetHighestCSV(4),localWeight);

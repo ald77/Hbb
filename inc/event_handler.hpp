@@ -157,6 +157,8 @@ protected:
   double GetMaxDR() const;
   double GetHT(const bool=true, const bool=false) const;
   double GetHighestCSV(const unsigned int=1) const;
+  
+  int GetPartonIdBin(const float=0.) const;
 
   bool HasGluonSplitting() const;
 
