@@ -1,10 +1,11 @@
 #ifndef H_EVENTHANDLER
 #define H_EVENTHANDLER
 
+#include <cfloat>
 #include <vector>
 #include <string>
 #include <utility>
-#include <cfloat>
+#include <limits>
 #include <stdint.h>
 #include "TChain.h"
 #include "TBranch.h"
@@ -123,14 +124,16 @@ protected:
   double GetMETOfLowPtPfCands(const double=20.0) const;
 
   int GetPBNR() const;
-  double GetMinDeltaPhiMET(const unsigned int) const;
+  double GetMinDeltaPhiMET(const unsigned int=std::numeric_limits<unsigned int>::max()) const;
 
   int GetNumGoodJets() const;
   int GetNumCSVTJets() const;
   int GetNumCSVMJets() const;
   int GetNumCSVLJets() const;
+  int GetNumBTaggedJets() const;
 
-  bool isGoodJet(const unsigned int, const bool=true, const double=20.0, const double=2.4, const bool=true) const;
+  bool isGoodJet(const unsigned int, const bool=true, const double=20.0,
+		 const double=2.4, const bool=true) const;
   bool isProblemJet(const unsigned int) const;
   bool jetPassLooseID(const unsigned int) const;
 
@@ -154,6 +157,7 @@ protected:
   double GetTopPtWeight() const;
   double GetTopPtWeightOfficial() const;
 
+  double GetMinDR() const;
   double GetMaxDR() const;
   double GetHT(const bool=true, const bool=false) const;
   double GetHighestCSV(const unsigned int=1) const;
@@ -163,6 +167,9 @@ protected:
   bool HasGluonSplitting() const;
 
   std::vector<std::pair<int,int> > GetBOrigins() const;
+
+  double GetHighestJetPt(const unsigned int=1) const;
+  double GetHighestJetCSV(const unsigned int=1) const;
 };
 
 #endif

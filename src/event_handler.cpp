@@ -705,6 +705,17 @@ double EventHandler::GetMaxDR() const{
   }
 }
 
+double EventHandler::GetMinDR() const{
+  GetHiggsBJetPairing();
+  if(sortedBJetCache.size()<4){
+    return DBL_MAX;
+  }else{
+    const double dRa(higgsBJetPairing.first.first.DeltaR(higgsBJetPairing.first.second));
+    const double dRb(higgsBJetPairing.second.first.DeltaR(higgsBJetPairing.second.second));
+    return dRa<dRb?dRa:dRb;
+  }
+}
+
 std::pair<double, double> EventHandler::GetHiggsMasses() const{
   GetHiggsBJetPairing();
   const double massA((higgsBJetPairing.first.first+higgsBJetPairing.first.second).M());
@@ -781,11 +792,11 @@ double EventHandler::GetHighestCSV(unsigned int pos) const{
 }
 
 int EventHandler::GetPartonIdBin(float partonId) const{
-	if (fabs(partonId)>=1.&&fabs(partonId)<=3.) return 2;
-	else if (fabs(partonId)==4.) return 3;
-	else if (fabs(partonId)==5.) return 4;
-	else if (fabs(partonId)==21.) return 5;
-	else return 1;
+  if (fabs(partonId)>=1.&&fabs(partonId)<=3.) return 2;
+  else if (fabs(partonId)==4.) return 3;
+  else if (fabs(partonId)==5.) return 4;
+  else if (fabs(partonId)==21.) return 5;
+  else return 1;
 }
 
 bool EventHandler::PassesTChiMassCut(int mChi, int mLSP) const{
@@ -928,6 +939,30 @@ int EventHandler::GetNumCSVLJets() const{
     }
   }
   return numPassing;
+}
+
+int EventHandler::GetNumBTaggedJets() const{
+  std::vector<double> csvs(0);
+  for(unsigned int jet(0); jet<jets_AK5PF_pt->size(); ++jet){
+    if(isGoodJet(jet)){
+      csvs.push_back(jets_AK5PF_btag_secVertexCombined->at(jet));
+    }
+  }
+  std::sort(csvs.begin(), csvs.end());
+  if(csvs.size()<=0 || csvs.at(0)<CSVTCut){
+    return 0;
+  }else if(csvs.size()<=1 || csvs.at(1)<CSVTCut){
+    return 1;
+  }else if(csvs.size()<=2 || csvs.at(2)<CSVMCut){
+    return 2;
+  }else if(csvs.size()<=3 || csvs.at(3)<CSVLCut){
+    return 3;
+  }else{
+    unsigned int jet(3);
+    for(; jet<csvs.size() && csvs.at(jet)>CSVTCut; ++jet){
+    }
+    return jet;
+  }
 }
 
 double EventHandler::GetMinDeltaPhiMET(const unsigned int maxjets) const{
@@ -1225,4 +1260,32 @@ double EventHandler::GetTopPtWeightOfficial() const{ // New 11/07
 
   if(topweight<0) topweight=1;
   return topweight;
+}
+
+double EventHandler::GetHighestJetPt(const unsigned int nth_highest) const{
+  std::vector<double> pts(0);
+  for(unsigned int jet(0); jet<jets_AK5PF_pt->size(); ++jet){
+    if(isGoodJet(jet)){
+      pts.push_back(jets_AK5PF_pt->at(jet));
+    }
+  }
+  if(nth_highest<=pts.size()){
+    return pts.at(nth_highest-1);
+  }else{
+    return 0.0;
+  }
+}
+
+double EventHandler::GetHighestJetCSV(const unsigned int nth_highest) const{
+  std::vector<double> csvs(0);
+  for(unsigned int jet(0); jet<jets_AK5PF_btag_secVertexCombined->size(); ++jet){
+    if(isGoodJet(jet)){
+      csvs.push_back(jets_AK5PF_btag_secVertexCombined->at(jet));
+    }
+  }
+  if(nth_highest<=csvs.size()){
+    return csvs.at(nth_highest-1);
+  }else{
+    return 0.0;
+  }
 }
