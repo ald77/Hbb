@@ -948,7 +948,7 @@ int EventHandler::GetNumBTaggedJets() const{
       csvs.push_back(jets_AK5PF_btag_secVertexCombined->at(jet));
     }
   }
-  std::sort(csvs.begin(), csvs.end());
+  std::sort(csvs.begin(), csvs.end(), std::greater<double>());
   if(csvs.size()<=0 || csvs.at(0)<CSVTCut){
     return 0;
   }else if(csvs.size()<=1 || csvs.at(1)<CSVTCut){
@@ -1269,6 +1269,7 @@ double EventHandler::GetHighestJetPt(const unsigned int nth_highest) const{
       pts.push_back(jets_AK5PF_pt->at(jet));
     }
   }
+  std::sort(pts.begin(), pts.end(), std::greater<double>());
   if(nth_highest<=pts.size()){
     return pts.at(nth_highest-1);
   }else{
@@ -1283,6 +1284,7 @@ double EventHandler::GetHighestJetCSV(const unsigned int nth_highest) const{
       csvs.push_back(jets_AK5PF_btag_secVertexCombined->at(jet));
     }
   }
+  std::sort(csvs.begin(), csvs.end(), std::greater<double>());
   if(nth_highest<=csvs.size()){
     return csvs.at(nth_highest-1);
   }else{

@@ -136,4 +136,7 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
 
     reduced_tree.Fill(); 
   }
+
+  reduced_tree.Write();
+  file.Close();
 }
