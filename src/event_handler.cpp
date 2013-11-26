@@ -668,7 +668,7 @@ int EventHandler::GetPBNR() const{
 
 double EventHandler::GetHT(const bool useMET, const bool useLeps) const{
   double HT(0.0);
-  if(useMET && pfmets_et->size()>0) HT+=pfmets_et->at(0);
+  if(useMET && pfTypeImets_et->size()>0) HT+=pfTypeImets_et->at(0);
   for(unsigned int i(0); i<jets_AK5PF_pt->size(); ++i){
     if(isGoodJet(i)) HT+=jets_AK5PF_pt->at(i);
   }
@@ -813,6 +813,29 @@ bool EventHandler::PassesTChiMassCut(int mChi, int mLSP) const{
   if(model_params->find(s_mChi)==std::string::npos) return false;
   if(model_params->find(s_mLSP)==std::string::npos) return false;
   return true;
+}
+
+int EventHandler::GetCharginoMass() const{
+  return GetMass("chargino");
+}
+
+int EventHandler::GetLSPMass() const{
+  return GetMass("bino");
+}
+
+int EventHandler::GetMass(const std::string& token) const{
+  std::string::size_type pos(model_params->find(token));
+  if(pos==std::string::npos){
+    return -1;
+  }else{
+    pos+=token.size();
+    const std::string::size_type end(model_params->find("_",pos));
+    if(end==std::string::npos){
+      return -1;
+    }else{
+      return atoi((model_params->substr(pos, end-pos+1)).c_str());
+    }
+  }
 }
 
 int GetSimpleParticle(const double &id){

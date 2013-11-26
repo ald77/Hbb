@@ -114,6 +114,10 @@ protected:
 
   bool PassesTChiMassCut(int=-1, int=1) const;
 
+  int GetMass(const std::string&) const;
+  int GetCharginoMass() const;
+  int GetLSPMass() const;
+
   void GetHiggsBJetPairing() const;
   void GetSortedBJets() const;
 
