@@ -26,7 +26,7 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
     passes2CSVTCut(false), passesMETSig30Cut(false), passesMETCleaningCut(false),
     passesTriggerCut(false), passesNumJetsCut(false), passesMinDeltaPhiCut(false),
     passesLeptonVetoCut(false), passesIsoTrackVetoCut(false), passesDRCut(false),
-    passesHiggsAvgMassCut(false), passesHiggsMassDiffCut(false);
+    passesBTaggingCut(false), passesHiggsAvgMassCut(false), passesHiggsMassDiffCut(false);
 
   bool passes4bSignalRegionCut(false), passes4bSidebandRegionCut(false);
   bool passes3bSignalRegionCut(false), passes3bSidebandRegionCut(false);
@@ -59,6 +59,7 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   reduced_tree.Branch("passesLeptonVetoCut",&passesLeptonVetoCut);
   reduced_tree.Branch("passesIsoTrackVetoCut",&passesIsoTrackVetoCut);
   reduced_tree.Branch("passesDRCut",&passesDRCut);
+  reduced_tree.Branch("passesBTaggingCut",&passesBTaggingCut);
   reduced_tree.Branch("passesHiggsAvgMassCut",&passesHiggsAvgMassCut);
   reduced_tree.Branch("passesHiggsMassDiffCut",&passesHiggsMassDiffCut);
 
@@ -139,6 +140,7 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
     passesLeptonVetoCut=PassesLeptonVetoCut();
     passesIsoTrackVetoCut=PassesIsoTrackVetoCut();
     passesDRCut=PassesDRCut();
+    passesBTaggingCut=PassesBTaggingCut();
     passesHiggsAvgMassCut=PassesHiggsAvgMassCut();
     passesHiggsMassDiffCut=PassesHiggsMassDiffCut();
 
