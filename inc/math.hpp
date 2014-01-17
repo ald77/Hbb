@@ -2,6 +2,7 @@
 #define H_MATH
 
 #include <cmath>
+#include <vector>
 #include <iterator>
 #include <algorithm>
 
@@ -29,6 +30,17 @@ namespace Math{
   template<typename T>
   typename T::value_type Mean(T begin, T end){
     return Sum(begin, end)/static_cast<typename T::value_type>(std::distance(begin,end));
+  }
+
+  template<typename T>
+  typename T::value_type Variance(T begin, T end){
+    const typename T::value_type mean(Mean(begin, end));
+    std::vector<typename T::value_type> residuals_squared(0);
+    for(T it(begin); it!=end; ++it){
+      const typename T::value_type residual(*it-mean);
+      residuals_squared.push_back(residual*residual);
+    }
+    return Sum(residuals_squared.begin(), residuals_squared.end())/static_cast<typename T::value_type>(std::distance(begin,end));
   }
 
   template<typename T>
