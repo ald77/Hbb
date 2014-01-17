@@ -982,7 +982,7 @@ int EventHandler::GetNumBTaggedJets() const{
     return 3;
   }else{
     unsigned int jet(3);
-    for(; jet<csvs.size() && csvs.at(jet)>CSVTCut; ++jet){
+    for(; jet<csvs.size() && csvs.at(jet)>CSVLCut; ++jet){
     }
     return jet;
   }
