@@ -257,6 +257,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
   TH1D sig_sb_nm1_numJets("sig_sb_nm1_numJets", "N-1 Number of Jets;Number of Jets;Events/19.4 fb^{-1}", 16, -0.5, 15.5);
   TH1D sig_sb_nm1_minDeltaPhi("sig_sb_nm1_minDeltaPhi", "N-1 min. #Delta#phi;min. #Delta#phi;Events/19.4 fb^{-1}", 30, 0.0, 4.0*atan(1.0));
 
+  TH1D minimax_mbb("minimax_mbb", "Minimax m_{bb};Minimax m_{bb};Events/19.4 fb^{-1}/10", 50, 0.0, 500.0);
+  TH1D maximin_mbb("maximin_mbb", "Maximin m_{bb};Maximin m_{bb};Events/19.4 fb^{-1}/10", 50, 0.0, 500.0);
+
   // jet flavor comparisons
   TH1D jet_parton_Id_CSV1("jet_parton_Id_CSV1",";jets_AK5PF_partonId;Jets",5,0.5,5.5);
   TH1D jet_parton_Id_CSV2("jet_parton_Id_CSV2",";jets_AK5PF_partonId;Jets",5,0.5,5.5);
@@ -294,7 +297,7 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
   
   Timer timer(GetTotalEntries());
   timer.Start();
-  for(int i(0); i<GetTotalEntries(); ++i){
+  for(int i(0); i<GetTotalEntries() && i<50000; ++i){
     if(i%1000==0 && i!=0){
       timer.PrintRemainingTime();
     }
@@ -333,6 +336,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
       }
       topPt_before.Fill(topPt, notopweight);
       topPt_after.Fill(topPt, localWeight);
+
+      minimax_mbb.Fill(GetMinimaxMbb(), localWeight);
+      maximin_mbb.Fill(GetMaximinMbb(), localWeight);
     }
 
     if(!betaUpToDate) GetBeta();

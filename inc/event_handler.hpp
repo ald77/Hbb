@@ -122,6 +122,8 @@ protected:
   void GetSortedBJets() const;
 
   std::pair<double, double> GetHiggsMasses() const;
+  double GetMinimaxMbb() const;
+  double GetMaximinMbb() const;
   double GetHiggsDeltaR() const;
 
   unsigned int GetNumLowPtPfCands(const double=20.0) const;

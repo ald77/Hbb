@@ -1,18 +1,18 @@
 #include "event_handler.hpp"
+#include <cassert>
+#include <climits>
+#include <cfloat>
+#include <ctime>
+#include <cmath>
+#include <cstdio>
 #include <iomanip>
 #include <fstream>
 #include <vector>
 #include <string>
 #include <set>
 #include <utility>
-#include <cmath>
-#include <cstdio>
 #include <iostream>
-#include <climits>
-#include <cfloat>
-#include <ctime>
 #include <sstream>
-#include <cassert>
 #include <algorithm>
 #include <functional>
 #include "TChain.h"
@@ -721,6 +721,46 @@ std::pair<double, double> EventHandler::GetHiggsMasses() const{
   const double massA((higgsBJetPairing.first.first+higgsBJetPairing.first.second).M());
   const double massB((higgsBJetPairing.second.first+higgsBJetPairing.second.second).M());
   return (massA>massB)?(std::make_pair(massA,massB)):(std::make_pair(massB,massA));
+}
+
+double EventHandler::GetMinimaxMbb() const{
+  GetHiggsBJetPairing();
+  const double mass_1a((higgsBJetPairing.first.first
+			+higgsBJetPairing.first.second).M());
+  const double mass_1b((higgsBJetPairing.second.first
+			+higgsBJetPairing.second.second).M());
+  const double mass_2a((higgsBJetPairing.first.first
+			+higgsBJetPairing.second.first).M());
+  const double mass_2b((higgsBJetPairing.first.second
+			+higgsBJetPairing.second.second).M());
+  const double mass_3a((higgsBJetPairing.first.first
+			+higgsBJetPairing.second.second).M());
+  const double mass_3b((higgsBJetPairing.first.second
+			+higgsBJetPairing.second.first).M());
+  const double mass_1(std::max(mass_1a, mass_1b));
+  const double mass_2(std::max(mass_2a, mass_2b));
+  const double mass_3(std::max(mass_3a, mass_3b));
+  return std::min(mass_1, std::min(mass_2, mass_3));
+}
+
+double EventHandler::GetMaximinMbb() const{
+  GetHiggsBJetPairing();
+  const double mass_1a((higgsBJetPairing.first.first
+			+higgsBJetPairing.first.second).M());
+  const double mass_1b((higgsBJetPairing.second.first
+			+higgsBJetPairing.second.second).M());
+  const double mass_2a((higgsBJetPairing.first.first
+			+higgsBJetPairing.second.first).M());
+  const double mass_2b((higgsBJetPairing.first.second
+			+higgsBJetPairing.second.second).M());
+  const double mass_3a((higgsBJetPairing.first.first
+			+higgsBJetPairing.second.second).M());
+  const double mass_3b((higgsBJetPairing.first.second
+			+higgsBJetPairing.second.first).M());
+  const double mass_1(std::min(mass_1a, mass_1b));
+  const double mass_2(std::min(mass_2a, mass_2b));
+  const double mass_3(std::min(mass_3a, mass_3b));
+  return std::max(mass_1, std::max(mass_2, mass_3));
 }
 
 double EventHandler::GetHiggsDeltaR() const{
