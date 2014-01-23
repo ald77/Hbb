@@ -33,10 +33,13 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   bool passes3bSignalRegionCut(false), passes3bSidebandRegionCut(false);
   bool passes2bSignalRegionCut(false), passes2bSidebandRegionCut(false);
 
+  bool passesBaselineSelection(false), passesTriggerPlateauCuts(false);
+
   float highest_jet_pt(0.0), second_highest_jet_pt(0.0), third_highest_jet_pt(0.0),
     fourth_highest_jet_pt(0.0), fifth_highest_jet_pt(0.0);
   float highest_csv(0.0), second_highest_csv(0.0),
     third_highest_csv(0.0), fourth_highest_csv(0.0), fifth_highest_csv(0.0);
+  float npv(0.0);
   float met_sig(0.0), met(0.0);
   unsigned short num_jets(0), num_b_tagged_jets(0);
   float min_delta_phi(0.0);
@@ -74,6 +77,9 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   reduced_tree.Branch("passes2bSignalRegionCut",&passes2bSignalRegionCut);
   reduced_tree.Branch("passes2bSidebandRegionCut",&passes2bSidebandRegionCut);
 
+  reduced_tree.Branch("passesBaselineSelection",&passesBaselineSelection);
+  reduced_tree.Branch("passesTriggerPlateauCuts",&passesTriggerPlateauCuts);
+
   reduced_tree.Branch("highest_jet_pt", &highest_jet_pt);
   reduced_tree.Branch("second_highest_jet_pt", &second_highest_jet_pt);
   reduced_tree.Branch("third_highest_jet_pt", &third_highest_jet_pt);
@@ -85,6 +91,8 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   reduced_tree.Branch("third_highest_csv", &third_highest_csv);
   reduced_tree.Branch("fourth_highest_csv", &fourth_highest_csv);
   reduced_tree.Branch("fifth_highest_csv", &fifth_highest_csv);
+
+  reduced_tree.Branch("npv", &npv);
 
   reduced_tree.Branch("met_sig", &met_sig);
   reduced_tree.Branch("met", &met);
@@ -143,6 +151,8 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
     }
 
     // Saving our cuts for the reduced tree
+    passesTriggerPlateauCuts=PassesTriggerPlateauCuts();
+    passesBaselineSelection=PassesBaselineSelection();
     passesJSONCut=PassesJSONCut();
     passesPVCut=PassesPVCut();
     passesJet2PtCut=PassesJet2PtCut();
@@ -177,6 +187,8 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
     third_highest_csv=GetHighestJetCSV(3);
     fourth_highest_csv=GetHighestJetCSV(4);
     fifth_highest_csv=GetHighestJetCSV(5);
+
+    npv=GetNPV();
 
     met_sig=pfmets_fullSignif;
     met=pfTypeImets_et->at(0);

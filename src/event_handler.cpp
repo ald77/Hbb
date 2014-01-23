@@ -321,7 +321,31 @@ uint_least32_t EventHandler::GetCutFailCode() const{
   return fail_code;
 }
 
+bool EventHandler::PassesTriggerPlateauCuts() const{
+  if(!Passes2CSVTCut()) return false;
+  if(!PassesJet2PtCut()) return false;
+  if(!PassesMETSig30Cut()) return false;
+  return true;
+}
+
+bool EventHandler::PassesBaselineSelection() const{
+  if(!PassesJSONCut()) return false;
+  if(!PassesPVCut()) return false;
+  if(!PassesMETCleaningCut()) return false;
+  if(!PassesTriggerCut()) return false;
+  if(!PassesNumJetsCut()) return false;
+  if(!Passes2CSVTCut()) return false;
+  if(!PassesJet2PtCut()) return false;
+  if(!PassesMinDeltaPhiCut()) return false;
+  if(!PassesLeptonVetoCut()) return false;
+  if(!PassesIsoTrackVetoCut()) return false;
+  if(!PassesDRCut()) return false;
+  if(!PassesMETSig30Cut()) return false;
+  return true;
+}
+
 bool EventHandler::PassesRegionACut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -338,6 +362,7 @@ bool EventHandler::PassesRegionACut() const{
 }
 
 bool EventHandler::PassesRegionBCut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -357,6 +382,7 @@ bool EventHandler::PassesRegionBCut() const{
 }
 
 bool EventHandler::PassesRegionC3bCut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -373,6 +399,7 @@ bool EventHandler::PassesRegionC3bCut() const{
 }
 
 bool EventHandler::PassesRegionD3bCut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -392,6 +419,7 @@ bool EventHandler::PassesRegionD3bCut() const{
 }
 
 bool EventHandler::PassesRegionC2bCut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -408,6 +436,7 @@ bool EventHandler::PassesRegionC2bCut() const{
 }
 
 bool EventHandler::PassesRegionD2bCut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -427,6 +456,7 @@ bool EventHandler::PassesRegionD2bCut() const{
 }
 
 bool EventHandler::PassesInvertedDRRegionACut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -443,6 +473,7 @@ bool EventHandler::PassesInvertedDRRegionACut() const{
 }
 
 bool EventHandler::PassesInvertedDRRegionBCut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -462,6 +493,7 @@ bool EventHandler::PassesInvertedDRRegionBCut() const{
 }
 
 bool EventHandler::PassesInvertedDRRegionC3bCut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -478,6 +510,7 @@ bool EventHandler::PassesInvertedDRRegionC3bCut() const{
 }
 
 bool EventHandler::PassesInvertedDRRegionD3bCut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -497,6 +530,7 @@ bool EventHandler::PassesInvertedDRRegionD3bCut() const{
 }
 
 bool EventHandler::PassesInvertedDRRegionC2bCut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -513,6 +547,7 @@ bool EventHandler::PassesInvertedDRRegionC2bCut() const{
 }
 
 bool EventHandler::PassesInvertedDRRegionD2bCut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -532,6 +567,7 @@ bool EventHandler::PassesInvertedDRRegionD2bCut() const{
 }
 
 bool EventHandler::PassesSingleLeptonRegionACut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -547,6 +583,7 @@ bool EventHandler::PassesSingleLeptonRegionACut() const{
 }
 
 bool EventHandler::PassesSingleLeptonRegionBCut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -565,6 +602,7 @@ bool EventHandler::PassesSingleLeptonRegionBCut() const{
 }
 
 bool EventHandler::PassesSingleLeptonRegionC3bCut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -580,6 +618,7 @@ bool EventHandler::PassesSingleLeptonRegionC3bCut() const{
 }
 
 bool EventHandler::PassesSingleLeptonRegionD3bCut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -598,6 +637,7 @@ bool EventHandler::PassesSingleLeptonRegionD3bCut() const{
 }
 
 bool EventHandler::PassesSingleLeptonRegionC2bCut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -613,6 +653,7 @@ bool EventHandler::PassesSingleLeptonRegionC2bCut() const{
 }
 
 bool EventHandler::PassesSingleLeptonRegionD2bCut() const{
+  if(!PassesJSONCut()) return false;
   if(!PassesPVCut()) return false;
   if(!PassesMETCleaningCut()) return false;
   if(!PassesTriggerCut()) return false;
@@ -1235,14 +1276,18 @@ int EventHandler::NewGetNumIsoTracks(const double ptThresh) const{
   return nisotracks;
 }
 
-double EventHandler::GetPUWeight(reweight::LumiReWeighting &lumiWeights) const{
+double EventHandler::GetNPV() const{
   double npv(-1.0);
   for(unsigned int i(0); i<PU_bunchCrossing->size(); ++i){
     if(PU_bunchCrossing->at(i)==0){
       npv = PU_TrueNumInteractions->at(i);
     }
   }
-  return lumiWeights.weight(npv);
+  return npv;
+}
+
+double EventHandler::GetPUWeight(reweight::LumiReWeighting &lumiWeights) const{
+  return lumiWeights.weight(GetNPV());
 }
 
 double EventHandler::GetSbinWeight() const{
