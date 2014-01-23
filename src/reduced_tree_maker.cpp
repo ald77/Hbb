@@ -1,4 +1,5 @@
 #include "reduced_tree_maker.hpp"
+#include <vector>
 #include <string>
 #include <set>
 #include "timer.hpp"
@@ -46,6 +47,9 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   float full_weight(0.0), lumi_weight(0.0), top_pt_weight(0.0), pu_weight(0.0), trigger_weight(0.0);
   bool has_gluon_splitting(false);
   short lsp_mass(0), chargino_mass(0);
+
+  std::vector<std::string> local_trigger_name(0,"");
+  std::vector<bool> local_trigger_decision(0,false);
   
   reduced_tree.Branch("passesJSONCut", &passesJSONCut);
   reduced_tree.Branch("passesPVCut",&passesPVCut);
@@ -114,6 +118,9 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
  
   reduced_tree.Branch("lsp_mass", &lsp_mass);
   reduced_tree.Branch("chargino_mass", &chargino_mass);
+
+  reduced_tree.Branch("trigger_name", &trigger_name);
+  reduced_tree.Branch("trigger_decision", &trigger_decision);
  
   Timer timer(GetTotalEntries());
   timer.Start();
@@ -127,6 +134,14 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
     std::pair<std::set<EventNumber>::iterator, bool> returnVal(eventList.insert(EventNumber(run, event, lumiblock)));
     if(!returnVal.second) continue;
     
+    local_trigger_name= *trigger_name;
+    local_trigger_decision.resize(trigger_decision->size());
+    for(std::vector<float>::size_type decision(0);
+	decision<trigger_decision->size();
+	++decision){
+      local_trigger_decision.at(decision)=trigger_decision->at(decision)>0.5;
+    }
+
     // Saving our cuts for the reduced tree
     passesJSONCut=PassesJSONCut();
     passesPVCut=PassesPVCut();
