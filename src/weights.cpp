@@ -94,6 +94,7 @@ void WeightCalculator::SetCrossSections(){
   crossSectionTable["TTJets_HadronicMGDecays_8TeV-madgraph"]=53.4*ttbar_norm;
   crossSectionTable["TTJets_SemiLeptMGDecays_8TeV-madgraph"]=53.2*ttbar_norm;
   crossSectionTable["TTJets_WToBC_8TeV-madgraph-tauola"]=ttbar_xsec*0.00084*0.676;
+  crossSectionTable["TTJets_MassiveBinDECAY_TuneZ2star_8TeV-madgraph-tauola"]=ttbar_xsec;
   crossSectionTable["TTWJets_8TeV-madgraph"]=0.2149;
   crossSectionTable["TTZJets_8TeV-madgraph_v2"]=0.172;
   crossSectionTable["Tbar_t-channel_TuneZ2star_8TeV-powheg"]=30.7;
@@ -199,6 +200,8 @@ void WeightCalculator::SetTotalEvents(){
   totalEventsTable["TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V19_ext1-v1_AODSIM_UCSB1962_v71"]=24953451+30856876+30999167;
   totalEventsTable["TTJets_HadronicMGDecays_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A_ext-v1_AODSIM_UCSB1880_v71"]=31223821;
   totalEventsTable["TTJets_WToBC_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V19-v1_AODSIM_UCSB1966_v71"]=276156;
+  totalEventsTable["TTJets_MassiveBinDECAY_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V7C_FSIM-v2_AODSIM_UCSB1976_v71"]=7299862;
+  totalEventsTable["TTJets_MassiveBinDECAY_TuneZ2star_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1850_v71"]=6923750;
   totalEventsTable["TTWJets_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1857_v71"]=196046;
   totalEventsTable["TTZJets_8TeV-madgraph_v2_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1856_v71"]=210160;
   totalEventsTable["ZJetsToNuNu_100_HT_200_TuneZ2Star_8TeV_madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1887_v71"]=4416646;
