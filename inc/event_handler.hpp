@@ -61,8 +61,11 @@ protected:
 
   void GetBeta(const std::string which="beta") const;
 
-  double GetNPV() const;
+  double GetNumInteractions() const;
+  unsigned short GetNumVertices() const;
   double GetPUWeight(reweight::LumiReWeighting &) const;
+
+  bool isGoodVertex(const unsigned int) const;
 
   bool PassesBaselineSelection() const;
   bool PassesTriggerPlateauCuts() const;

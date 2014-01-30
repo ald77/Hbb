@@ -35,11 +35,13 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
 
   bool passesBaselineSelection(false), passesTriggerPlateauCuts(false);
 
+  float pu_true_num_interactions(0.0);
+  unsigned short num_primary_vertices(0);
+
   float highest_jet_pt(0.0), second_highest_jet_pt(0.0), third_highest_jet_pt(0.0),
     fourth_highest_jet_pt(0.0), fifth_highest_jet_pt(0.0);
   float highest_csv(0.0), second_highest_csv(0.0),
     third_highest_csv(0.0), fourth_highest_csv(0.0), fifth_highest_csv(0.0);
-  float npv(0.0);
   float met_sig(0.0), met(0.0);
   unsigned short num_jets(0), num_b_tagged_jets(0);
   float min_delta_phi(0.0);
@@ -92,7 +94,8 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   reduced_tree.Branch("fourth_highest_csv", &fourth_highest_csv);
   reduced_tree.Branch("fifth_highest_csv", &fifth_highest_csv);
 
-  reduced_tree.Branch("npv", &npv);
+  reduced_tree.Branch("pu_true_num_interactions", &pu_true_num_interactions);
+  reduced_tree.Branch("num_primary_vertices", &num_primary_vertices);
 
   reduced_tree.Branch("met_sig", &met_sig);
   reduced_tree.Branch("met", &met);
@@ -188,7 +191,8 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
     fourth_highest_csv=GetHighestJetCSV(4);
     fifth_highest_csv=GetHighestJetCSV(5);
 
-    npv=GetNPV();
+    pu_true_num_interactions=GetNumInteractions();
+    num_primary_vertices=GetNumVertices();
 
     met_sig=pfmets_fullSignif;
     met=pfTypeImets_et->at(0);

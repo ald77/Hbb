@@ -183,6 +183,7 @@ bool EventHandler::PassesPVCut() const{
   const double pv_rho(sqrt(pv_x->at(0)*pv_x->at(0) + pv_y->at(0)*pv_y->at(0)));
   if(pv_ndof->at(0)>4 && fabs(pv_z->at(0))<24. && pv_rho<2.0 && pv_isFake->at(0)==0) return true;
   return false;
+  return isGoodVertex(0);
 }
 
 bool EventHandler::PassesMETCleaningCut() const{
@@ -1276,7 +1277,7 @@ int EventHandler::NewGetNumIsoTracks(const double ptThresh) const{
   return nisotracks;
 }
 
-double EventHandler::GetNPV() const{
+double EventHandler::GetNumInteractions() const{
   double npv(-1.0);
   for(unsigned int i(0); i<PU_bunchCrossing->size(); ++i){
     if(PU_bunchCrossing->at(i)==0){
@@ -1286,8 +1287,22 @@ double EventHandler::GetNPV() const{
   return npv;
 }
 
+bool EventHandler::isGoodVertex(const unsigned int vertex) const{
+  const double pv_rho(sqrt(pv_x->at(vertex)*pv_x->at(vertex) + pv_y->at(vertex)*pv_y->at(vertex)));
+  return pv_ndof->at(vertex)>4 && fabs(pv_z->at(vertex))<24. && pv_rho<2.0 && pv_isFake->at(vertex)==0;
+}
+
+unsigned short EventHandler::GetNumVertices() const{
+  unsigned short num_vertices(0);
+  for(unsigned int vertex(0); vertex<pv_x->size(); ++vertex){
+    if(isGoodVertex(vertex)) ++num_vertices;
+  }
+  return num_vertices;
+  //return pv_x->size();
+}
+
 double EventHandler::GetPUWeight(reweight::LumiReWeighting &lumiWeights) const{
-  return lumiWeights.weight(GetNPV());
+  return lumiWeights.weight(GetNumInteractions());
 }
 
 double EventHandler::GetSbinWeight() const{
