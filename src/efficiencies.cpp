@@ -7,10 +7,12 @@
 
 int main(){
   std::vector<std::vector<std::string> > names(2);
-  names.at(0).push_back("reduced_trees/TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7C-v1_AODSIM_UCSB1884_v71.root/reduced_tree");
-  names.at(0).push_back("reduced_trees/TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V19_ext1-v1_AODSIM_UCSB1962_v71.root/reduced_tree");
-  names.at(0).push_back("reduced_trees/TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V19_ext2-v1_AODSIM_UCSB1959_v71.root/reduced_tree");
-  names.at(1).push_back("reduced_trees/SMS-TChiHH_2b2b_2J_mChargino-350_mLSP-1_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1871_v71_SyncSkim.root/reduced_tree");
+  //names.at(0).push_back("reduced_trees/TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7C-v1_AODSIM_UCSB1884_v71.root/reduced_tree");
+  //names.at(0).push_back("reduced_trees/TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V19_ext1-v1_AODSIM_UCSB1962_v71.root/reduced_tree");
+  //names.at(0).push_back("reduced_trees/TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V19_ext2-v1_AODSIM_UCSB1959_v71.root/reduced_tree");
+  names.at(0).push_back("reduced_trees/TTJets_MassiveBinDECAY_TuneZ2star_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1850_v71.root/reduced_tree");
+  //names.at(1).push_back("reduced_trees/SMS-TChiHH_2b2b_2J_mChargino-350_mLSP-1_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1871_v71_SyncSkim.root/reduced_tree");
+  names.at(1).push_back("reduced_trees/SMS-TChiHH_2b2b_2J_mChargino-130to500_mLSP-1_TuneZ2star_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V19-v1_AODSIM_UCSB1992_v71.root/reduced_tree");
   std::vector<TChain*> chains(names.size(),NULL);
   for(unsigned int chain(0); chain<chains.size(); ++chain){
     chains.at(chain)=new TChain(names.at(chain).at(0).c_str(), names.at(chain).at(0).c_str());
@@ -113,8 +115,10 @@ int main(){
 	timer.PrintRemainingTime();
       }
       chains.at(chain)->GetEntry(entry);
-      passesBTaggingCut=(num_b_tagged_jets>=4);
       weights.at(chain)=lumi_weight;
+      timer.Iterate();
+      if(chargino_mass!=-1 && chargino_mass!=250) continue;
+      if(lsp_mass!=-1 && lsp_mass!=1) continue;
       for(unsigned int cut(0); cut<cuts.size(); ++cut){
 	++totals_initial.at(chain).at(cut);
 	bool passes_before(true), passes_after(true);
@@ -145,7 +149,6 @@ int main(){
 	  }
 	}
       }
-      timer.Iterate();
     }
 
     for(unsigned int cut(0); cut<cuts.size(); ++cut){
@@ -156,16 +159,6 @@ int main(){
     }
   }
   std::vector<std::vector<unsigned int> > sample_lists(2);
-
-  for(unsigned int name(0); name<names.size(); ++name){
-    if(names.at(name).at(0).find("TTJets")!=std::string::npos){
-      sample_lists.at(0).push_back(name);
-      std::cout << "AAA" << std::endl;
-    }else{
-      sample_lists.at(1).push_back(name);
-      std::cout << "BBB" << std::endl;
-    }
-  }
 
   for(unsigned int list(0); list<sample_lists.size(); ++list){
     std::vector<double> total_events_initial(cuts.size(),0.0);
