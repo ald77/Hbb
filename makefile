@@ -18,9 +18,11 @@ vpath %.exe $(EXEDIR)
 vpath %.d $(MAKEDIR)
 
 # Add new executables to this list
-all: make_plots.exe skim_file.exe stack_histos.exe draw_abcd_ratio_plots.exe make_sig_plots.exe calc_abcd.exe count_specific_mass_events.exe draw_npv_plot.exe make_cutflow_table.exe calc_abcd_new.exe make_reduced_tree.exe efficiencies.exe
+all: make_plots.exe skim_file.exe stack_histos.exe draw_abcd_ratio_plots.exe make_sig_plots.exe calc_abcd.exe count_specific_mass_events.exe draw_npv_plot.exe make_cutflow_table.exe calc_abcd_new.exe make_reduced_tree.exe efficiencies.exe full_sim_vs_fast_sim.exe pileup_plots.exe
 
 # List any object files your executable need to be linked with
+$(EXEDIR)/pileup_plots.exe: pileup_plots.o
+$(EXEDIR)/full_sim_vs_fast_sim.exe: full_sim_vs_fast_sim.o timer.o
 $(EXEDIR)/efficiencies.exe: efficiencies.o timer.o
 $(EXEDIR)/draw_npv_plot.exe: draw_npv_plot.o pu_constants.o
 $(EXEDIR)/count_specific_mass_events.exe: count_specific_mass_events.o
