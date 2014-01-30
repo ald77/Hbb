@@ -121,6 +121,8 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   reduced_tree.Branch("ht_jets_leps", &ht_jets_leps);
   reduced_tree.Branch("ht_jets_met_leps", &ht_jets_met_leps);
 
+  reduced_tree.Branch("has_gluon_splitting", &has_gluon_splitting);
+
   reduced_tree.Branch("full_weight", &full_weight);
   reduced_tree.Branch("lumi_weight", &lumi_weight);
   reduced_tree.Branch("pu_weight", &pu_weight);
