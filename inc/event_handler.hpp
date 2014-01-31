@@ -72,6 +72,7 @@ protected:
   bool PassesPVCut() const;
   bool PassesMETCleaningCut() const;
   bool PassesTriggerCut() const;
+  bool PassesQCDTriggerCut() const;
   bool PassesNumJetsCut() const;
   bool Passes2CSVTCut() const;
   bool PassesJet2PtCut() const;

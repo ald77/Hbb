@@ -27,7 +27,8 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
     passes2CSVTCut(false), passesMETSig30Cut(false), passesMETCleaningCut(false),
     passesTriggerCut(false), passesNumJetsCut(false), passesMinDeltaPhiCut(false),
     passesLeptonVetoCut(false), passesIsoTrackVetoCut(false), passesDRCut(false),
-    passesBTaggingCut(false), passesHiggsAvgMassCut(false), passesHiggsMassDiffCut(false);
+    passesBTaggingCut(false), passesHiggsAvgMassCut(false), passesHiggsMassDiffCut(false),
+    passesQCDTriggerCut(false);
 
   bool passes4bSignalRegionCut(false), passes4bSidebandRegionCut(false);
   bool passes3bSignalRegionCut(false), passes3bSidebandRegionCut(false);
@@ -53,9 +54,6 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   bool has_gluon_splitting(false);
   short lsp_mass(0), chargino_mass(0);
 
-  std::vector<std::string> local_trigger_name(0,"");
-  std::vector<bool> local_trigger_decision(0,false);
-  
   reduced_tree.Branch("passesJSONCut", &passesJSONCut);
   reduced_tree.Branch("passesPVCut",&passesPVCut);
   reduced_tree.Branch("passesJet2PtCut",&passesJet2PtCut);
@@ -63,6 +61,7 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   reduced_tree.Branch("passesMETSig30Cut",&passesMETSig30Cut);
   reduced_tree.Branch("passesMETCleaningCut",&passesMETCleaningCut);
   reduced_tree.Branch("passesTriggerCut",&passesTriggerCut);
+  reduced_tree.Branch("passesQCDTriggerCut",&passesQCDTriggerCut);
   reduced_tree.Branch("passesNumJetsCut",&passesNumJetsCut);
   reduced_tree.Branch("passesMinDeltaPhiCut",&passesMinDeltaPhiCut);
   reduced_tree.Branch("passesLeptonVetoCut",&passesLeptonVetoCut);
@@ -132,9 +131,6 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   reduced_tree.Branch("lsp_mass", &lsp_mass);
   reduced_tree.Branch("chargino_mass", &chargino_mass);
 
-  reduced_tree.Branch("trigger_name", &trigger_name);
-  reduced_tree.Branch("trigger_decision", &trigger_decision);
- 
   Timer timer(GetTotalEntries());
   timer.Start();
   for(int i(0); i<GetTotalEntries(); ++i){
@@ -147,14 +143,6 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
     std::pair<std::set<EventNumber>::iterator, bool> returnVal(eventList.insert(EventNumber(run, event, lumiblock)));
     if(!returnVal.second) continue;
     
-    local_trigger_name= *trigger_name;
-    local_trigger_decision.resize(trigger_decision->size());
-    for(std::vector<float>::size_type decision(0);
-	decision<trigger_decision->size();
-	++decision){
-      local_trigger_decision.at(decision)=trigger_decision->at(decision)>0.5;
-    }
-
     // Saving our cuts for the reduced tree
     passesTriggerPlateauCuts=PassesTriggerPlateauCuts();
     passesBaselineSelection=PassesBaselineSelection();

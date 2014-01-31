@@ -218,6 +218,17 @@ bool EventHandler::PassesTriggerCut() const{
   return false;
 }
 
+bool EventHandler::PassesQCDTriggerCut() const{
+  for(unsigned int a=0; a<trigger_name->size(); ++a){
+    if((trigger_name->at(a).find("HLT_DiCentralPFJet50_PFMET80_v")!=std::string::npos
+        || trigger_name->at(a).find("HLT_DiCentralPFNoPUJet50 PFMETORPFMETNoMu80_v")!=std::string::npos)
+       && trigger_prescalevalue->at(a)==1 && trigger_decision->at(a)==1){
+      return true;
+    }
+  }
+  return false;
+}
+
 bool EventHandler::PassesNumJetsCut() const{
   const int numGoodJets(GetNumGoodJets());
   if(numGoodJets==4 || numGoodJets==5){
