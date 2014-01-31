@@ -1361,6 +1361,69 @@ double EventHandler::GetTopPtWeight() const{
   return 1;
 }
 
+double EventHandler::look_up_scale_factor() const{
+  if(GetLSPMass()!=1) return scaleFactor;
+  std::string::size_type last_decimal(model_params->rfind("."));
+  std::string::size_type last_space(model_params->rfind(" ",last_decimal));
+  std::string cross_section_str(model_params->substr(last_space+1));
+  double cross_section(atof(cross_section_str.c_str()));
+  double num_events(0);
+  switch(GetCharginoMass()){
+  case 130:
+    num_events=47890.0;
+    break;
+  case 150:
+    num_events=415152.0;
+    break;
+  case 175:
+    num_events=399589.0;
+    break;
+  case 200:
+    num_events=387968.0;
+    break;
+  case 225:
+    num_events=379120.0;
+    break;
+  case 250:
+    num_events=152428.0;
+    break;
+  case 275:
+    num_events=150227.0;
+    break;
+  case 300:
+    num_events=146559.0;
+    break;
+  case 325:
+    num_events=142987.0;
+    break;
+  case 350:
+    num_events=80305.0;
+    break;
+  case 375:
+    num_events=78645.0;
+    break;
+  case 400:
+    num_events=78026.0;
+    break;
+  case 425:
+    num_events=77734.0;
+    break;
+  case 450:
+    num_events=77444.0;
+    break;
+  case 475:
+    num_events=77069.0;
+    break;
+  case 500:
+    num_events=76193.0;
+    break;
+  default:
+    return scaleFactor;
+  }
+  //Should probably not hard code the lumi but this requires changing a few other things...
+  return 19.399*cross_section/num_events;
+}
+
 double EventHandler::GetTopPtWeightOfficial() const{ // New 11/07
   double topweight(-1.0);
 

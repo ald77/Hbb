@@ -304,11 +304,16 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
     timer.Iterate();
     GetEntry(i);
 
+    double this_scale_factor(scaleFactor);
+    if(sampleName.find("SMS-TChiHH")!=std::string::npos){
+      this_scale_factor=look_up_scale_factor();
+    }
+
     const bool isRealData(sampleName.find("Run2012")!=std::string::npos);
     const bool isttbar(sampleName.find("TTJets")!=std::string::npos || sampleName.find("TT_")!=std::string::npos);
-    const double localWeight((isRealData?1.0:GetPUWeight(lumiWeights))*scaleFactor*(true && isttbar?GetTopPtWeight():1.0)*GetSbinWeight()*(HasGluonSplitting()?1.0:1.0));
-    const double nonpileupweight(scaleFactor*(true && isttbar?GetTopPtWeight():1.0)*(HasGluonSplitting()?1.0:1.0)*GetSbinWeight());
-    const double notopweight((isRealData?1.0:GetPUWeight(lumiWeights))*scaleFactor*GetSbinWeight());
+    const double localWeight((isRealData?1.0:GetPUWeight(lumiWeights))*this_scale_factor*(true && isttbar?GetTopPtWeight():1.0)*GetSbinWeight()*(HasGluonSplitting()?1.0:1.0));
+    const double nonpileupweight(this_scale_factor*(true && isttbar?GetTopPtWeight():1.0)*(HasGluonSplitting()?1.0:1.0)*GetSbinWeight());
+    const double notopweight((isRealData?1.0:GetPUWeight(lumiWeights))*this_scale_factor*GetSbinWeight());
 
     if(!PassesJSONCut()) continue;
     if(!PassesTChiMassCut(300,1)

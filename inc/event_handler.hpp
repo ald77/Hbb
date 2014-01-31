@@ -179,6 +179,8 @@ protected:
 
   bool HasGluonSplitting() const;
 
+  double look_up_scale_factor() const;
+
   std::vector<std::pair<int,int> > GetBOrigins() const;
 
   double GetHighestJetPt(const unsigned int=1) const;

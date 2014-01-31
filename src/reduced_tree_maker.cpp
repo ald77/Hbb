@@ -200,6 +200,8 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
     min_delta_r=GetMinDR();
     max_delta_r=GetMaxDR();
 
+    
+
     const std::pair<double, double> higgs_masses(GetHiggsMasses());
     average_higgs_mass=0.5*(higgs_masses.first+higgs_masses.second);
     higgs_mass_difference=fabs(higgs_masses.first-higgs_masses.second);
@@ -209,8 +211,13 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
     ht_jets_leps=GetHT(false, true);
     ht_jets_met_leps=GetHT(true, true);
 
+    double this_scale_factor(scaleFactor);
+    if(sampleName.find("SMS-TChiHH")!=std::string::npos){
+      this_scale_factor=look_up_scale_factor();
+    }
+
     pu_weight=isRealData?1.0:GetPUWeight(lumiWeights);
-    lumi_weight=scaleFactor;
+    lumi_weight=this_scale_factor;
     top_pt_weight=isttbar?GetTopPtWeight():1.0;
     trigger_weight=GetSbinWeight();
     full_weight=pu_weight*lumi_weight*top_pt_weight*trigger_weight;
