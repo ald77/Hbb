@@ -27,8 +27,8 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
     passes2CSVTCut(false), passesMETSig30Cut(false), passesMETCleaningCut(false),
     passesTriggerCut(false), passesNumJetsCut(false), passesMinDeltaPhiCut(false),
     passesLeptonVetoCut(false), passesIsoTrackVetoCut(false), passesDRCut(false),
-    passesBTaggingCut(false), passesHiggsAvgMassCut(false), passesHiggsMassDiffCut(false),
-    passesQCDTriggerCut(false);
+    passesBTaggingCut(false), passesHiggsAvgMassCut(false),
+    passesHiggsMassDiffCut(false), passesQCDTriggerCut(false);
 
   bool passes4bSignalRegionCut(false), passes4bSidebandRegionCut(false);
   bool passes3bSignalRegionCut(false), passes3bSidebandRegionCut(false);
