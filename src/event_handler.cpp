@@ -837,7 +837,7 @@ void EventHandler::GetSortedBJets() const{
     sortedBJetCache.clear();
     for(unsigned int i(0); i<jets_AK5PF_pt->size(); ++i){
       if(isGoodJet(i)){
-        sortedBJetCache.push_back(BJet(TLorentzVector(jets_AK5PF_px->at(i),jets_AK5PF_py->at(i),jets_AK5PF_pz->at(i),jets_AK5PF_energy->at(i)),jets_AK5PF_btag_secVertexCombined->at(i),i));
+        sortedBJetCache.push_back(BJet(TLorentzVector(jets_AK5PF_px->at(i),jets_AK5PF_py->at(i),jets_AK5PF_pz->at(i),jets_AK5PF_energy->at(i)),jets_AK5PF_btag_secVertexCombined->at(i),i,static_cast<unsigned int>(jets_AK5PF_parton_Id->at(i)),static_cast<unsigned int>(jets_AK5PF_parton_motherId->at(i))));
       }
     }
     std::sort(sortedBJetCache.begin(),sortedBJetCache.end(), std::greater<BJet>());
@@ -967,6 +967,22 @@ int GetSimpleParticle(const double &id){
   default:
     return 0;
   }
+}
+
+std::vector<std::pair<int, int> > EventHandler::GetBOrigins_new() const{
+  if(!bJetsUpToDate) GetSortedBJets();
+  std::vector<std::pair<int, int> > x(0);
+  for(unsigned int jet(0); jet<sortedBJetCache.size(); ++jet){
+    /*
+      printf("i: %d, CSV: %3.2f, Id: %d, momId: %d\n", 
+	   sortedBJetCache[jet].GetIndex(), sortedBJetCache[jet].GetBTag(),
+	   sortedBJetCache[jet].GetPartonId(), sortedBJetCache[jet].GetMotherId());
+    */
+    const unsigned int id(sortedBJetCache.at(jet).GetPartonId());
+    const unsigned int mom(sortedBJetCache.at(jet).GetMotherId());
+    x.push_back(std::pair<int,int>(id, mom));
+  }
+  return x;
 }
 
 std::vector<std::pair<int, int> > EventHandler::GetBOrigins() const{

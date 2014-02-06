@@ -14,8 +14,10 @@ public:
 };
 
 namespace CfAPlots{
+  void FixBinLabels_new(TH1D &h);
   void FixBinLabels(TH1D &h);
   void FixSbinLabels(TH1D &h);
+  int GetType_new(const std::pair<int,int> &b_origin);
   int GetType(const std::pair<int,int> &b_origin);
 }
 

@@ -18,7 +18,7 @@
 
 class EventHandler : public cfA{
 public:
-  EventHandler(const std::string &, const bool, const double=1.0, const bool=false);
+  explicit EventHandler(const std::string &, const bool, const double=1.0, const bool=false);
 
   void SetScaleFactor(const double);
   void SetScaleFactor(const double, const double, const int);
@@ -182,6 +182,7 @@ protected:
   double look_up_scale_factor() const;
 
   std::vector<std::pair<int,int> > GetBOrigins() const;
+  std::vector<std::pair<int,int> > GetBOrigins_new() const;
 
   double GetHighestJetPt(const unsigned int=1) const;
   double GetHighestJetCSV(const unsigned int=1) const;
