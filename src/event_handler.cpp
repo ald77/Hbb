@@ -229,6 +229,16 @@ bool EventHandler::PassesQCDTriggerCut() const{
   return false;
 }
 
+bool EventHandler::PassesSpecificTrigger(const std::string trigger) const{ // just check if a specific trigger fired
+  for(unsigned int a=0; a<trigger_name->size(); ++a){
+    if(trigger_name->at(a).find(trigger)!=std::string::npos
+       && trigger_prescalevalue->at(a)==1 && trigger_decision->at(a)==1){
+      return true;
+    }
+  }
+  return false;
+}
+
 bool EventHandler::PassesNumJetsCut() const{
   const int numGoodJets(GetNumGoodJets());
   if(numGoodJets==4 || numGoodJets==5){
@@ -353,6 +363,20 @@ bool EventHandler::PassesBaselineSelection() const{
   if(!PassesIsoTrackVetoCut()) return false;
   if(!PassesDRCut()) return false;
   if(!PassesMETSig30Cut()) return false;
+  return true;
+}
+
+bool EventHandler::PassesSingleLeptonControlCut() const {
+  if(GetNumVetoElectrons()+GetNumVetoMuons()!=1) return false;
+  if(GetNumVetoTaus()>0) return false;
+  if(!PassesIsoTrackVetoCut()) return false;
+  return true;
+}
+
+bool EventHandler::PassesQCDControlCut() const {
+  if(!PassesQCDTriggerCut()) return false;
+  if(GetNumCSVMJets()>2) return false;
+  if(GetMinDeltaPhiMET(UINT_MAX)>0.3) return false;
   return true;
 }
 
@@ -975,8 +999,8 @@ std::vector<std::pair<int, int> > EventHandler::GetBOrigins_new() const{
   for(unsigned int jet(0); jet<sortedBJetCache.size(); ++jet){
     /*
       printf("i: %d, CSV: %3.2f, Id: %d, momId: %d\n", 
-	   sortedBJetCache[jet].GetIndex(), sortedBJetCache[jet].GetBTag(),
-	   sortedBJetCache[jet].GetPartonId(), sortedBJetCache[jet].GetMotherId());
+      sortedBJetCache[jet].GetIndex(), sortedBJetCache[jet].GetBTag(),
+      sortedBJetCache[jet].GetPartonId(), sortedBJetCache[jet].GetMotherId());
     */
     const unsigned int id(sortedBJetCache.at(jet).GetPartonId());
     const unsigned int mom(sortedBJetCache.at(jet).GetMotherId());
@@ -1438,6 +1462,16 @@ double EventHandler::look_up_scale_factor() const{
   }
   //Should probably not hard code the lumi but this requires changing a few other things...
   return 19.399*cross_section/num_events;
+}
+
+double EventHandler::GetTopPt() const {
+  double topPt(-1);
+  for(unsigned int i(0); i<mc_doc_id->size(); ++i){
+    // look for the *top* (not antitop) pT
+    if(mc_doc_id->at(i)==6) topPt = mc_doc_pt->at(i);
+    if(topPt>=0) break; //check to see if we're done
+  }
+  return topPt;
 }
 
 double EventHandler::GetTopPtWeightOfficial() const{ // New 11/07

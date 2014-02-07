@@ -9,6 +9,7 @@
 ./scripts/make_reduced_tree.exe -c -i TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V19_ext1-v1_AODSIM_UCSB1962_v71 &> logs/make_reduced_tree_1962.log &
 ./scripts/make_reduced_tree.exe -c -i TTJets_MassiveBinDECAY_TuneZ2star_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1850_v71 &> logs/make_reduced_tree_1962.log &
 ./scripts/make_reduced_tree.exe -c -i TTJets_MassiveBinDECAY_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V7C_FSIM-v2_AODSIM_UCSB1976_v71 &> logs/make_reduced_tree_1962.log &
+./scripts/make_reduced_tree.exe -c -i TTJets_WToBC_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V19-v1_AODSIM_UCSB1966_v71 &> logs/make_reduced_tree_1966.log &
 
 ./scripts/make_reduced_tree.exe -c -i TTWJets_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1857_v71 &> logs/make_reduced_tree_1857.log &
 ./scripts/make_reduced_tree.exe -c -i TTZJets_8TeV-madgraph_v2_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1856_v71 &> logs/make_reduced_tree_1856.log &
@@ -59,6 +60,9 @@
 ./scripts/make_reduced_tree.exe -c -i MET_Run2012C-PromptReco-v2_AOD_UCSB1867_v71 &> logs/make_reduced_tree_1867.log &
 ./scripts/make_reduced_tree.exe -c -i MET_Run2012D-PromptReco-v1_AOD_UCSB1869_v71 &> logs/make_reduced_tree_1869.log &
 ./scripts/make_reduced_tree.exe -c -i MET_Run2012D-PromptReco-v1_AOD_UCSB1870_v71 &> logs/make_reduced_tree_1870.log &
+
+# for trigger eff
+#./scripts/make_reduced_tree.exe -c -i 
 
 wait
 

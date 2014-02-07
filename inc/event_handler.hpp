@@ -73,6 +73,7 @@ protected:
   bool PassesMETCleaningCut() const;
   bool PassesTriggerCut() const;
   bool PassesQCDTriggerCut() const;
+  bool PassesSpecificTrigger(const std::string) const;
   bool PassesNumJetsCut() const;
   bool Passes2CSVTCut() const;
   bool PassesJet2PtCut() const;
@@ -92,6 +93,8 @@ protected:
   bool PassesMETSig150Cut() const;
 
   bool PassesSingleLeptonCut() const;
+  bool PassesSingleLeptonControlCut() const;
+  bool PassesQCDControlCut() const;
   bool PassesJSONCut() const;
 
   uint_least32_t GetCutFailCode() const;
@@ -168,6 +171,7 @@ protected:
 
   double GetSbinWeight() const;
   double GetTopPtWeight() const;
+  double GetTopPt() const;
   double GetTopPtWeightOfficial() const;
 
   double GetMinDR() const;

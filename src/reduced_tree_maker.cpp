@@ -28,13 +28,17 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
     passesTriggerCut(false), passesNumJetsCut(false), passesMinDeltaPhiCut(false),
     passesLeptonVetoCut(false), passesIsoTrackVetoCut(false), passesDRCut(false),
     passesBTaggingCut(false), passesHiggsAvgMassCut(false),
-    passesHiggsMassDiffCut(false), passesQCDTriggerCut(false);
+    passesHiggsMassDiffCut(false), passesQCDTriggerCut(false), passesSingleMuTrigger(false);
+
+  bool higgs_mass_signal_region(false), higgs_mass_sideband(false);
 
   bool passes4bSignalRegionCut(false), passes4bSidebandRegionCut(false);
   bool passes3bSignalRegionCut(false), passes3bSidebandRegionCut(false);
   bool passes2bSignalRegionCut(false), passes2bSidebandRegionCut(false);
 
   bool passesBaselineSelection(false), passesTriggerPlateauCuts(false);
+
+  bool controlSampleOneLepton(false), controlSampleQCD(false);
 
   float pu_true_num_interactions(0.0);
   unsigned short num_primary_vertices(0);
@@ -46,12 +50,13 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   float met_sig(0.0), met(0.0);
   unsigned short num_jets(0), num_b_tagged_jets(0);
   float min_delta_phi(0.0);
-  unsigned short num_electrons(0), num_muons(0), num_taus(0), num_iso_tracks(0);
+  unsigned short num_electrons(0), num_muons(0), num_taus(0), num_iso_tracks(0), num_leptons(0);
   float min_delta_r(0.0), max_delta_r(0.0);
   float average_higgs_mass(0.0), higgs_mass_difference(0.0);
   float ht_jets(0.0), ht_jets_met(0.0), ht_jets_leps(0.0), ht_jets_met_leps(0.0);
-  float full_weight(0.0), lumi_weight(0.0), top_pt_weight(0.0), pu_weight(0.0), trigger_weight(0.0);
+  float full_weight(0.0), lumi_weight(0.0), top_pt_weight(0.0), top_pt_weight_official(0.0), pu_weight(0.0), trigger_weight(0.0);
   bool has_gluon_splitting(false);
+  float top_pt(0.0);
   short lsp_mass(0), chargino_mass(0);
 
   reduced_tree.Branch("passesJSONCut", &passesJSONCut);
@@ -62,6 +67,7 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   reduced_tree.Branch("passesMETCleaningCut",&passesMETCleaningCut);
   reduced_tree.Branch("passesTriggerCut",&passesTriggerCut);
   reduced_tree.Branch("passesQCDTriggerCut",&passesQCDTriggerCut);
+  reduced_tree.Branch("passesSingleMuTrigger",&passesSingleMuTrigger);
   reduced_tree.Branch("passesNumJetsCut",&passesNumJetsCut);
   reduced_tree.Branch("passesMinDeltaPhiCut",&passesMinDeltaPhiCut);
   reduced_tree.Branch("passesLeptonVetoCut",&passesLeptonVetoCut);
@@ -71,6 +77,8 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   reduced_tree.Branch("passesHiggsAvgMassCut",&passesHiggsAvgMassCut);
   reduced_tree.Branch("passesHiggsMassDiffCut",&passesHiggsMassDiffCut);
 
+  reduced_tree.Branch("higgs_mass_signal_region",&higgs_mass_signal_region);
+  reduced_tree.Branch("higgs_mass_sideband",&higgs_mass_sideband);
   reduced_tree.Branch("passes4bSignalRegionCut",&passes4bSignalRegionCut);
   reduced_tree.Branch("passes4bSidebandRegionCut",&passes4bSidebandRegionCut);
   reduced_tree.Branch("passes3bSignalRegionCut",&passes3bSignalRegionCut);
@@ -80,6 +88,9 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
 
   reduced_tree.Branch("passesBaselineSelection",&passesBaselineSelection);
   reduced_tree.Branch("passesTriggerPlateauCuts",&passesTriggerPlateauCuts);
+
+  reduced_tree.Branch("controlSampleOneLepton",&controlSampleOneLepton);
+  reduced_tree.Branch("controlSampleQCD",&controlSampleQCD);
 
   reduced_tree.Branch("highest_jet_pt", &highest_jet_pt);
   reduced_tree.Branch("second_highest_jet_pt", &second_highest_jet_pt);
@@ -107,6 +118,7 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   reduced_tree.Branch("num_electrons", &num_electrons);
   reduced_tree.Branch("num_muons", &num_muons);
   reduced_tree.Branch("num_taus", &num_taus);
+  reduced_tree.Branch("num_leptons",&num_leptons);
   reduced_tree.Branch("num_iso_tracks", &num_iso_tracks);
 
   reduced_tree.Branch("min_delta_R", &min_delta_r);
@@ -121,11 +133,13 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   reduced_tree.Branch("ht_jets_met_leps", &ht_jets_met_leps);
 
   reduced_tree.Branch("has_gluon_splitting", &has_gluon_splitting);
+  reduced_tree.Branch("top_pt",&top_pt);
 
   reduced_tree.Branch("full_weight", &full_weight);
   reduced_tree.Branch("lumi_weight", &lumi_weight);
   reduced_tree.Branch("pu_weight", &pu_weight);
   reduced_tree.Branch("top_pt_weight", &top_pt_weight);
+  reduced_tree.Branch("top_pt_weight_official", &top_pt_weight_official);
   reduced_tree.Branch("trigger_weight", &trigger_weight);
  
   reduced_tree.Branch("lsp_mass", &lsp_mass);
@@ -162,6 +176,9 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
     passesHiggsAvgMassCut=PassesHiggsAvgMassCut();
     passesHiggsMassDiffCut=PassesHiggsMassDiffCut();
 
+    passesQCDTriggerCut=PassesQCDTriggerCut();
+    passesSingleMuTrigger=PassesSpecificTrigger("HLT_IsoMu24_eta2p1");
+
     passes4bSignalRegionCut=PassesRegionACut();
     passes4bSidebandRegionCut=PassesRegionBCut();
     passes3bSignalRegionCut=PassesRegionC3bCut();
@@ -195,16 +212,21 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
     num_electrons=GetNumVetoElectrons();
     num_muons=GetNumVetoMuons();
     num_taus=GetNumVetoTaus();
+    num_leptons=num_electrons+num_muons+num_taus;
     num_iso_tracks=NewGetNumIsoTracks();
 
     min_delta_r=GetMinDR();
     max_delta_r=GetMaxDR();
 
-    
+    controlSampleOneLepton=PassesSingleLeptonControlCut();
+    controlSampleQCD=PassesQCDControlCut();
 
     const std::pair<double, double> higgs_masses(GetHiggsMasses());
     average_higgs_mass=0.5*(higgs_masses.first+higgs_masses.second);
     higgs_mass_difference=fabs(higgs_masses.first-higgs_masses.second);
+
+    higgs_mass_signal_region=passesHiggsAvgMassCut&&passesHiggsMassDiffCut;
+    higgs_mass_sideband=(average_higgs_mass<90||average_higgs_mass>150)||higgs_mass_difference>30;
 
     ht_jets=GetHT(false, false);
     ht_jets_met=GetHT(true, false);
@@ -219,9 +241,11 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
     pu_weight=isRealData?1.0:GetPUWeight(lumiWeights);
     lumi_weight=this_scale_factor;
     top_pt_weight=isttbar?GetTopPtWeight():1.0;
+    top_pt_weight_official=isttbar?GetTopPtWeightOfficial():1.0;
     trigger_weight=GetSbinWeight();
-    full_weight=pu_weight*lumi_weight*top_pt_weight*trigger_weight;
+    full_weight=pu_weight*lumi_weight*top_pt_weight_official*trigger_weight;
 
+    top_pt=GetTopPt();
     has_gluon_splitting=HasGluonSplitting();
 
     lsp_mass=GetLSPMass();
