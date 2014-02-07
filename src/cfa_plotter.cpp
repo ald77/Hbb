@@ -173,28 +173,28 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
   TH1D topPt_before("topPt_before", "Top p_{T} Before Top p_{T} Reweighting;top p_{T} [GeV];Events/5 GeV/19.4 fb^{-1}", 50, 0.0, 500.0);
   TH1D topPt_after("topPt_after", "Top p_{T} After Top p_{T} Reweighting;top p_{T} [GeV];Events/5 GeV/19.4 fb^{-1}", 50, 0.0, 500.0);
 
-  TH1D xx_origin1("xx_origin1", "Origin of Highest CSV Jet;Origin;Events/19.4 fb^{-1}", 19, 0.5, 19.5);
-  TH1D xx_origin2("xx_origin2", "Origin of Second Highest CSV Jet;Origin;Events/19.4 fb^{-1}", 19, 0.5, 19.5);
-  TH1D xx_origin3("xx_origin3", "Origin of Third Highest CSV Jet;Origin;Events/19.4 fb^{-1}", 19, 0.5, 19.5);
-  TH1D xx_origin4("xx_origin4", "Origin of Fourth Highest CSV Jet;Origin;Events/19.4 fb^{-1}", 19, 0.5, 19.5);
-  CfAPlots::FixBinLabels(xx_origin1);
-  CfAPlots::FixBinLabels(xx_origin2);
-  CfAPlots::FixBinLabels(xx_origin3);
-  CfAPlots::FixBinLabels(xx_origin4);
+  TH1D xx_origin1("xx_origin1", "Origin of Highest CSV Jet;Origin;Events/19.4 fb^{-1}", 12, 0.5,12.5);
+  TH1D xx_origin2("xx_origin2", "Origin of Second Highest CSV Jet;Origin;Events/19.4 fb^{-1}", 12, 0.5,12.5);
+  TH1D xx_origin3("xx_origin3", "Origin of Third Highest CSV Jet;Origin;Events/19.4 fb^{-1}", 12, 0.5,12.5);
+  TH1D xx_origin4("xx_origin4", "Origin of Fourth Highest CSV Jet;Origin;Events/19.4 fb^{-1}", 12, 0.5,12.5);
+  CfAPlots::FixBinLabels_new(xx_origin1);
+  CfAPlots::FixBinLabels_new(xx_origin2);
+  CfAPlots::FixBinLabels_new(xx_origin3);
+  CfAPlots::FixBinLabels_new(xx_origin4);
 
   TH1D xx_beta1("xx_beta1", "beta for Highest CSV Jet;beta;Events/0.05/19.4 fb^{-1}", 20, 0.0, 1.0);
   TH1D xx_beta2("xx_beta2", "beta for Second Highest CSV Jet;beta;Events/0.05/19.4 fb^{-1}", 20, 0.0, 1.0);
   TH1D xx_beta3("xx_beta3", "beta for Third Highest CSV Jet;beta;Events/0.05/19.4 fb^{-1}", 20, 0.0, 1.0);
   TH1D xx_beta4("xx_beta4", "beta for Fourth Highest CSV Jet;beta;Events/0.05/19.4 fb^{-1}", 20, 0.0, 1.0);
 
-  TH1D yy_origin1("yy_origin1", "Origin of Highest CSV Jet;Origin;Events/19.4 fb^{-1}", 19, 0.5, 19.5);
-  TH1D yy_origin2("yy_origin2", "Origin of Second Highest CSV Jet;Origin;Events/19.4 fb^{-1}", 19, 0.5, 19.5);
-  TH1D yy_origin3("yy_origin3", "Origin of Third Highest CSV Jet;Origin;Events/19.4 fb^{-1}", 19, 0.5, 19.5);
-  TH1D yy_origin4("yy_origin4", "Origin of Fourth Highest CSV Jet;Origin;Events/19.4 fb^{-1}", 19, 0.5, 19.5);
-  CfAPlots::FixBinLabels(yy_origin1);
-  CfAPlots::FixBinLabels(yy_origin2);
-  CfAPlots::FixBinLabels(yy_origin3);
-  CfAPlots::FixBinLabels(yy_origin4);
+  TH1D yy_origin1("yy_origin1", "Origin of Highest CSV Jet;Origin;Events/19.4 fb^{-1}", 12, 0.5,12.5);
+  TH1D yy_origin2("yy_origin2", "Origin of Second Highest CSV Jet;Origin;Events/19.4 fb^{-1}", 12, 0.5,12.5);
+  TH1D yy_origin3("yy_origin3", "Origin of Third Highest CSV Jet;Origin;Events/19.4 fb^{-1}", 12, 0.5,12.5);
+  TH1D yy_origin4("yy_origin4", "Origin of Fourth Highest CSV Jet;Origin;Events/19.4 fb^{-1}", 12, 0.5,12.5);
+  CfAPlots::FixBinLabels_new(yy_origin1);
+  CfAPlots::FixBinLabels_new(yy_origin2);
+  CfAPlots::FixBinLabels_new(yy_origin3);
+  CfAPlots::FixBinLabels_new(yy_origin4);
 
   TH1D yy_beta1("yy_beta1", "beta for Highest CSV Jet;beta;Events/0.05/19.4 fb^{-1}", 20, 0.0, 1.0);
   TH1D yy_beta2("yy_beta2", "beta for Second Highest CSV Jet;beta;Events/0.05/19.4 fb^{-1}", 20, 0.0, 1.0);
@@ -326,6 +326,15 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
     ++startCount;
     startCountWeighted+=localWeight;
 
+    // "Baseline" selection
+    if(PassesPVCut() && PassesJet2PtCut() && Passes2CSVTCut() && PassesMETCleaningCut() && PassesTriggerCut() && PassesNumJetsCut()) {
+      const std::vector<std::pair<int,int> > bo(GetBOrigins_new());
+      xx_origin1.Fill(CfAPlots::GetType_new(bo.at(0)),localWeight);
+      xx_origin2.Fill(CfAPlots::GetType_new(bo.at(1)),localWeight);
+      xx_origin3.Fill(CfAPlots::GetType_new(bo.at(2)),localWeight);
+      xx_origin4.Fill(CfAPlots::GetType_new(bo.at(3)),localWeight);
+    }
+    
     if(PassesPVCut() && PassesJet2PtCut() && Passes2CSVTCut() && PassesMETSig30Cut() && PassesMETCleaningCut() && PassesTriggerCut() && PassesNumJetsCut() && PassesMinDeltaPhiCut() && PassesLeptonVetoCut() && PassesIsoTrackVetoCut() && PassesDRCut()){
       double npv(-1.0);
       for(unsigned int bc(0); bc<PU_bunchCrossing->size(); ++bc){
@@ -348,11 +357,11 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
 
     if(!betaUpToDate) GetBeta();
     if(PassesRegionACut()){
-      const std::vector<std::pair<int,int> > bo(GetBOrigins());
-      xx_origin1.Fill(CfAPlots::GetType(bo.at(0)),localWeight);
-      xx_origin2.Fill(CfAPlots::GetType(bo.at(1)),localWeight);
-      xx_origin3.Fill(CfAPlots::GetType(bo.at(2)),localWeight);
-      xx_origin4.Fill(CfAPlots::GetType(bo.at(3)),localWeight);
+      // const std::vector<std::pair<int,int> > bo(GetBOrigins());
+      // xx_origin1.Fill(CfAPlots::GetType(bo.at(0)),localWeight);
+      // xx_origin2.Fill(CfAPlots::GetType(bo.at(1)),localWeight);
+      // xx_origin3.Fill(CfAPlots::GetType(bo.at(2)),localWeight);
+      // xx_origin4.Fill(CfAPlots::GetType(bo.at(3)),localWeight);
       std::vector<std::pair<double, double> > CSV_beta(0);
       for(unsigned int jet(0); jet<jets_AK5PF_pt->size(); ++jet){
         if(isGoodJet(jet, true, 20.0, 2.4, false)){
@@ -369,10 +378,10 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
 
     if(PassesRegionBCut()){
       const std::vector<std::pair<int,int> > bo(GetBOrigins());
-      yy_origin1.Fill(CfAPlots::GetType(bo.at(0)),localWeight);
-      yy_origin2.Fill(CfAPlots::GetType(bo.at(1)),localWeight);
-      yy_origin3.Fill(CfAPlots::GetType(bo.at(2)),localWeight);
-      yy_origin4.Fill(CfAPlots::GetType(bo.at(3)),localWeight);
+      yy_origin1.Fill(CfAPlots::GetType_new(bo.at(0)),localWeight);
+      yy_origin2.Fill(CfAPlots::GetType_new(bo.at(1)),localWeight);
+      yy_origin3.Fill(CfAPlots::GetType_new(bo.at(2)),localWeight);
+      yy_origin4.Fill(CfAPlots::GetType_new(bo.at(3)),localWeight);
       std::vector<std::pair<double, double> > CSV_beta(0);
       for(unsigned int jet(0); jet<jets_AK5PF_pt->size(); ++jet){
         if(isGoodJet(jet, true, 20.0, 2.4, false)){
@@ -524,7 +533,7 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
       //Signal region plots go here!
       if(PassesMETSig30Cut() && PassesHiggsMassCut() && PassesDRCut()){
         unsigned int CSV1(sortedBJetCache[0].GetIndex()), CSV2(sortedBJetCache[1].GetIndex()),
-                     CSV3(sortedBJetCache[2].GetIndex()), CSV4(sortedBJetCache[3].GetIndex());
+          CSV3(sortedBJetCache[2].GetIndex()), CSV4(sortedBJetCache[3].GetIndex());
         jet_parton_Id_CSV1.Fill(GetPartonIdBin(jets_AK5PF_parton_Id->at(CSV1)),localWeight);
         jet_parton_Id_CSV2.Fill(GetPartonIdBin(jets_AK5PF_parton_Id->at(CSV2)),localWeight);
         jet_parton_Id_CSV3.Fill(GetPartonIdBin(jets_AK5PF_parton_Id->at(CSV3)),localWeight);
@@ -1240,6 +1249,21 @@ namespace CfAPlots{
     h.GetXaxis()->SetBinLabel(4,"4");
   }
 
+  void FixBinLabels_new(TH1D &h){
+    h.GetXaxis()->SetBinLabel(1, "H->b");
+    h.GetXaxis()->SetBinLabel(2, "t->b");
+    h.GetXaxis()->SetBinLabel(3, "W->b");
+    h.GetXaxis()->SetBinLabel(4, "g->b");
+    h.GetXaxis()->SetBinLabel(5, "Z->b");
+    h.GetXaxis()->SetBinLabel(6, "W->c");
+    h.GetXaxis()->SetBinLabel(7, "g->c");
+    h.GetXaxis()->SetBinLabel(8, "Z->c");
+    h.GetXaxis()->SetBinLabel(9, "W->uds");
+    h.GetXaxis()->SetBinLabel(10, "g->uds");
+    h.GetXaxis()->SetBinLabel(11, "Z->uds");
+    h.GetXaxis()->SetBinLabel(12, "gluon");
+  }
+
   void FixBinLabels(TH1D &h){
     h.GetXaxis()->SetBinLabel(1, "H->b");
     h.GetXaxis()->SetBinLabel(2, "t->b");
@@ -1262,51 +1286,87 @@ namespace CfAPlots{
     h.GetXaxis()->SetBinLabel(19, "other");
   }
 
-  int GetType(const std::pair<int,int> &b_origin){
-    if(b_origin.first==5){
-      if(b_origin.second==25){
+  int GetType_new(const std::pair<int,int> &b_origin){
+    if(abs(b_origin.first)==5){
+      if(abs(b_origin.second)==25){
         return 1;
-      }else if(b_origin.second==6){
+      }else if(abs(b_origin.second)==6){
         return 2;
-      }else if(b_origin.second==24){
+      }else if(abs(b_origin.second)==24){
         return 3;
-      }else if(b_origin.second==21){
+      }else if(abs(b_origin.second)==21){
         return 4;
-      }else if(b_origin.second==23){
+      }else if(abs(b_origin.second)==23){
+        return 5;
+      }
+    }else if(abs(b_origin.first)==4){
+      if(abs(b_origin.second)==24){
+        return 6;
+      }else if(abs(b_origin.second)==21){
+        return 7;
+      }else if(abs(b_origin.second)==23){
+        return 8;
+      }
+    }else if(abs(b_origin.first)>=1 && abs(b_origin.first)<=3){
+      if(abs(b_origin.second)==24){
+        return 9;
+      }else if(abs(b_origin.second)==21){
+        return 10;
+      }else if(abs(b_origin.second)==23){
+        return 11;
+      }
+    }else if(abs(b_origin.first)==21){
+      return 12;
+    }
+    return -1;
+  }
+
+  int GetType(const std::pair<int,int> &b_origin){
+    if(abs(b_origin.first)==5){
+      if(abs(b_origin.second)==25){
+        return 1;
+      }else if(abs(b_origin.second)==6){
+        return 2;
+      }else if(abs(b_origin.second)==24){
+        return 3;
+      }else if(abs(b_origin.second)==21){
+        return 4;
+      }else if(abs(b_origin.second)==23){
         return 5;
       }else{
         return 6;
       }
-    }else if(b_origin.first==4){
-      if(b_origin.second==24){
+    }else if(abs(b_origin.first)==4){
+      if(abs(b_origin.second)==24){
         return 7;
-      }else if(b_origin.second==21){
+      }else if(abs(b_origin.second)==21){
         return 8;
-      }else if(b_origin.second==23){
+      }else if(abs(b_origin.second)==23){
         return 9;
       }else{
         return 10;
       }
-    }else if(b_origin.first>=1 && b_origin.first<=3){
-      if(b_origin.second==24){
+    }else if(abs(b_origin.first)>=1 && abs(b_origin.first)<=3){
+      if(abs(b_origin.second)==24){
         return 11;
-      }else if(b_origin.second==21){
+      }else if(abs(b_origin.second)==21){
         return 12;
-      }else if(b_origin.second==23){
+      }else if(abs(b_origin.second)==23){
         return 13;
       }else{
         return 14;
       }
-    }else if(b_origin.first==21){
+    }else if(abs(b_origin.first)==21){
       return 15;
-    }else if(b_origin.first==11){
+    }else if(abs(b_origin.first)==11){
       return 16;
-    }else if(b_origin.first==13){
+    }else if(abs(b_origin.first)==13){
       return 17;
-    }else if(b_origin.first==15){
+    }else if(abs(b_origin.first)==15){
       return 18;
     }else{
       return 19;
     }
   }
+
 }
