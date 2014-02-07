@@ -42,7 +42,7 @@ $(EXEDIR)/make_reduced_tree.exe: make_reduced_tree.o lib_jet_met_objects.so even
 -include $(MAKEDIR)/cfa.d
 
 $(MAKEDIR)/%.d: $(SRCDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM -MG -MF $@ $< 
+	$(CXX) $(CXXFLAGS) -MM -MG -MF $@ $< 
 	sed -i'' 's#$*.o#$(OBJDIR)/$*.o $(MAKEDIR)/$*.d#g' $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
