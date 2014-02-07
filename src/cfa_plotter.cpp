@@ -328,12 +328,12 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
 
     // "Baseline" selection
     if(PassesPVCut() && PassesJet2PtCut() && Passes2CSVTCut() && PassesMETCleaningCut() && PassesTriggerCut() && PassesNumJetsCut()) {
-	const std::vector<std::pair<int,int> > bo(GetBOrigins_new());
-	xx_origin1.Fill(CfAPlots::GetType_new(bo.at(0)),localWeight);
-	xx_origin2.Fill(CfAPlots::GetType_new(bo.at(1)),localWeight);
-	xx_origin3.Fill(CfAPlots::GetType_new(bo.at(2)),localWeight);
-	xx_origin4.Fill(CfAPlots::GetType_new(bo.at(3)),localWeight);
-      }
+      const std::vector<std::pair<int,int> > bo(GetBOrigins_new());
+      xx_origin1.Fill(CfAPlots::GetType_new(bo.at(0)),localWeight);
+      xx_origin2.Fill(CfAPlots::GetType_new(bo.at(1)),localWeight);
+      xx_origin3.Fill(CfAPlots::GetType_new(bo.at(2)),localWeight);
+      xx_origin4.Fill(CfAPlots::GetType_new(bo.at(3)),localWeight);
+    }
     
     if(PassesPVCut() && PassesJet2PtCut() && Passes2CSVTCut() && PassesMETSig30Cut() && PassesMETCleaningCut() && PassesTriggerCut() && PassesNumJetsCut() && PassesMinDeltaPhiCut() && PassesLeptonVetoCut() && PassesIsoTrackVetoCut() && PassesDRCut()){
       double npv(-1.0);
@@ -533,7 +533,7 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
       //Signal region plots go here!
       if(PassesMETSig30Cut() && PassesHiggsMassCut() && PassesDRCut()){
         unsigned int CSV1(sortedBJetCache[0].GetIndex()), CSV2(sortedBJetCache[1].GetIndex()),
-                     CSV3(sortedBJetCache[2].GetIndex()), CSV4(sortedBJetCache[3].GetIndex());
+          CSV3(sortedBJetCache[2].GetIndex()), CSV4(sortedBJetCache[3].GetIndex());
         jet_parton_Id_CSV1.Fill(GetPartonIdBin(jets_AK5PF_parton_Id->at(CSV1)),localWeight);
         jet_parton_Id_CSV2.Fill(GetPartonIdBin(jets_AK5PF_parton_Id->at(CSV2)),localWeight);
         jet_parton_Id_CSV3.Fill(GetPartonIdBin(jets_AK5PF_parton_Id->at(CSV3)),localWeight);
@@ -1285,6 +1285,7 @@ namespace CfAPlots{
     h.GetXaxis()->SetBinLabel(18, "tau");
     h.GetXaxis()->SetBinLabel(19, "other");
   }
+
   int GetType_new(const std::pair<int,int> &b_origin){
     if(abs(b_origin.first)==5){
       if(abs(b_origin.second)==25){
@@ -1317,9 +1318,7 @@ namespace CfAPlots{
     }else if(abs(b_origin.first)==21){
       return 12;
     }
-    else {
-      return -1;
-    }
+    return -1;
   }
 
   int GetType(const std::pair<int,int> &b_origin){
