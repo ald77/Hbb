@@ -26,7 +26,7 @@ TH1D GetMCSum(std::vector<TH1D>& histos){
 }
 
 void GetHighLowRatio(TH1D& h, const double low, const double high,
-		     double& ratio, double& uncert){
+                     double& ratio, double& uncert){
   const int bin_low(h.FindBin(low-0.000001)), bin_high(h.FindBin(high));
   const int num_bins(h.GetNbinsX());
   double uncert_high(0.0), uncert_low(0.0);
@@ -114,71 +114,71 @@ int main(){
     names.push_back(name);
     
     h_min_delta_phi.push_back(TH1D(("h_min_delta_phi_"+name).c_str(),
-				   "Min. Delta Phi (QCD Control);Min Delta Phi;Events/0.1",
-				   32, 0.0, 3.2));
+                                   "Min. Delta Phi (QCD Control);Min Delta Phi;Events/0.1",
+                                   32, 0.0, 3.2));
     h_average_higgs_mass.push_back(TH1D(("h_average_higgs_mass_"+name).c_str(),
-					"<m_{bb}> (QCD Control);<m_{bb}> [GeV];Events/5 GeV",
-					50, 0.0, 250.0));
+                                        "<m_{bb}> (QCD Control);<m_{bb}> [GeV];Events/5 GeV",
+                                        50, 0.0, 250.0));
     h_higgs_mass_diff.push_back(TH1D(("h_higgs_mass_diff_"+name).c_str(),
-				     "#Delta m_{bb} (QCD Control);#Delta m_{bb} [GeV];Events/1 GeV",
-				     50, 0.0, 50.0));
+                                     "#Delta m_{bb} (QCD Control);#Delta m_{bb} [GeV];Events/1 GeV",
+                                     50, 0.0, 50.0));
     h_metsig.push_back(TH1D(("h_metsig_"+name).c_str(),
-			    "S_{MET} (QCD Control);S_{MET};Events/10", 40, 0.0, 400.0));
+                            "S_{MET} (QCD Control);S_{MET};Events/10", 40, 0.0, 400.0));
     h_min_delta_phi_sbin0.push_back(TH1D(("h_min_delta_phi_sbin0_"+name).c_str(),
-					 "Min. Delta Phi (S-bin 0) (QCD Control);Min Delta Phi;Events/0.1",
-					 32, 0.0, 3.2));
+                                         "Min. Delta Phi (S-bin 0) (QCD Control);Min Delta Phi;Events/0.1",
+                                         32, 0.0, 3.2));
     h_min_delta_phi_sbin1.push_back(TH1D(("h_min_delta_phi_sbin1_"+name).c_str(),
-					 "Min. Delta Phi (S-bin 1) (QCD Control);Min Delta Phi;Events/0.1",
-					 32, 0.0, 3.2));
+                                         "Min. Delta Phi (S-bin 1) (QCD Control);Min Delta Phi;Events/0.1",
+                                         32, 0.0, 3.2));
     h_min_delta_phi_sbin2.push_back(TH1D(("h_min_delta_phi_sbin2_"+name).c_str(),
-					 "Min. Delta Phi (S-bin 2) (QCD Control);Min Delta Phi;Events/0.1",
-					 32, 0.0, 3.2));
+                                         "Min. Delta Phi (S-bin 2) (QCD Control);Min Delta Phi;Events/0.1",
+                                         32, 0.0, 3.2));
     h_min_delta_phi_sbin3.push_back(TH1D(("h_min_delta_phi_sbin3_"+name).c_str(),
-					 "Min. Delta Phi (S-bin 3) (QCD Control);Min Delta Phi;Events/0.1",
-					 32, 0.0, 3.2));
+                                         "Min. Delta Phi (S-bin 3) (QCD Control);Min Delta Phi;Events/0.1",
+                                         32, 0.0, 3.2));
     h_min_delta_phi_sbin4.push_back(TH1D(("h_min_delta_phi_sbin4_"+name).c_str(),
-					 "Min. Delta Phi (S-bin 4) (QCD Control);Min Delta Phi;Events/0.1",
-					 32, 0.0, 3.2));
+                                         "Min. Delta Phi (S-bin 4) (QCD Control);Min Delta Phi;Events/0.1",
+                                         32, 0.0, 3.2));
     
     const int num_events(chain.GetEntries());
     Timer timer(num_events);
     timer.Start();
     for(int event(0); event<num_events; ++event){
       if(event%(1u<<16u)==0){
-	timer.PrintRemainingTime();
+        timer.PrintRemainingTime();
       }
       chain.GetEntry(event);
       const double stupid_factor(chain_num==0?19307.0/5208.0:1.0);
       full_weight*=stupid_factor;
       if(passesJSONCut && passesPVCut && passesJet2PtCut && passesMETCleaningCut
-	 && passesNumJetsCut && passesLeptonVetoCut && passesIsoTrackVetoCut
-	 && /*passesDRCut &&*/ passesQCDTriggerCut && num_b_tagged_jets<3 && met>160.0 && second_highest_jet_pt>70.0){
-	if(/*passesHiggsMassDiffCut && !passesMETSig30Cut &&*/ !passesMinDeltaPhiCut){
-	  h_average_higgs_mass.at(chain_num).Fill(average_higgs_mass, full_weight);
-	}
-	if(/*passesHiggsAvgMassCut && !passesMETSig30Cut && */!passesMinDeltaPhiCut){
-	  h_higgs_mass_diff.at(chain_num).Fill(higgs_mass_difference, full_weight);
-	}
-	if(/*passesHiggsAvgMassCut && passesHiggsMassDiffCut
-	     && */!passesMinDeltaPhiCut){
-	  h_metsig.at(chain_num).Fill(met_sig, full_weight);
-	}
-	if(/*passesHiggsAvgMassCut && passesHiggsMassDiffCut && !passesMETSig30Cut*/ true){
-	  h_min_delta_phi.at(chain_num).Fill(min_delta_phi, full_weight);
-	}
-	if(/*passesHiggsAvgMassCut && passesHiggsMassDiffCut*/ true){
-	  if(met_sig<30.0){
-	    h_min_delta_phi_sbin0.at(chain_num).Fill(min_delta_phi, full_weight);
-	  }else if(met_sig<50.0){
-	    h_min_delta_phi_sbin1.at(chain_num).Fill(min_delta_phi, full_weight);
-	  }else if(met_sig<100.0){
-	    h_min_delta_phi_sbin2.at(chain_num).Fill(min_delta_phi, full_weight);
-	  }else if(met_sig<150.0){
-	    h_min_delta_phi_sbin3.at(chain_num).Fill(min_delta_phi, full_weight);
-	  }else{
-	    h_min_delta_phi_sbin4.at(chain_num).Fill(min_delta_phi, full_weight);
-	  }
-	}
+         && passesNumJetsCut && passesLeptonVetoCut && passesIsoTrackVetoCut
+         && /*passesDRCut &&*/ passesQCDTriggerCut && num_b_tagged_jets<3 && met>160.0 && second_highest_jet_pt>70.0){
+        if(/*passesHiggsMassDiffCut && !passesMETSig30Cut &&*/ !passesMinDeltaPhiCut){
+          h_average_higgs_mass.at(chain_num).Fill(average_higgs_mass, full_weight);
+        }
+        if(/*passesHiggsAvgMassCut && !passesMETSig30Cut && */!passesMinDeltaPhiCut){
+          h_higgs_mass_diff.at(chain_num).Fill(higgs_mass_difference, full_weight);
+        }
+        if(/*passesHiggsAvgMassCut && passesHiggsMassDiffCut
+             && */!passesMinDeltaPhiCut){
+          h_metsig.at(chain_num).Fill(met_sig, full_weight);
+        }
+        if(/*passesHiggsAvgMassCut && passesHiggsMassDiffCut && !passesMETSig30Cut*/ true){
+          h_min_delta_phi.at(chain_num).Fill(min_delta_phi, full_weight);
+        }
+        if(/*passesHiggsAvgMassCut && passesHiggsMassDiffCut*/ true){
+          if(met_sig<30.0){
+            h_min_delta_phi_sbin0.at(chain_num).Fill(min_delta_phi, full_weight);
+          }else if(met_sig<50.0){
+            h_min_delta_phi_sbin1.at(chain_num).Fill(min_delta_phi, full_weight);
+          }else if(met_sig<100.0){
+            h_min_delta_phi_sbin2.at(chain_num).Fill(min_delta_phi, full_weight);
+          }else if(met_sig<150.0){
+            h_min_delta_phi_sbin3.at(chain_num).Fill(min_delta_phi, full_weight);
+          }else{
+            h_min_delta_phi_sbin4.at(chain_num).Fill(min_delta_phi, full_weight);
+          }
+        }
       }
       timer.Iterate();
     }
@@ -214,15 +214,15 @@ int main(){
   double mc_rat_sbin4(0.0), mc_uncert_sbin4(0.0);
   GetHighLowRatio(h_min_delta_phi.at(1), low, high, mc_rat_tot, mc_uncert_tot);
   GetHighLowRatio(h_min_delta_phi_sbin0.at(1), low, high,
-		  mc_rat_sbin0, mc_uncert_sbin0);
+                  mc_rat_sbin0, mc_uncert_sbin0);
   GetHighLowRatio(h_min_delta_phi_sbin1.at(1), low, high,
-		  mc_rat_sbin1, mc_uncert_sbin1);
+                  mc_rat_sbin1, mc_uncert_sbin1);
   GetHighLowRatio(h_min_delta_phi_sbin2.at(1), low, high,
-		  mc_rat_sbin2, mc_uncert_sbin2);
+                  mc_rat_sbin2, mc_uncert_sbin2);
   GetHighLowRatio(h_min_delta_phi_sbin3.at(1), low, high,
-		  mc_rat_sbin3, mc_uncert_sbin3);
+                  mc_rat_sbin3, mc_uncert_sbin3);
   GetHighLowRatio(h_min_delta_phi_sbin4.at(1), low, high,
-		  mc_rat_sbin4, mc_uncert_sbin4);
+                  mc_rat_sbin4, mc_uncert_sbin4);
 
   std::cout << rat_tot << " " << uncert_tot << std::endl;
   std::cout << rat_sbin0 << " " << uncert_sbin0 << std::endl;

@@ -7,8 +7,8 @@ class ABCDCount{
 public:
   ABCDCount();
   ABCDCount(const std::vector<double>&, const std::vector<double>&,
-	    const std::vector<double>&, const std::vector<double>&,
-	    const double=1.0);
+            const std::vector<double>&, const std::vector<double>&,
+            const double=1.0);
 
   typedef std::vector<double>::size_type size_type;
   enum Region{kA, kB, kC, kD};
@@ -21,7 +21,7 @@ public:
   double GetCount(const Region&, const size_type&) const;
 
   void SetCounts(const std::vector<double>&, const std::vector<double>&,
-		 const std::vector<double>&, const std::vector<double>&);
+                 const std::vector<double>&, const std::vector<double>&);
 
   void SetCount(const Region&, const std::vector<double>&);
 

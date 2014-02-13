@@ -7,8 +7,8 @@
 class CfAPlotter : public EventHandler{
 public:
   CfAPlotter(const std::string& in_file_name,
-	     const bool is_list,
-	     const double weight_in=1.0);
+             const bool is_list,
+             const double weight_in=1.0);
 
   void MakePlots(const std::string& out_file_name);
 };

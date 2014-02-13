@@ -69,7 +69,7 @@ void MakeCompositionTable() { // Creates an AN-ready table of all the SM backgro
               << "$";
       }
     } // loop over samples
-      ofile << " \\\\" << endl;
+    ofile << " \\\\" << endl;
   } // loop over cuts
     
   // Table footer

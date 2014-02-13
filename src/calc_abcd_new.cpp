@@ -52,7 +52,7 @@ void GetTrees(std::vector<TTree*> &trees, const std::vector<TFile*> &files){
 }
 
 void GetCounts(std::vector<ABCDCount>& counts, std::vector<TTree*>& trees,
-	       const std::vector<double>& weights){
+               const std::vector<double>& weights){
   counts.resize(trees.size());
   for(unsigned int i(0); i<trees.size(); ++i){
     if(trees.at(i)->GetEntries()>0){

@@ -803,17 +803,17 @@ std::pair<double, double> EventHandler::GetHiggsMasses() const{
 double EventHandler::GetMinimaxMbb() const{
   GetHiggsBJetPairing();
   const double mass_1a((higgsBJetPairing.first.first
-			+higgsBJetPairing.first.second).M());
+                        +higgsBJetPairing.first.second).M());
   const double mass_1b((higgsBJetPairing.second.first
-			+higgsBJetPairing.second.second).M());
+                        +higgsBJetPairing.second.second).M());
   const double mass_2a((higgsBJetPairing.first.first
-			+higgsBJetPairing.second.first).M());
+                        +higgsBJetPairing.second.first).M());
   const double mass_2b((higgsBJetPairing.first.second
-			+higgsBJetPairing.second.second).M());
+                        +higgsBJetPairing.second.second).M());
   const double mass_3a((higgsBJetPairing.first.first
-			+higgsBJetPairing.second.second).M());
+                        +higgsBJetPairing.second.second).M());
   const double mass_3b((higgsBJetPairing.first.second
-			+higgsBJetPairing.second.first).M());
+                        +higgsBJetPairing.second.first).M());
   const double mass_1(std::max(mass_1a, mass_1b));
   const double mass_2(std::max(mass_2a, mass_2b));
   const double mass_3(std::max(mass_3a, mass_3b));
@@ -823,17 +823,17 @@ double EventHandler::GetMinimaxMbb() const{
 double EventHandler::GetMaximinMbb() const{
   GetHiggsBJetPairing();
   const double mass_1a((higgsBJetPairing.first.first
-			+higgsBJetPairing.first.second).M());
+                        +higgsBJetPairing.first.second).M());
   const double mass_1b((higgsBJetPairing.second.first
-			+higgsBJetPairing.second.second).M());
+                        +higgsBJetPairing.second.second).M());
   const double mass_2a((higgsBJetPairing.first.first
-			+higgsBJetPairing.second.first).M());
+                        +higgsBJetPairing.second.first).M());
   const double mass_2b((higgsBJetPairing.first.second
-			+higgsBJetPairing.second.second).M());
+                        +higgsBJetPairing.second.second).M());
   const double mass_3a((higgsBJetPairing.first.first
-			+higgsBJetPairing.second.second).M());
+                        +higgsBJetPairing.second.second).M());
   const double mass_3b((higgsBJetPairing.first.second
-			+higgsBJetPairing.second.first).M());
+                        +higgsBJetPairing.second.first).M());
   const double mass_1(std::min(mass_1a, mass_1b));
   const double mass_2(std::min(mass_2a, mass_2b));
   const double mass_3(std::min(mass_3a, mass_3b));
@@ -1154,7 +1154,7 @@ bool EventHandler::isProblemJet(const unsigned int ijet) const{
   return jets_AK5PF_pt->at(ijet)>50.0
     && fabs(jets_AK5PF_eta->at(ijet))>0.9
     && fabs(jets_AK5PF_eta->at(ijet))<1.9
-    && jets_AK5PF_chg_Mult->at(ijet)-jets_AK5PF_neutral_Mult->at(ijet)>=40;
+                                      && jets_AK5PF_chg_Mult->at(ijet)-jets_AK5PF_neutral_Mult->at(ijet)>=40;
 }
 
 bool EventHandler::isGoodJet(const unsigned int ijet, const bool jetid, const double ptThresh, const double etaThresh, const bool doBeta) const{

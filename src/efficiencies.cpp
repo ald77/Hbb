@@ -112,7 +112,7 @@ int main(){
     timer.Start();
     for(int entry(0); entry<num_entries; ++entry){
       if(entry%(1<<18)==0 && entry!=0){
-	timer.PrintRemainingTime();
+        timer.PrintRemainingTime();
       }
       chains.at(chain)->GetEntry(entry);
       weights.at(chain)=lumi_weight;
@@ -120,42 +120,42 @@ int main(){
       if(chargino_mass!=-1 && chargino_mass!=250) continue;
       if(lsp_mass!=-1 && lsp_mass!=1) continue;
       for(unsigned int cut(0); cut<cuts.size(); ++cut){
-	++totals_initial.at(chain).at(cut);
-	bool passes_before(true), passes_after(true);
-	for(unsigned int cut_before(0); cut_before<cut && passes_before==true; ++cut_before){
-	  if(!(*(cuts.at(cut_before)))){
-	    passes_before=false;
-	  }
-	}
-	for(unsigned int cut_after(cut+1); cut_after<cuts.size() && passes_after==true; ++cut_after){
-	  if(!(*(cuts.at(cut_after)))){
-	    passes_after=false;
-	  }
-	}
-	
-	if(passes_before){
-	  ++totals_in_place.at(chain).at(cut);
-	  if(passes_after){
-	    ++totals_nm1.at(chain).at(cut);
-	  }
-	}
-	if(*(cuts.at(cut))){
-	  ++passes_initial.at(chain).at(cut);
-	  if(passes_before){
-	    ++passes_in_place.at(chain).at(cut);
-	    if(passes_after){
-	      ++passes_nm1.at(chain).at(cut);
-	    }
-	  }
-	}
+        ++totals_initial.at(chain).at(cut);
+        bool passes_before(true), passes_after(true);
+        for(unsigned int cut_before(0); cut_before<cut && passes_before==true; ++cut_before){
+          if(!(*(cuts.at(cut_before)))){
+            passes_before=false;
+          }
+        }
+        for(unsigned int cut_after(cut+1); cut_after<cuts.size() && passes_after==true; ++cut_after){
+          if(!(*(cuts.at(cut_after)))){
+            passes_after=false;
+          }
+        }
+        
+        if(passes_before){
+          ++totals_in_place.at(chain).at(cut);
+          if(passes_after){
+            ++totals_nm1.at(chain).at(cut);
+          }
+        }
+        if(*(cuts.at(cut))){
+          ++passes_initial.at(chain).at(cut);
+          if(passes_before){
+            ++passes_in_place.at(chain).at(cut);
+            if(passes_after){
+              ++passes_nm1.at(chain).at(cut);
+            }
+          }
+        }
       }
     }
 
     for(unsigned int cut(0); cut<cuts.size(); ++cut){
       std::cout << "chain=" << chain << ", cut=" << cut << "\n"
-		<< passes_initial.at(chain).at(cut) << "/" << totals_initial.at(chain).at(cut) << "\n"
-		<< passes_in_place.at(chain).at(cut) << "/" << totals_in_place.at(chain).at(cut) << "\n"
-		<< passes_nm1.at(chain).at(cut) << "/" << totals_nm1.at(chain).at(cut) << "\n\n";
+                << passes_initial.at(chain).at(cut) << "/" << totals_initial.at(chain).at(cut) << "\n"
+                << passes_in_place.at(chain).at(cut) << "/" << totals_in_place.at(chain).at(cut) << "\n"
+                << passes_nm1.at(chain).at(cut) << "/" << totals_nm1.at(chain).at(cut) << "\n\n";
     }
   }
   std::vector<std::vector<unsigned int> > sample_lists(2);
@@ -172,20 +172,20 @@ int main(){
     std::vector<double> uncert_nm1(cuts.size(),0.0);
     for(unsigned int sample(0); sample<sample_lists.at(list).size(); ++sample){
       for(unsigned int cut(0); cut<cuts.size(); ++cut){
-	const unsigned int index(sample_lists.at(list).at(sample));
-	const double weight_squared(weights.at(index)*weights.at(index));
-	total_events_initial.at(cut)+=totals_initial.at(index).at(cut)*weights.at(index);
-	total_events_in_place.at(cut)+=totals_in_place.at(index).at(cut)*weights.at(index);
-	total_events_nm1.at(cut)+=totals_nm1.at(index).at(cut)*weights.at(index);
-	const double ratio_initial(passes_initial.at(index).at(cut)/(static_cast<double>(totals_initial.at(index).at(cut))));
-	const double ratio_in_place(passes_in_place.at(index).at(cut)/(static_cast<double>(totals_in_place.at(index).at(cut))));
-	const double ratio_nm1(passes_nm1.at(index).at(cut)/(static_cast<double>(totals_nm1.at(index).at(cut))));
-	eff_initial.at(cut)+=passes_initial.at(index).at(cut)*weights.at(index);
-	eff_in_place.at(cut)+=passes_in_place.at(index).at(cut)*weights.at(index);
-	eff_nm1.at(cut)+=passes_nm1.at(index).at(cut)*weights.at(index);
-	uncert_initial.at(cut)+=ratio_initial*(1.0-ratio_initial)*totals_initial.at(index).at(cut)*weight_squared;
-	uncert_in_place.at(cut)+=ratio_in_place*(1.0-ratio_in_place)*totals_in_place.at(index).at(cut)*weight_squared;
-	uncert_nm1.at(cut)+=ratio_nm1*(1.0-ratio_nm1)*totals_nm1.at(index).at(cut)*weight_squared;
+        const unsigned int index(sample_lists.at(list).at(sample));
+        const double weight_squared(weights.at(index)*weights.at(index));
+        total_events_initial.at(cut)+=totals_initial.at(index).at(cut)*weights.at(index);
+        total_events_in_place.at(cut)+=totals_in_place.at(index).at(cut)*weights.at(index);
+        total_events_nm1.at(cut)+=totals_nm1.at(index).at(cut)*weights.at(index);
+        const double ratio_initial(passes_initial.at(index).at(cut)/(static_cast<double>(totals_initial.at(index).at(cut))));
+        const double ratio_in_place(passes_in_place.at(index).at(cut)/(static_cast<double>(totals_in_place.at(index).at(cut))));
+        const double ratio_nm1(passes_nm1.at(index).at(cut)/(static_cast<double>(totals_nm1.at(index).at(cut))));
+        eff_initial.at(cut)+=passes_initial.at(index).at(cut)*weights.at(index);
+        eff_in_place.at(cut)+=passes_in_place.at(index).at(cut)*weights.at(index);
+        eff_nm1.at(cut)+=passes_nm1.at(index).at(cut)*weights.at(index);
+        uncert_initial.at(cut)+=ratio_initial*(1.0-ratio_initial)*totals_initial.at(index).at(cut)*weight_squared;
+        uncert_in_place.at(cut)+=ratio_in_place*(1.0-ratio_in_place)*totals_in_place.at(index).at(cut)*weight_squared;
+        uncert_nm1.at(cut)+=ratio_nm1*(1.0-ratio_nm1)*totals_nm1.at(index).at(cut)*weight_squared;
       }
     }
 

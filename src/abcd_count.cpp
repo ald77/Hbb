@@ -14,8 +14,8 @@ ABCDCount::ABCDCount():
 }
 
 ABCDCount::ABCDCount(const std::vector<double> &a_in, const std::vector<double> &b_in,
-		     const std::vector<double> &c_in, const std::vector<double> &d_in,
-		     const double weight_in):
+                     const std::vector<double> &c_in, const std::vector<double> &d_in,
+                     const double weight_in):
   a_(a_in),
   b_(b_in),
   c_(c_in),
@@ -23,7 +23,7 @@ ABCDCount::ABCDCount(const std::vector<double> &a_in, const std::vector<double> 
   weight_(weight_in),
   number_of_bins_(0),
   number_of_bins_ready_(false){
-  }
+}
 
 ABCDCount::size_type ABCDCount::GetNumberOfBins() const{
   if(!number_of_bins_ready_){
@@ -77,7 +77,7 @@ double ABCDCount::GetCount(const Region& region, const size_type& bin) const{
 }
 
 void ABCDCount::SetCounts(const std::vector<double>& a_in, const std::vector<double>& b_in,
-			  const std::vector<double>& c_in, const std::vector<double>& d_in){
+                          const std::vector<double>& c_in, const std::vector<double>& d_in){
   number_of_bins_ready_=false;
   a_=a_in;
   b_=b_in;

@@ -8,7 +8,7 @@ class ABCDCalculator{
 public:
   ABCDCalculator();
   ABCDCalculator(const std::vector<ABCDCount>&,
-		 const std::vector<ABCDCount>&);
+                 const std::vector<ABCDCount>&);
 
   typedef ABCDCount::size_type size_type;
 

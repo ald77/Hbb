@@ -52,8 +52,8 @@ int main(){
       oss << "+";
     }
     h_n_jet.push_back(TH1D(("h_"+oss.str()+"_jet").c_str(),
-			   ("Good Vertices in "+oss.str()+" b-Tag Events (baseline, w/o num. jets cut));Vertices;Events/1").c_str(),
-			   61, -0.5, 60.5));
+                           ("Good Vertices in "+oss.str()+" b-Tag Events (baseline, w/o num. jets cut));Vertices;Events/1").c_str(),
+                           61, -0.5, 60.5));
     h_n_jet.at(histo).SetLineColor(histo+1);
   }
 
@@ -127,26 +127,26 @@ int main(){
       chains.at(chain)->GetEntry(entry);
 
       if(passesBaselineSelection){
-	const double no_pu_weight(lumi_weight*top_pt_weight*trigger_weight);
-	const double no_toppt_weight(lumi_weight*pu_weight*trigger_weight);
-	h_pv_nopileup.at(chain).Fill(num_primary_vertices, no_pu_weight);
-	h_pv_notoppt.at(chain).Fill(num_primary_vertices, no_toppt_weight);
-	h_pv.at(chain).Fill(num_primary_vertices, full_weight);
-	h_btags_nopileup.at(chain).Fill(num_b_tagged_jets, no_pu_weight);
-	h_btags_notoppt.at(chain).Fill(num_b_tagged_jets, no_toppt_weight);
-	h_btags.at(chain).Fill(num_b_tagged_jets, full_weight);
-	h_mbb_nopileup.at(chain).Fill(average_higgs_mass, no_pu_weight);
-	h_mbb_notoppt.at(chain).Fill(average_higgs_mass, no_toppt_weight);
-	h_mbb.at(chain).Fill(average_higgs_mass, full_weight);
+        const double no_pu_weight(lumi_weight*top_pt_weight*trigger_weight);
+        const double no_toppt_weight(lumi_weight*pu_weight*trigger_weight);
+        h_pv_nopileup.at(chain).Fill(num_primary_vertices, no_pu_weight);
+        h_pv_notoppt.at(chain).Fill(num_primary_vertices, no_toppt_weight);
+        h_pv.at(chain).Fill(num_primary_vertices, full_weight);
+        h_btags_nopileup.at(chain).Fill(num_b_tagged_jets, no_pu_weight);
+        h_btags_notoppt.at(chain).Fill(num_b_tagged_jets, no_toppt_weight);
+        h_btags.at(chain).Fill(num_b_tagged_jets, full_weight);
+        h_mbb_nopileup.at(chain).Fill(average_higgs_mass, no_pu_weight);
+        h_mbb_notoppt.at(chain).Fill(average_higgs_mass, no_toppt_weight);
+        h_mbb.at(chain).Fill(average_higgs_mass, full_weight);
       }
       if(chain==0){
-	if(passesJSONCut && passesPVCut && passesJet2PtCut && passesMETSig30Cut
-	   && passesMETCleaningCut && passesTriggerCut && passesMinDeltaPhiCut
-	   && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
-	  unsigned num_b_tags(num_b_tagged_jets);
-	  if(num_b_tags>=num_bins) num_b_tags=num_bins-1;
-	  h_n_jet.at(num_b_tags).Fill(num_primary_vertices,full_weight);
-	}
+        if(passesJSONCut && passesPVCut && passesJet2PtCut && passesMETSig30Cut
+           && passesMETCleaningCut && passesTriggerCut && passesMinDeltaPhiCut
+           && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
+          unsigned num_b_tags(num_b_tagged_jets);
+          if(num_b_tags>=num_bins) num_b_tags=num_bins-1;
+          h_n_jet.at(num_b_tags).Fill(num_primary_vertices,full_weight);
+        }
       }
     }
   }

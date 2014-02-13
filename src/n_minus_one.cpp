@@ -26,7 +26,7 @@ TH1D GetMCSum(std::vector<TH1D>& histos){
 }
 
 void GetHighLowRatio(TH1D& h, const double low, const double high,
-		     double& ratio, double& uncert){
+                     double& ratio, double& uncert){
   const int bin_low(h.FindBin(low-0.000001)), bin_high(h.FindBin(high));
   const int num_bins(h.GetNbinsX());
   double uncert_high(0.0), uncert_low(0.0);
@@ -219,80 +219,80 @@ int main(){
     timer.Start();
     for(int event(0); event<num_events; ++event){
       if(event%(1u<<16u)==0){
-	timer.PrintRemainingTime();
+        timer.PrintRemainingTime();
       }
       chain.GetEntry(event);
 
       if(passesJSONCut && passesPVCut && passesJet2PtCut
-	 && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
-	 && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
-	 && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
-	h_pu_true_num_interactions.at(chain_num).Fill(pu_true_num_interactions, full_weight);
-	h_num_primary_vertices.at(chain_num).Fill(num_primary_vertices, full_weight);
-	h_third_highest_jet_pt.at(chain_num).Fill(third_highest_jet_pt, full_weight);
-	h_fourth_highest_jet_pt.at(chain_num).Fill(fourth_highest_jet_pt, full_weight);
-	h_fifth_highest_jet_pt.at(chain_num).Fill(fifth_highest_jet_pt, full_weight);
-	h_third_highest_csv.at(chain_num).Fill(third_highest_csv, full_weight);
-	h_fourth_highest_csv.at(chain_num).Fill(fourth_highest_csv, full_weight);
-	h_fifth_highest_csv.at(chain_num).Fill(fifth_highest_csv, full_weight);
-	h_min_delta_R.at(chain_num).Fill(min_delta_R, full_weight);
-	h_ht_jets.at(chain_num).Fill(ht_jets, full_weight);
-	h_ht_jets_met.at(chain_num).Fill(ht_jets_met, full_weight);
-	h_ht_jets_leps.at(chain_num).Fill(ht_jets_leps, full_weight);
-	h_ht_jets_met_leps.at(chain_num).Fill(ht_jets_met_leps, full_weight);
-	h_top_pt.at(chain_num).Fill(top_pt, full_weight);
-	h_average_higgs_mass.at(chain_num).Fill(average_higgs_mass, full_weight);
-	h_higgs_mass_difference.at(chain_num).Fill(higgs_mass_difference, full_weight);
+         && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
+         && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
+         && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
+        h_pu_true_num_interactions.at(chain_num).Fill(pu_true_num_interactions, full_weight);
+        h_num_primary_vertices.at(chain_num).Fill(num_primary_vertices, full_weight);
+        h_third_highest_jet_pt.at(chain_num).Fill(third_highest_jet_pt, full_weight);
+        h_fourth_highest_jet_pt.at(chain_num).Fill(fourth_highest_jet_pt, full_weight);
+        h_fifth_highest_jet_pt.at(chain_num).Fill(fifth_highest_jet_pt, full_weight);
+        h_third_highest_csv.at(chain_num).Fill(third_highest_csv, full_weight);
+        h_fourth_highest_csv.at(chain_num).Fill(fourth_highest_csv, full_weight);
+        h_fifth_highest_csv.at(chain_num).Fill(fifth_highest_csv, full_weight);
+        h_min_delta_R.at(chain_num).Fill(min_delta_R, full_weight);
+        h_ht_jets.at(chain_num).Fill(ht_jets, full_weight);
+        h_ht_jets_met.at(chain_num).Fill(ht_jets_met, full_weight);
+        h_ht_jets_leps.at(chain_num).Fill(ht_jets_leps, full_weight);
+        h_ht_jets_met_leps.at(chain_num).Fill(ht_jets_met_leps, full_weight);
+        h_top_pt.at(chain_num).Fill(top_pt, full_weight);
+        h_average_higgs_mass.at(chain_num).Fill(average_higgs_mass, full_weight);
+        h_higgs_mass_difference.at(chain_num).Fill(higgs_mass_difference, full_weight);
       }
       if(passesJSONCut && passesPVCut /*&& passesJet2PtCut*/
-	 && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
-	 && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
-	 && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
-	h_highest_jet_pt.at(chain_num).Fill(highest_jet_pt, full_weight);
-	h_second_highest_jet_pt.at(chain_num).Fill(second_highest_jet_pt, full_weight);
+         && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
+         && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
+         && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
+        h_highest_jet_pt.at(chain_num).Fill(highest_jet_pt, full_weight);
+        h_second_highest_jet_pt.at(chain_num).Fill(second_highest_jet_pt, full_weight);
       }
       if(passesJSONCut && passesPVCut && passesJet2PtCut
-	 /*&& passes2CSVTCut*/ && passesMETSig30Cut && passesMETCleaningCut
-	 && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
-	 && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
-	h_highest_csv.at(chain_num).Fill(highest_csv, full_weight);
-	h_second_highest_csv.at(chain_num).Fill(second_highest_csv, full_weight);
-	h_num_b_tagged_jets.at(chain_num).Fill(num_b_tagged_jets, full_weight);
+         /*&& passes2CSVTCut*/ && passesMETSig30Cut && passesMETCleaningCut
+         && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
+         && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
+        h_highest_csv.at(chain_num).Fill(highest_csv, full_weight);
+        h_second_highest_csv.at(chain_num).Fill(second_highest_csv, full_weight);
+        h_num_b_tagged_jets.at(chain_num).Fill(num_b_tagged_jets, full_weight);
       }
       if(passesJSONCut && passesPVCut && passesJet2PtCut
-	 && passes2CSVTCut && /*passesMETSig30Cut &&*/ passesMETCleaningCut
-	 && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
-	 && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
-	h_met_sig.at(chain_num).Fill(met_sig, full_weight);
-	h_met.at(chain_num).Fill(met, full_weight);
-      }	
+         && passes2CSVTCut && /*passesMETSig30Cut &&*/ passesMETCleaningCut
+         && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
+         && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
+        h_met_sig.at(chain_num).Fill(met_sig, full_weight);
+        h_met.at(chain_num).Fill(met, full_weight);
+      } 
       if(passesJSONCut && passesPVCut && passesJet2PtCut
-	 && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
-	 && passesTriggerCut && /*passesNumJetsCut &&*/ passesMinDeltaPhiCut
-	 && passesLeptonVetoCut && passesIsoTrackVetoCut /*&& passesDRCut*/){
-	h_num_jets.at(chain_num).Fill(num_jets, full_weight);
+         && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
+         && passesTriggerCut && /*passesNumJetsCut &&*/ passesMinDeltaPhiCut
+         && passesLeptonVetoCut && passesIsoTrackVetoCut /*&& passesDRCut*/){
+        h_num_jets.at(chain_num).Fill(num_jets, full_weight);
       }
       if(passesJSONCut && passesPVCut && passesJet2PtCut
-	 && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
-	 && passesTriggerCut && passesNumJetsCut /*&& passesMinDeltaPhiCut*/
-	 && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
-	h_min_delta_phi.at(chain_num).Fill(min_delta_phi, full_weight);
+         && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
+         && passesTriggerCut && passesNumJetsCut /*&& passesMinDeltaPhiCut*/
+         && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
+        h_min_delta_phi.at(chain_num).Fill(min_delta_phi, full_weight);
       }
       if(passesJSONCut && passesPVCut && passesJet2PtCut
-	 && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
-	 && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
-	 /*&& passesLeptonVetoCut && passesIsoTrackVetoCut*/ && passesDRCut){
-	h_num_electrons.at(chain_num).Fill(num_electrons, full_weight);
-	h_num_muons.at(chain_num).Fill(num_muons, full_weight);
-	h_num_taus.at(chain_num).Fill(num_taus, full_weight);
-	h_num_iso_tracks.at(chain_num).Fill(num_iso_tracks, full_weight);
-	h_num_leptons.at(chain_num).Fill(num_leptons, full_weight);
+         && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
+         && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
+         /*&& passesLeptonVetoCut && passesIsoTrackVetoCut*/ && passesDRCut){
+        h_num_electrons.at(chain_num).Fill(num_electrons, full_weight);
+        h_num_muons.at(chain_num).Fill(num_muons, full_weight);
+        h_num_taus.at(chain_num).Fill(num_taus, full_weight);
+        h_num_iso_tracks.at(chain_num).Fill(num_iso_tracks, full_weight);
+        h_num_leptons.at(chain_num).Fill(num_leptons, full_weight);
       }
       if(passesJSONCut && passesPVCut && passesJet2PtCut
-	 && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
-	 && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
-	 && passesLeptonVetoCut && passesIsoTrackVetoCut /*&& passesDRCut*/){
-	h_max_delta_R.at(chain_num).Fill(max_delta_R, full_weight);
+         && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
+         && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
+         && passesLeptonVetoCut && passesIsoTrackVetoCut /*&& passesDRCut*/){
+        h_max_delta_R.at(chain_num).Fill(max_delta_R, full_weight);
       }
       timer.Iterate();
     }

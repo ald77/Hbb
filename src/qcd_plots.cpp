@@ -22,7 +22,7 @@ void get_independence_model(const TH2D& in, TH2D& out){
       const double y_err(y_proj->GetBinError(y_bin));
       out.SetBinContent(x_bin, y_bin, x_val*y_val/integral);
       out.SetBinError(x_bin, y_bin,
-		      sqrt(x_val*x_val*y_err*y_err+y_val*y_val*x_err*x_err)/integral);
+                      sqrt(x_val*x_val*y_err*y_err+y_val*y_val*x_err*x_err)/integral);
     }
   }
 }
@@ -90,17 +90,17 @@ int main(){
        && passesIsoTrackVetoCut && passesDRCut){
       int smet_bin(0);
       if(met_sig<0.0){
-	smet_bin=-1;
+        smet_bin=-1;
       }else if(met_sig<30.0){
-	smet_bin=0;
+        smet_bin=0;
       }else if(met_sig<50.0){
-	smet_bin=1;
+        smet_bin=1;
       }else if(met_sig<100.0){
-	smet_bin=2;
+        smet_bin=2;
       }else if(met_sig<150.0){
-	smet_bin=3;
+        smet_bin=3;
       }else{
-	smet_bin=4;
+        smet_bin=4;
       }
       btags_metsig.Fill(smet_bin, num_b_tagged_jets, full_weight);
       btags_mbb.Fill(average_higgs_mass, num_b_tagged_jets, full_weight);

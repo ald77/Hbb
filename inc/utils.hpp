@@ -18,6 +18,6 @@ void setup(TChain& chain, const std::string& name, T& variable){
 }
 
 void MakeRatioPlot(std::vector<TH1D>& histos, std::vector<std::string>& names,
-		   const std::string& out_name);
+                   const std::string& out_name);
 
 #endif

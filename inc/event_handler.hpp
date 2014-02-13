@@ -149,7 +149,7 @@ protected:
   int GetNumBTaggedJets() const;
 
   bool isGoodJet(const unsigned int, const bool=true, const double=20.0,
-		 const double=2.4, const bool=true) const;
+                 const double=2.4, const bool=true) const;
   bool isProblemJet(const unsigned int) const;
   bool jetPassLooseID(const unsigned int) const;
 

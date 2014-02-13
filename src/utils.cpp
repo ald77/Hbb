@@ -1,7 +1,7 @@
 #include "utils.hpp"
 
 void MakeRatioPlot(std::vector<TH1D>& histos, std::vector<std::string>& names,
-		   const std::string& out_name){
+                   const std::string& out_name){
   if(histos.size()==0 || names.size()!=histos.size()) return;
   const double div(1.0/3.0);
   std::vector<unsigned> colors(0);
@@ -17,7 +17,7 @@ void MakeRatioPlot(std::vector<TH1D>& histos, std::vector<std::string>& names,
   oss << histos.at(0).GetTitle() << ";" << histos.at(0).GetXaxis()->GetTitle() << ";"
       << histos.at(0).GetYaxis()->GetTitle() << std::endl;
   THStack s((std::string("s_")+histos.at(0).GetName()).c_str(),
-	    oss.str().c_str());
+            oss.str().c_str());
   std::vector<double> edges(histos.at(0).GetNbinsX()+1);
   for(unsigned bin(0); bin<edges.size(); ++bin){
     edges.at(bin)=histos.at(0).GetBinLowEdge(bin+1);

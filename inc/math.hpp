@@ -73,14 +73,14 @@ namespace Math{
       ++inner_begin;
       ++inner_end;
       while(inner_end!=end){
-	const typename T::value_type this_delta((*inner_end)-(*inner_begin));
-	if(this_delta<min_delta){
-	  min_delta=this_delta;
-	  min_begin=inner_begin;
-	  min_end=inner_end;
-	}
-	++inner_begin;
-	++inner_end;
+        const typename T::value_type this_delta((*inner_end)-(*inner_begin));
+        if(this_delta<min_delta){
+          min_delta=this_delta;
+          min_begin=inner_begin;
+          min_end=inner_end;
+        }
+        ++inner_begin;
+        ++inner_end;
       }
       return HalfSampleMode(min_begin, min_end);
     }
