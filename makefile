@@ -5,7 +5,8 @@ INCDIR := inc
 MAKEDIR := bin
 
 CXX := $(shell root-config --cxx)
-CXXFLAGS := -isystem $(shell root-config --incdir) -Wall -Wextra -pedantic -Wshadow $(shell root-config --cflags) -O2 -I $(INCDIR)
+EXTRA_WARNINGS := -Wcast-align -Wcast-qual -Wcoverage-mismatch -Wdisabled-optimization -Wenum-compare -Wformat=2 -Wformat-nonliteral -Wformat-security -Wformat-y2k -Winit-self -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Woverlength-strings -Wpacked -Wpacked-bitfield-compat -Wpointer-arith -Wredundant-decls -Wstack-protector -Wswitch-default -Wswitch-enum -Wsync-nand -Wundef -Wunreachable-code -Wunused -Wunused-but-set-parameter -Wunused-but-set-variable -Wvariadic-macros -Wvla -Wwrite-strings -Wabi -Wctor-dtor-privacy -Wnon-virtual-dtor -Wstrict-null-sentinel -Wsign-promo -Wsign-compare #-Wunsafe-loop-optimizations -Wfloat-equal -Wsign-conversion
+CXXFLAGS := -isystem $(shell root-config --incdir) -Wall -Wextra -pedantic -Wshadow -Woverloaded-virtual -Wold-style-cast $(EXTRA_WARNINGS) $(shell root-config --cflags) -Wstrict-overflow=5 -O2 -I $(INCDIR)
 LD := $(shell root-config --ld)
 LDFLAGS := $(shell root-config --ldflags)
 LDLIBS := $(shell root-config --libs) -lMinuit

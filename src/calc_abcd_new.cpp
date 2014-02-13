@@ -148,6 +148,8 @@ void SetParameter(const unsigned int i, const unsigned int num_params, TMinuit& 
     case 4:
       sprintf(name, "Ds (%d)", i/5);
       break;
+    default:
+      break;
     }
     minuit.DefineParameter(i, name, 10.0, 1.0, 0.0, 0.0);
   }

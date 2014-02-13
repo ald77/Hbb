@@ -119,7 +119,7 @@ void CheckVRunLumi2(std::vector< std::vector<int> > VVRunLumi){
         std::cout<<VVRunLumi[i][0]<<" "<<VVRunLumi[i][j]<<std::endl;
       }
       else{
-        for(int k=VVRunLumi[i][j];k<VVRunLumi[i][j+1]+1;++k){
+        for(int k=VVRunLumi[i][j];k<=VVRunLumi[i][j+1];++k){
           std::cout<<VVRunLumi[i][0]<<" "<<k<<std::endl;
         }
       }

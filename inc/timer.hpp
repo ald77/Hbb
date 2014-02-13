@@ -5,7 +5,7 @@
 
 class Timer{
 public:
-  Timer(const unsigned long=0);
+  explicit Timer(const unsigned long=0);
   void Start();
   void SetNumIterations(const unsigned long);
   void Iterate();

@@ -6,7 +6,7 @@
 
 class WeightCalculator{
 public:
-  WeightCalculator(const double=19399);
+  explicit WeightCalculator(const double=19399);
 
   void SetLuminosity(const double lumiIn=19399);
   double GetLuminosity() const;

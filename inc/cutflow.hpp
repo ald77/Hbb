@@ -10,23 +10,21 @@
 #include "TChain.h"
 #include "TBranch.h"
 
-using namespace std;
-
 class Cutflow{
 public:
-  Cutflow(const vector<TFile*>);
-  Cutflow(const string, const bool=false);
+  explicit Cutflow(const std::vector<TFile*>);
+  explicit Cutflow(const std::string, const bool=false);
   void PrepareVectors();
   void LoadValues();
   void Print(const bool=false) const;
   //void PrintLatex(const bool=false) const;
   void PrintCSV(const bool=false) const;
   unsigned int numCutsTotal_;
-  vector<int> unscaled_;
-  vector<double> scaled_;
-  vector<double> error_sq_;
-  vector<double> error_;
-  vector<string> cutNames_;
+  std::vector<int> unscaled_;
+  std::vector<double> scaled_;
+  std::vector<double> error_sq_;
+  std::vector<double> error_;
+  std::vector<std::string> cutNames_;
 private:
   TChain fChain_;
   

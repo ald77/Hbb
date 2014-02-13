@@ -3,7 +3,7 @@
 
 class EventNumber{
 public:
-  EventNumber(const int=0, const int=0, const int=0);
+  explicit EventNumber(const int=0, const int=0, const int=0);
 
   int GetRunNumber() const;
   int GetEventNumber() const;

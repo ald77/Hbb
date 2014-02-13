@@ -29,6 +29,8 @@ int main(int argc, char *argv[]){
     case 'l':
       isLocal=true;
       break;
+    default:
+      break;
     }
   }
 

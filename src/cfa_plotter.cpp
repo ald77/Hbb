@@ -593,6 +593,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++Asbin4Count;
         Asbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
       ++ACount;
       ACountWeighted+=localWeight;
@@ -612,6 +615,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++Bsbin4Count;
         Bsbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
       ++BCount;
       BCountWeighted+=localWeight;
@@ -631,6 +637,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++C3bsbin4Count;
         C3bsbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
       ++C3bCount;
       C3bCountWeighted+=localWeight;
@@ -650,6 +659,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++D3bsbin4Count;
         D3bsbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
       ++D3bCount;
       D3bCountWeighted+=localWeight;
@@ -669,6 +681,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++C2bsbin4Count;
         C2bsbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
       ++C2bCount;
       C2bCountWeighted+=localWeight;
@@ -688,6 +703,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++D2bsbin4Count;
         D2bsbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
       ++D2bCount;
       D2bCountWeighted+=localWeight;
@@ -710,6 +728,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++ASLsbin4Count;
         ASLsbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
     }
     if(PassesSingleLeptonRegionBCut()){
@@ -727,6 +748,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++BSLsbin4Count;
         BSLsbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
     }
     if(PassesSingleLeptonRegionC3bCut()){
@@ -744,6 +768,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++C3bSLsbin4Count;
         C3bSLsbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
     }
     if(PassesSingleLeptonRegionD3bCut()){
@@ -761,6 +788,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++D3bSLsbin4Count;
         D3bSLsbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
     }
     if(PassesSingleLeptonRegionC2bCut()){
@@ -778,6 +808,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++C2bSLsbin4Count;
         C2bSLsbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
     }
     if(PassesSingleLeptonRegionD2bCut()){
@@ -795,6 +828,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++D2bSLsbin4Count;
         D2bSLsbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
     }
 
@@ -813,6 +849,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++ADRInvsbin4Count;
         ADRInvsbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
     }
     if(PassesInvertedDRRegionBCut()){
@@ -830,6 +869,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++BDRInvsbin4Count;
         BDRInvsbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
     }
     if(PassesInvertedDRRegionC3bCut()){
@@ -847,6 +889,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++C3bDRInvsbin4Count;
         C3bDRInvsbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
     }
     if(PassesInvertedDRRegionD3bCut()){
@@ -864,6 +909,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++D3bDRInvsbin4Count;
         D3bDRInvsbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
     }
     if(PassesInvertedDRRegionC2bCut()){
@@ -881,6 +929,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++C2bDRInvsbin4Count;
         C2bDRInvsbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
     }
     if(PassesInvertedDRRegionD2bCut()){
@@ -898,6 +949,9 @@ void CfAPlotter::MakePlots(const std::string& out_file_name){
         break;
       case 4: ++D2bDRInvsbin4Count;
         D2bDRInvsbin4CountWeighted+=localWeight;
+	break;
+      default:
+	break;
       }
     }
 

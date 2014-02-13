@@ -9,13 +9,13 @@
 
 void get_independence_model(const TH2D& in, TH2D& out){
   out=in;
-  const unsigned x_bins(in.GetNbinsX()), y_bins(in.GetNbinsY());
+  const int x_bins(in.GetNbinsX()), y_bins(in.GetNbinsY());
 
   TH1D* x_proj(in.ProjectionX("_px",0,-1,"e"));
   TH1D* y_proj(in.ProjectionY("_py",0,-1,"e"));
   const double integral(in.Integral(0, -1, 0, -1));
-  for(unsigned x_bin(0); x_bin<=x_bins+1; ++x_bin){
-    for(unsigned y_bin(0); y_bin<=y_bins+1; ++y_bin){
+  for(int x_bin(0); x_bin<=x_bins+1; ++x_bin){
+    for(int y_bin(0); y_bin<=y_bins+1; ++y_bin){
       const double x_val(x_proj->GetBinContent(x_bin));
       const double y_val(y_proj->GetBinContent(y_bin));
       const double x_err(x_proj->GetBinError(x_bin));

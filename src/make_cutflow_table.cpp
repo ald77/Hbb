@@ -46,8 +46,8 @@ void MakeCompositionTable() { // Creates an AN-ready table of all the SM backgro
   for (uint n(4);n<nCuts;n++) { // loop over cuts
     ofile << categories[0].first->cutNames_[n].c_str();
     for (uint cat(0);cat<categories.size();cat++) { // loop over samples
-      int oomv = (int)floor(log10(categories[cat].first->scaled_[n]));
-      int oome = (int)floor(log10(categories[cat].first->error_[n]));
+      int oomv(static_cast<int>(floor(log10(categories[cat].first->scaled_[n]))));
+      int oome(static_cast<int>(floor(log10(categories[cat].first->error_[n]))));
       //printf("%f/%d/%f/%d\n",categories[cat].first->scaled_[n],oomv,categories[cat].first->error_[n],oome);
       if (categories[cat].second != "Data") { // MC formatting
         if (oomv>2) {
@@ -102,8 +102,8 @@ void MakeSumTable() { // Creates an AN-ready table comparing the total SM backgr
   for (uint n(4);n<nCuts;n++) { // loop over cuts
     ofile << categories_sum[0].first->cutNames_[n].c_str();
     for (uint cat(0);cat<categories_sum.size();cat++) { // loop over samples
-      int oomv = (int)floor(log10(categories_sum[cat].first->scaled_[n]));
-      int oome = (int)floor(log10(categories_sum[cat].first->error_[n]));
+      int oomv(static_cast<int>(floor(log10(categories_sum[cat].first->scaled_[n]))));
+      int oome(static_cast<int>(floor(log10(categories_sum[cat].first->error_[n]))));
       //printf("%f/%d/%f/%d\n",categories_sum[cat].first->scaled_[n],oomv,categories_sum[cat].first->error_[n],oome);
       if (categories_sum[cat].second != "Data") { // MC formatting
         if (oomv>2) {
@@ -157,8 +157,8 @@ void MakeSUSYTable() { // Creates an AN-ready table of select signal mass points
   for (uint n(4);n<nCuts;n++) { // loop over cuts
     ofile << categories_susy[0].first->cutNames_[n].c_str();
     for (uint cat(0);cat<categories_susy.size();cat++) { // loop over samples
-      int oomv = (int)floor(log10(categories_susy[cat].first->scaled_[n]));
-      int oome = (int)floor(log10(categories_susy[cat].first->error_[n]));
+      int oomv(static_cast<int>(floor(log10(categories_susy[cat].first->scaled_[n]))));
+      int oome(static_cast<int>(floor(log10(categories_susy[cat].first->error_[n]))));
       //printf("%f/%d/%f/%d\n",categories_susy[cat].first->scaled_[n],oomv,categories_susy[cat].first->error_[n],oome);
       if (categories_susy[cat].second != "Data") { // MC formatting
         if (oomv>2) {

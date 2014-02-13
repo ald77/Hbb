@@ -19,6 +19,8 @@ int main(int argc, char *argv[]){
     case 'c':
       iscfA=true;
       break;
+    default:
+      break;
     }
   }
   

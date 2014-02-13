@@ -43,7 +43,7 @@ namespace reweight {
 
     PoissonMeanShifter() { };
 
-    PoissonMeanShifter( float Shift ){
+    explicit PoissonMeanShifter( float Shift ){
 
       // these are the polynomial or exponential coefficients for each bin of a 25-bin sequence that
       // convert the Distribution of the 2011 luminosity to something with a lower or higher peak luminosity.
@@ -268,7 +268,7 @@ namespace reweight {
 
       int NBins = weights_->GetNbinsX();
 
-      for(int ibin = 1; ibin<NBins+1; ++ibin){
+      for(int ibin = 1; ibin<=NBins; ++ibin){
         //std::cout << "   " << ibin-1 << " " << weights_->GetBinContent(ibin) << std::endl;
       }
 
@@ -301,7 +301,7 @@ namespace reweight {
       weights_ = new TH1F("luminumer","luminumer",NBins,-0.5, float(NBins)-0.5);
       TH1* den = new TH1F("lumidenom","lumidenom",NBins,-0.5, float(NBins)-0.5);
 
-      for(int ibin = 1; ibin<NBins+1; ++ibin ) {
+      for(int ibin = 1; ibin<=NBins; ++ibin ) {
         weights_->SetBinContent(ibin, Lumi_distr[ibin-1]);
         Data_distr_->SetBinContent(ibin, Lumi_distr[ibin-1]);
         den->SetBinContent(ibin,MC_distr[ibin-1]);
@@ -333,7 +333,7 @@ namespace reweight {
 
       //std::cout << " Lumi/Pileup Reweighting: Computed Weights per In-Time Nint " << std::endl;
 
-      for(int ibin = 1; ibin<NBins+1; ++ibin){
+      for(int ibin = 1; ibin<=NBins; ++ibin){
         //std::cout << "   " << ibin-1 << " " << weights_->GetBinContent(ibin) << std::endl;
       }
 
@@ -394,7 +394,7 @@ namespace reweight {
       // Get entries for Data, MC, fill arrays:                                                                                                 
       int NMCbin = MC_distr_->GetNbinsX();
 
-      for (int jbin=1;jbin<NMCbin+1;jbin++) {
+      for (int jbin=1;jbin<=NMCbin;jbin++) {
         x =  MC_distr_->GetBinCenter(jbin);
         xweight = MC_distr_->GetBinContent(jbin); //use as weight for matrix         
 
@@ -441,7 +441,7 @@ namespace reweight {
 
       int NDatabin = Data_distr_->GetNbinsX();
 
-      for (int jbin=1;jbin<NDatabin+1;jbin++) {
+      for (int jbin=1;jbin<=NDatabin;jbin++) {
         mean =  (Data_distr_->GetBinCenter(jbin))*ScaleFactor;
         xweight = Data_distr_->GetBinContent(jbin);
 
@@ -522,7 +522,7 @@ namespace reweight {
     void weight3D_set( std::string WeightFileName ) { 
 
       TFile *infile = new TFile(WeightFileName.c_str());
-      TH1F *WHist = (TH1F*)infile->Get("WHist");
+      TH1F *WHist = static_cast<TH1F*>(infile->Get("WHist"));
 
       // Check if the histogram exists           
       if (!WHist) {

@@ -133,7 +133,7 @@ void Cutflow::LoadValues() {
     scaled_[12]+=higgsCountWeighted_;
     scaled_[13]+=DRCountWeighted_;
     for (unsigned int e = 0; e < error_sq_.size(); e++) {
-      if (unscaled_[e]>0) error_sq_[e]+=(scaled_[e]*scaled_[e])/(double)unscaled_[e];
+      if (unscaled_[e]>0) error_sq_[e]+=(scaled_[e]*scaled_[e])/static_cast<double>(unscaled_[e]);
     }
   }
   for (unsigned int e = 0; e < error_sq_.size(); e++) {

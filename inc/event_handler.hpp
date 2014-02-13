@@ -18,7 +18,7 @@
 
 class EventHandler : public cfA{
 public:
-  explicit EventHandler(const std::string &, const bool, const double=1.0, const bool=false);
+  EventHandler(const std::string &, const bool, const double=1.0, const bool=false);
 
   void SetScaleFactor(const double);
   void SetScaleFactor(const double, const double, const int);

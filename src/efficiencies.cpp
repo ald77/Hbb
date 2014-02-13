@@ -177,9 +177,9 @@ int main(){
 	total_events_initial.at(cut)+=totals_initial.at(index).at(cut)*weights.at(index);
 	total_events_in_place.at(cut)+=totals_in_place.at(index).at(cut)*weights.at(index);
 	total_events_nm1.at(cut)+=totals_nm1.at(index).at(cut)*weights.at(index);
-	const double ratio_initial(passes_initial.at(index).at(cut)/((double)totals_initial.at(index).at(cut)));
-	const double ratio_in_place(passes_in_place.at(index).at(cut)/((double)totals_in_place.at(index).at(cut)));
-	const double ratio_nm1(passes_nm1.at(index).at(cut)/((double)totals_nm1.at(index).at(cut)));
+	const double ratio_initial(passes_initial.at(index).at(cut)/(static_cast<double>(totals_initial.at(index).at(cut))));
+	const double ratio_in_place(passes_in_place.at(index).at(cut)/(static_cast<double>(totals_in_place.at(index).at(cut))));
+	const double ratio_nm1(passes_nm1.at(index).at(cut)/(static_cast<double>(totals_nm1.at(index).at(cut))));
 	eff_initial.at(cut)+=passes_initial.at(index).at(cut)*weights.at(index);
 	eff_in_place.at(cut)+=passes_in_place.at(index).at(cut)*weights.at(index);
 	eff_nm1.at(cut)+=passes_nm1.at(index).at(cut)*weights.at(index);
