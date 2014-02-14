@@ -1359,7 +1359,7 @@ double EventHandler::GetPUWeight(reweight::LumiReWeighting &lumiWeights) const{
 double EventHandler::GetSbinWeight() const{
   if(sampleName.find("Run2012")!=std::string::npos){
     return 1.0;
-  }else if(pfmets_fullSignif>30.0 && pfmets_fullSignif<50.0){
+  }else if(pfmets_fullSignif<50.0){
     return 0.804;
   }else if(pfmets_fullSignif>50.0 && pfmets_fullSignif<100.0){
     return 0.897;
