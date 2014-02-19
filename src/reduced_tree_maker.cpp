@@ -145,6 +145,10 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   reduced_tree.Branch("lsp_mass", &lsp_mass);
   reduced_tree.Branch("chargino_mass", &chargino_mass);
 
+  reduced_tree.Branch("run", &run);
+  reduced_tree.Branch("event", &event);
+  reduced_tree.Branch("lumiblock", &lumiblock);
+
   Timer timer(GetTotalEntries());
   timer.Start();
   for(int i(0); i<GetTotalEntries(); ++i){
