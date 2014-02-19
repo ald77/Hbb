@@ -22,17 +22,17 @@ int main(){
   TChain single_t_or_boson("single_t_or_boson","single_t_or_boson");
   TChain diboson("diboson","diboson");
 
-  data.Add("reduced_trees/MET_*2012*SyncSkim.root/reduced_tree");
-  ttbar.Add("reduced_trees/TTJets_FullLept*SyncSkim.root/reduced_tree");
-  ttbar.Add("reduced_trees/TTJets_SemiLept*SyncSkim.root/reduced_tree");
-  qcd.Add("reduced_trees/TTJets_Hadronic*SyncSkim.root/reduced_tree");
-  qcd.Add("reduced_trees/BJets*SyncSkim.root/reduced_tree");
-  single_t_or_boson.Add("reduced_trees/*channel*SyncSkim.root/reduced_tree");
-  single_t_or_boson.Add("reduced_trees/*JetsTo*SyncSkim.root/reduced_tree");
-  diboson.Add("reduced_trees/WH*SyncSkim.root/reduced_tree");
-  diboson.Add("reduced_trees/WW*SyncSkim.root/reduced_tree");
-  diboson.Add("reduced_trees/WZ*SyncSkim.root/reduced_tree");
-  diboson.Add("reduced_trees/ZZ*SyncSkim.root/reduced_tree");
+  data.Add("reduced_trees/MET_*2012*1.root/reduced_tree");
+  ttbar.Add("reduced_trees/TTJets_FullLept*1.root/reduced_tree");
+  ttbar.Add("reduced_trees/TTJets_SemiLept*1.root/reduced_tree");
+  qcd.Add("reduced_trees/TTJets_Hadronic*1.root/reduced_tree");
+  qcd.Add("reduced_trees/BJets*1.root/reduced_tree");
+  single_t_or_boson.Add("reduced_trees/*channel*1.root/reduced_tree");
+  single_t_or_boson.Add("reduced_trees/*JetsTo*1.root/reduced_tree");
+  diboson.Add("reduced_trees/WH*1.root/reduced_tree");
+  diboson.Add("reduced_trees/WW*1.root/reduced_tree");
+  diboson.Add("reduced_trees/WZ*1.root/reduced_tree");
+  diboson.Add("reduced_trees/ZZ*1.root/reduced_tree");
   std::vector<TChain*> chains(0);
   chains.push_back(&data);
   chains.push_back(&qcd);
