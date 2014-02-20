@@ -9,9 +9,11 @@
 #include "THStack.h"
 #include "TLegend.h"
 #include "TPaveText.h"
+#include "TH2D.h"
 #include "style.hpp"
 #include "timer.hpp"
 #include "utils.hpp"
+#include "plotter.hpp"
 
 TH1D GetMCSum(std::vector<TH1D>& histos){
   if(histos.size()<2){
@@ -49,6 +51,7 @@ int main(){
   TChain qcd("qcd","qcd");
   TChain single_t_or_boson("single_t_or_boson","single_t_or_boson");
   TChain diboson("diboson","diboson");
+  TChain signal("signal_(m=300_GeV)", "signal_(m=300_GeV)");
 
   data.Add("reduced_trees/MET_*2012*1.root/reduced_tree");
   ttbar.Add("reduced_trees/TTJets_FullLept*1.root/reduced_tree");
@@ -62,12 +65,14 @@ int main(){
   diboson.Add("reduced_trees/WW*1.root/reduced_tree");
   diboson.Add("reduced_trees/WZ*1.root/reduced_tree");
   diboson.Add("reduced_trees/ZZ*1.root/reduced_tree");
+  signal.Add("reduced_trees/*SMS*1.root/reduced_tree");
   std::vector<TChain*> chains(0);
   chains.push_back(&data);
   chains.push_back(&qcd);
   chains.push_back(&diboson);
   chains.push_back(&single_t_or_boson);
   chains.push_back(&ttbar);
+  chains.push_back(&signal);
 
   std::vector<std::string> names(0);
 
@@ -77,6 +82,8 @@ int main(){
     passesLeptonVetoCut(false), passesIsoTrackVetoCut(false), passesDRCut(false),
     passesBTaggingCut(false), passesHiggsAvgMassCut(false),
     passesHiggsMassDiffCut(false), passesQCDTriggerCut(false);
+
+  bool passesBaselineSelection(false);
 
   float pu_true_num_interactions(0.0);
   unsigned short num_primary_vertices(0);
@@ -95,6 +102,7 @@ int main(){
   float ht_jets(0.0), ht_jets_met(0.0), ht_jets_leps(0.0), ht_jets_met_leps(0.0);
   float full_weight(0.0);
   float top_pt(0.0);
+  short chargino_mass(0);
 
   std::vector<TH1D> h_pu_true_num_interactions(0);
   std::vector<TH1D> h_num_primary_vertices(0);
@@ -141,8 +149,19 @@ int main(){
   std::vector<TH1D> h_1l_third_highest_csv(0);
   std::vector<TH1D> h_1l_fourth_highest_csv(0);
   std::vector<TH1D> h_1l_fifth_highest_csv(0);
+  std::vector<TH1D> h_2b_avg(0);
+  std::vector<TH1D> h_2b_diff(0);
+  std::vector<TH1D> h_2b_sbin(0);
+  std::vector<TH1D> h_3b_avg(0);
+  std::vector<TH1D> h_3b_diff(0);
+  std::vector<TH1D> h_3b_sbin(0);
+  std::vector<TH1D> h_4b_avg(0);
+  std::vector<TH1D> h_4b_diff(0);
+  std::vector<TH1D> h_4b_sbin(0);
+  std::vector<TH2D> h_diff_vs_avg(0);
 
   for(unsigned chain_num(0); chain_num<chains.size(); ++chain_num){
+    const double stupid_factor(chain_num==0?19307.0/5208.0:1.0);
     std::cout << chain_num << "/" << chains.size() << std::endl;
     TChain& chain(*chains.at(chain_num));
     chain.SetBranchStatus("*",0);
@@ -194,6 +213,8 @@ int main(){
     setup(chain, "ht_jets_met_leps", ht_jets_met_leps);
     setup(chain, "top_pt", top_pt);
     setup(chain, "full_weight", full_weight);
+    setup(chain, "passesBaselineSelection", passesBaselineSelection);
+    setup(chain, "chargino_mass", chargino_mass);
 
     const std::string name(chain.GetName());
     names.push_back(name);
@@ -242,6 +263,18 @@ int main(){
     h_1l_fifth_highest_csv.push_back(TH1D(("h_1l_fifth_highest_csv"+name).c_str(), "Fifth Highest CSV (1l control);Fifth Highest CSV;Events/0.02", 50, 0.0, 1.0));
     h_1l_met_sig.push_back(TH1D(("h_1l_met_sig"+name).c_str(), "S_{MET} (1l control);S_{MET};Events/10", 40, 0.0, 400.0));
     h_1l_met.push_back(TH1D(("h_1l_met"+name).c_str(), "MET (1l control);MET [GeV];Events/10 GeV", 40, 0.0, 400.0));
+
+    h_2b_avg.push_back(TH1D(("h_2b_avg"+name).c_str(), "<m_{bb}> (baseline);<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_2b_diff.push_back(TH1D(("h_2b_diff"+name).c_str(), "#Delta m_{bb} (baseline);#Delta m_{bb} [GeV];Events/5 GeV", 24, 0.0, 120.0));
+    h_2b_sbin.push_back(TH1D(("h_2b_sbin"+name).c_str(), "#S_{MET} bin Counts (2b baseline);S_{MET} bin;Events", 4, 0.5, 4.5));
+    h_3b_avg.push_back(TH1D(("h_3b_avg"+name).c_str(), "<m_{bb}> (baseline);<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_3b_diff.push_back(TH1D(("h_3b_diff"+name).c_str(), "#Delta m_{bb} (baseline);#Delta m_{bb} [GeV];Events/5 GeV", 24, 0.0, 120.0));
+    h_3b_sbin.push_back(TH1D(("h_3b_sbin"+name).c_str(), "#S_{MET} bin Counts (3b baseline);S_{MET} bin;Events", 4, 0.5, 4.5));
+    h_4b_avg.push_back(TH1D(("h_4b_avg"+name).c_str(), "<m_{bb}> (baseline);<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_4b_diff.push_back(TH1D(("h_4b_diff"+name).c_str(), "#Delta m_{bb} (baseline);#Delta m_{bb} [GeV];Events/5 GeV", 24, 0.0, 120.0));
+    h_4b_sbin.push_back(TH1D(("h_4b_sbin"+name).c_str(), "#S_{MET} bin Counts (4b baseline);S_{MET} bin;Events", 4, 0.5, 4.5));
+
+    h_diff_vs_avg.push_back(TH2D(("h_diff_vs_avg"+name).c_str(), ";<m_{bb}> [GeV];#Delta m_{bb}", 50, 0.0, 250.0, 24, 0.0, 120.0));
     
     const int num_events(chain.GetEntries());
     Timer timer(num_events);
@@ -252,38 +285,73 @@ int main(){
       }
       chain.GetEntry(event);
 
+      if(passesBaselineSelection){
+	if(chain_num<chains.size()-1 || chargino_mass==300){
+	  unsigned short sbin(0);
+	  if(met_sig<50.0){
+	    sbin=1;
+	  }else if(met_sig<100.0){
+	    sbin=2;
+	  }else if(met_sig<150.0){
+	    sbin=3;
+	  }else{
+	    sbin=4;
+	  }
+	  switch(num_b_tagged_jets){
+	  case 2:
+	    h_2b_avg.at(chain_num).Fill(average_higgs_mass, full_weight);
+	    h_2b_diff.at(chain_num).Fill(higgs_mass_difference, full_weight);
+	    h_2b_sbin.at(chain_num).Fill(sbin, full_weight);
+	    break;
+	  case 3:
+	    h_3b_avg.at(chain_num).Fill(average_higgs_mass, full_weight);
+	    h_3b_diff.at(chain_num).Fill(higgs_mass_difference, full_weight);
+	    h_3b_sbin.at(chain_num).Fill(sbin, full_weight);
+	    break;
+	  case 4:
+	    h_4b_avg.at(chain_num).Fill(average_higgs_mass, full_weight);
+	    h_4b_diff.at(chain_num).Fill(higgs_mass_difference, full_weight);
+	    h_4b_sbin.at(chain_num).Fill(sbin, full_weight);
+	    break;
+	  default:
+	    break;
+	  }
+	  h_diff_vs_avg.at(chain_num).Fill(average_higgs_mass, higgs_mass_difference, full_weight);
+	}
+      }
+
       if(passesJSONCut && passesPVCut && second_highest_jet_pt>70.0
          /*&& passes2CSVTCut*/ && !passesMETSig30Cut && passesMETCleaningCut
          /*&& passesTriggerCut*/ && passesNumJetsCut && !passesMinDeltaPhiCut
          && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut
 	 && num_b_tagged_jets<3 && met>160.0 && passesQCDTriggerCut){
-	h_qcd_control_highest_csv.at(chain_num).Fill(highest_csv, full_weight);
-	h_qcd_control_second_highest_csv.at(chain_num).Fill(second_highest_csv, full_weight);
-	h_qcd_control_third_highest_csv.at(chain_num).Fill(third_highest_csv, full_weight);
-	h_qcd_control_fourth_highest_csv.at(chain_num).Fill(fourth_highest_csv, full_weight);
-	h_qcd_control_fifth_highest_csv.at(chain_num).Fill(fifth_highest_csv, full_weight);
+	h_qcd_control_highest_csv.at(chain_num).Fill(highest_csv, full_weight*stupid_factor);
+	h_qcd_control_second_highest_csv.at(chain_num).Fill(second_highest_csv, full_weight*stupid_factor);
+	h_qcd_control_third_highest_csv.at(chain_num).Fill(third_highest_csv, full_weight*stupid_factor);
+	h_qcd_control_fourth_highest_csv.at(chain_num).Fill(fourth_highest_csv, full_weight*stupid_factor);
+	h_qcd_control_fifth_highest_csv.at(chain_num).Fill(fifth_highest_csv, full_weight*stupid_factor);
       }
       if(passesJSONCut && passesPVCut && second_highest_jet_pt>70.0
          /*&& passes2CSVTCut && !passesMETSig30Cut*/ && passesMETCleaningCut
          /*&& passesTriggerCut*/ && passesNumJetsCut && !passesMinDeltaPhiCut
          && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut
 	 && num_b_tagged_jets<3 && met>160.0 && passesQCDTriggerCut){
-	h_qcd_control_met_sig.at(chain_num).Fill(met_sig, full_weight);
+	h_qcd_control_met_sig.at(chain_num).Fill(met_sig, full_weight*stupid_factor);
       }
       if(passesJSONCut && passesPVCut && second_highest_jet_pt>70.0
          /*&& passes2CSVTCut*/ && !passesMETSig30Cut && passesMETCleaningCut
          /*&& passesTriggerCut*/ && passesNumJetsCut && !passesMinDeltaPhiCut
          && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut
 	 && num_b_tagged_jets<3 /*&& met>160.0*/ && passesQCDTriggerCut){
-	h_qcd_control_met.at(chain_num).Fill(met, full_weight);
+	h_qcd_control_met.at(chain_num).Fill(met, full_weight*stupid_factor);
       }
       if(passesJSONCut && passesPVCut && passesJet2PtCut
          && passes2CSVTCut /*&& passesMETSig30Cut*/ && passesMETCleaningCut
          && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
          /*&& passesLeptonVetoCut && passesIsoTrackVetoCut*/ && passesDRCut
 	 && num_leptons==1 && num_taus==0){
-	h_1l_met_sig.at(chain_num).Fill(met_sig, full_weight);
-	h_1l_met.at(chain_num).Fill(met, full_weight);
+	h_1l_met_sig.at(chain_num).Fill(met_sig, full_weight*stupid_factor);
+	h_1l_met.at(chain_num).Fill(met, full_weight*stupid_factor);
       }
       if(passesJSONCut && passesPVCut && passesJet2PtCut
          && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
@@ -372,51 +440,98 @@ int main(){
     }
   }
 
-  MakeRatioPlot(h_pu_true_num_interactions, names, "nm1/pu_true_num_interactions.pdf");
-  MakeRatioPlot(h_num_primary_vertices, names, "nm1/num_primary_vertices.pdf");
-  MakeRatioPlot(h_highest_jet_pt, names, "nm1/highest_jet_pt.pdf");
-  MakeRatioPlot(h_second_highest_jet_pt, names, "nm1/second_highest_jet_pt.pdf");
-  MakeRatioPlot(h_third_highest_jet_pt, names, "nm1/third_highest_jet_pt.pdf");
-  MakeRatioPlot(h_fourth_highest_jet_pt, names, "nm1/fourth_highest_jet_pt.pdf");
-  MakeRatioPlot(h_fifth_highest_jet_pt, names, "nm1/fifth_highest_jet_pt.pdf");
-  MakeRatioPlot(h_highest_csv, names, "nm1/highest_csv.pdf");
-  MakeRatioPlot(h_second_highest_csv, names, "nm1/second_highest_csv.pdf");
-  MakeRatioPlot(h_third_highest_csv, names, "nm1/third_highest_csv.pdf");
-  MakeRatioPlot(h_fourth_highest_csv, names, "nm1/fourth_highest_csv.pdf");
-  MakeRatioPlot(h_fifth_highest_csv, names, "nm1/fifth_highest_csv.pdf");
-  MakeRatioPlot(h_met_sig, names, "nm1/met_sig.pdf");
-  MakeRatioPlot(h_met, names, "nm1/met.pdf");
-  MakeRatioPlot(h_num_jets, names, "nm1/num_jets.pdf");
-  MakeRatioPlot(h_num_b_tagged_jets, names, "nm1/num_b_tagged_jets.pdf");
-  MakeRatioPlot(h_min_delta_phi, names, "nm1/min_delta_phi.pdf");
-  MakeRatioPlot(h_num_electrons, names, "nm1/num_electrons.pdf");
-  MakeRatioPlot(h_num_muons, names, "nm1/num_muons.pdf");
-  MakeRatioPlot(h_num_taus, names, "nm1/num_taus.pdf");
-  MakeRatioPlot(h_num_iso_tracks, names, "nm1/num_iso_tracks.pdf");
-  MakeRatioPlot(h_num_leptons, names, "nm1/num_leptons.pdf");
-  MakeRatioPlot(h_min_delta_R, names, "nm1/min_delta_R.pdf");
-  MakeRatioPlot(h_max_delta_R, names, "nm1/max_delta_R.pdf");
-  MakeRatioPlot(h_average_higgs_mass, names, "nm1/average_higgs_mass.pdf");
-  MakeRatioPlot(h_higgs_mass_difference, names, "nm1/higgs_mass_difference.pdf");
-  MakeRatioPlot(h_ht_jets, names, "nm1/ht_jets.pdf");
-  MakeRatioPlot(h_ht_jets_met, names, "nm1/ht_jets_met.pdf");
-  MakeRatioPlot(h_ht_jets_leps, names, "nm1/ht_jets_leps.pdf");
-  MakeRatioPlot(h_ht_jets_met_leps, names, "nm1/ht_jets_met_leps.pdf");
-  MakeRatioPlot(h_top_pt, names, "nm1/top_pt.pdf");
-  MakeRatioPlot(h_qcd_control_highest_csv, names, "nm1/qcd_control_highest_csv.pdf");
-  MakeRatioPlot(h_qcd_control_second_highest_csv, names, "nm1/qcd_control_second_highest_csv.pdf");
-  MakeRatioPlot(h_qcd_control_third_highest_csv, names, "nm1/qcd_control_third_highest_csv.pdf");
-  MakeRatioPlot(h_qcd_control_fourth_highest_csv, names, "nm1/qcd_control_fourth_highest_csv.pdf");
-  MakeRatioPlot(h_qcd_control_fifth_highest_csv, names, "nm1/qcd_control_fifth_highest_csv.pdf");
-  MakeRatioPlot(h_qcd_control_met_sig, names, "nm1/qcd_control_met_sig.pdf");
-  MakeRatioPlot(h_qcd_control_met, names, "nm1/qcd_control_met.pdf");
-  MakeRatioPlot(h_1l_highest_csv, names, "nm1/1l_highest_csv.pdf");
-  MakeRatioPlot(h_1l_second_highest_csv, names, "nm1/1l_second_highest_csv.pdf");
-  MakeRatioPlot(h_1l_third_highest_csv, names, "nm1/1l_third_highest_csv.pdf");
-  MakeRatioPlot(h_1l_fourth_highest_csv, names, "nm1/1l_fourth_highest_csv.pdf");
-  MakeRatioPlot(h_1l_fifth_highest_csv, names, "nm1/1l_fifth_highest_csv.pdf");
-  MakeRatioPlot(h_1l_met_sig, names, "nm1/1l_met_sig.pdf");
-  MakeRatioPlot(h_1l_met, names, "nm1/1l_met.pdf");
+  std::vector<std::string> sub_names(names.begin()+1, names.end());
+
+  plotter plot;
+  plot.set_mc_names(sub_names);
+  plot_data_mc(plot, h_pu_true_num_interactions, "nm1/pu_true_num_interactions.pdf");
+  plot_data_mc(plot, h_num_primary_vertices, "nm1/num_primary_vertices.pdf");
+  plot_data_mc(plot, h_highest_jet_pt, "nm1/highest_jet_pt.pdf");
+  plot_data_mc(plot, h_second_highest_jet_pt, "nm1/second_highest_jet_pt.pdf");
+  plot_data_mc(plot, h_third_highest_jet_pt, "nm1/third_highest_jet_pt.pdf");
+  plot_data_mc(plot, h_fourth_highest_jet_pt, "nm1/fourth_highest_jet_pt.pdf");
+  plot_data_mc(plot, h_fifth_highest_jet_pt, "nm1/fifth_highest_jet_pt.pdf");
+  plot_data_mc(plot, h_highest_csv, "nm1/highest_csv.pdf");
+  plot_data_mc(plot, h_second_highest_csv, "nm1/second_highest_csv.pdf");
+  plot_data_mc(plot, h_third_highest_csv, "nm1/third_highest_csv.pdf");
+  plot_data_mc(plot, h_fourth_highest_csv, "nm1/fourth_highest_csv.pdf");
+  plot_data_mc(plot, h_fifth_highest_csv, "nm1/fifth_highest_csv.pdf");
+  plot_data_mc(plot, h_met_sig, "nm1/met_sig.pdf");
+  plot_data_mc(plot, h_met, "nm1/met.pdf");
+  plot_data_mc(plot, h_num_jets, "nm1/num_jets.pdf");
+  plot_data_mc(plot, h_num_b_tagged_jets, "nm1/num_b_tagged_jets.pdf");
+  plot_data_mc(plot, h_min_delta_phi, "nm1/min_delta_phi.pdf");
+  plot_data_mc(plot, h_num_electrons, "nm1/num_electrons.pdf");
+  plot_data_mc(plot, h_num_muons, "nm1/num_muons.pdf");
+  plot_data_mc(plot, h_num_taus, "nm1/num_taus.pdf");
+  plot_data_mc(plot, h_num_iso_tracks, "nm1/num_iso_tracks.pdf");
+  plot_data_mc(plot, h_num_leptons, "nm1/num_leptons.pdf");
+  plot_data_mc(plot, h_min_delta_R, "nm1/min_delta_R.pdf");
+  plot_data_mc(plot, h_max_delta_R, "nm1/max_delta_R.pdf");
+  plot_data_mc(plot, h_average_higgs_mass, "nm1/average_higgs_mass.pdf");
+  plot_data_mc(plot, h_higgs_mass_difference, "nm1/higgs_mass_difference.pdf");
+  plot_data_mc(plot, h_ht_jets, "nm1/ht_jets.pdf");
+  plot_data_mc(plot, h_ht_jets_met, "nm1/ht_jets_met.pdf");
+  plot_data_mc(plot, h_ht_jets_leps, "nm1/ht_jets_leps.pdf");
+  plot_data_mc(plot, h_ht_jets_met_leps, "nm1/ht_jets_met_leps.pdf");
+  plot_data_mc(plot, h_top_pt, "nm1/top_pt.pdf");
+  plot_data_mc(plot, h_qcd_control_highest_csv, "nm1/qcd_control_highest_csv.pdf");
+  plot_data_mc(plot, h_qcd_control_second_highest_csv, "nm1/qcd_control_second_highest_csv.pdf");
+  plot_data_mc(plot, h_qcd_control_third_highest_csv, "nm1/qcd_control_third_highest_csv.pdf");
+  plot_data_mc(plot, h_qcd_control_fourth_highest_csv, "nm1/qcd_control_fourth_highest_csv.pdf");
+  plot_data_mc(plot, h_qcd_control_fifth_highest_csv, "nm1/qcd_control_fifth_highest_csv.pdf");
+  plot_data_mc(plot, h_qcd_control_met_sig, "nm1/qcd_control_met_sig.pdf");
+  plot_data_mc(plot, h_qcd_control_met, "nm1/qcd_control_met.pdf");
+  plot_data_mc(plot, h_1l_highest_csv, "nm1/1l_highest_csv.pdf");
+  plot_data_mc(plot, h_1l_second_highest_csv, "nm1/1l_second_highest_csv.pdf");
+  plot_data_mc(plot, h_1l_third_highest_csv, "nm1/1l_third_highest_csv.pdf");
+  plot_data_mc(plot, h_1l_fourth_highest_csv, "nm1/1l_fourth_highest_csv.pdf");
+  plot_data_mc(plot, h_1l_fifth_highest_csv, "nm1/1l_fifth_highest_csv.pdf");
+  plot_data_mc(plot, h_1l_met_sig, "nm1/1l_met_sig.pdf");
+  plot_data_mc(plot, h_1l_met, "nm1/1l_met.pdf");
+  plot_data_mc_sig(plot, h_2b_sbin, "nm1/2b_sbin.pdf");
+  plot_data_mc_sig(plot, h_3b_sbin, "nm1/3b_sbin.pdf");
+  plot_data_mc_sig(plot, h_4b_sbin, "nm1/4b_sbin.pdf");
+  
+  TCanvas c;
+  h_2b_avg.at(4).SetLineColor(2);
+  h_2b_diff.at(4).SetLineColor(2);
+  h_3b_avg.at(4).SetLineColor(3);
+  h_3b_diff.at(4).SetLineColor(3);
+  h_4b_avg.at(4).SetLineColor(4);
+  h_4b_diff.at(4).SetLineColor(4);
+  h_2b_avg.at(4).Draw("hist");
+  h_3b_avg.at(4).Draw("histsame");
+  h_4b_avg.at(4).Draw("histsame");
+  h_2b_avg.at(4).Scale(1.0/h_2b_avg.at(4).Integral("width"));
+  h_3b_avg.at(4).Scale(1.0/h_3b_avg.at(4).Integral("width"));
+  h_4b_avg.at(4).Scale(1.0/h_4b_avg.at(4).Integral("width"));
+  h_2b_diff.at(4).Scale(1.0/h_2b_diff.at(4).Integral("width"));
+  h_3b_diff.at(4).Scale(1.0/h_3b_diff.at(4).Integral("width"));
+  h_4b_diff.at(4).Scale(1.0/h_4b_diff.at(4).Integral("width"));
+  h_2b_avg.at(4).SetStats(0);
+  h_3b_avg.at(4).SetStats(0);
+  h_4b_avg.at(4).SetStats(0);
+  h_2b_diff.at(4).SetStats(0);
+  h_3b_diff.at(4).SetStats(0);
+  h_4b_diff.at(4).SetStats(0);
+  TLegend l(0.7, 0.5, 0.95, 0.85);
+  l.AddEntry(&h_2b_avg.at(4), "tt1l (2b)", "l");
+  l.AddEntry(&h_3b_avg.at(4), "tt1l (3b)", "l");
+  l.AddEntry(&h_4b_avg.at(4), "tt1l (4b)", "l");
+  l.Draw("same");
+  c.Print("nm1/avg_compare.pdf");
+  h_2b_diff.at(4).Draw("hist");
+  h_3b_diff.at(4).Draw("histsame");
+  h_4b_diff.at(4).Draw("histsame");
+  l.Draw("same");
+  c.Print("nm1/diff_compare.pdf");
+
+  for(unsigned chain_num(0); chain_num<chains.size(); ++chain_num){
+    TCanvas cc;
+    h_diff_vs_avg.at(chain_num).Draw("SCAT");
+    cc.Print(("nm1/diff_vs_avg"+names.at(chain_num)+".pdf").c_str());
+  }
 
   //TH1D tot_min_delta_phi(GetMCSum(h_min_delta_phi));
   TH1D tot_min_delta_phi(h_min_delta_phi.at(0));

@@ -11,6 +11,7 @@
 #include "TPaveText.h"
 #include "style.hpp"
 #include "utils.hpp"
+#include "plotter.hpp"
 
 int main(){
   SetStyle();
@@ -150,13 +151,17 @@ int main(){
       }
     }
   }
-  MakeRatioPlot(h_pv, names, "pv.pdf");
-  MakeRatioPlot(h_pv_nopileup, names, "pv_nopileup.pdf");
-  MakeRatioPlot(h_pv_notoppt, names, "pv_notoppt.pdf");
-  MakeRatioPlot(h_btags, names, "btags.pdf");
-  MakeRatioPlot(h_btags_nopileup, names, "btags_nopileup.pdf");
-  MakeRatioPlot(h_btags_notoppt, names, "btags_notoppt.pdf");
-  MakeRatioPlot(h_mbb, names, "mbb.pdf");
-  MakeRatioPlot(h_mbb_nopileup, names, "mbb_nopileup.pdf");
-  MakeRatioPlot(h_mbb_notoppt, names, "mbb_notoppt.pdf");
+
+  std::vector<std::string> sub_names(names.begin()+1, names.end());
+  plotter plot;
+  plot.set_mc_names(sub_names);
+  plot_data_mc(plot, h_pv, "pv.pdf");
+  plot_data_mc(plot, h_pv_nopileup, "pv_nopileup.pdf");
+  plot_data_mc(plot, h_pv_notoppt, "pv_notoppt.pdf");
+  plot_data_mc(plot, h_btags, "btags.pdf");
+  plot_data_mc(plot, h_btags_nopileup, "btags_nopileup.pdf");
+  plot_data_mc(plot, h_btags_notoppt, "btags_notoppt.pdf");
+  plot_data_mc(plot, h_mbb, "mbb.pdf");
+  plot_data_mc(plot, h_mbb_nopileup, "mbb_nopileup.pdf");
+  plot_data_mc(plot, h_mbb_notoppt, "mbb_notoppt.pdf");
 }

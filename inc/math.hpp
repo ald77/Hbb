@@ -14,6 +14,21 @@ namespace Math{
   double GetDeltaR(const double, const double, const double, const double);
 
   template<typename T>
+  T add_in_quadrature(T x, T y){
+    if(x<0) x=-x;
+    if(y<0) y=-y;
+    if(x>y && x>0){
+      const T ratio(y/x);
+      return x*sqrt(1.0+ratio*ratio);
+    }else if(y>x && y>0.0){
+      const T ratio(x/y);
+      return y*sqrt(1.0+ratio*ratio);
+    }else{
+      return 0.0;
+    }
+  }
+
+  template<typename T>
   typename T::value_type Sum(T begin, T end){
     //Performs Kahan summation (more precise than naive summation for long lists of numbers)
     typename T::value_type sum(0.0);

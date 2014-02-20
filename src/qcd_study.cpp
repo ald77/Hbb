@@ -12,6 +12,7 @@
 #include "style.hpp"
 #include "timer.hpp"
 #include "utils.hpp"
+#include "plotter.hpp"
 
 TH1D GetMCSum(std::vector<TH1D>& histos){
   if(histos.size()<2){
@@ -184,15 +185,18 @@ int main(){
     }
   }
 
-  MakeRatioPlot(h_min_delta_phi, names, "qcd/h_min_delta_phi.pdf");
-  MakeRatioPlot(h_average_higgs_mass, names, "qcd/h_average_higgs_mass.pdf");
-  MakeRatioPlot(h_higgs_mass_diff, names, "qcd/h_higgs_mass_diff.pdf");
-  MakeRatioPlot(h_metsig, names, "qcd/h_metsig.pdf");
-  MakeRatioPlot(h_min_delta_phi_sbin0, names, "qcd/h_min_delta_phi_sbin0.pdf");
-  MakeRatioPlot(h_min_delta_phi_sbin1, names, "qcd/h_min_delta_phi_sbin1.pdf");
-  MakeRatioPlot(h_min_delta_phi_sbin2, names, "qcd/h_min_delta_phi_sbin2.pdf");
-  MakeRatioPlot(h_min_delta_phi_sbin3, names, "qcd/h_min_delta_phi_sbin3.pdf");
-  MakeRatioPlot(h_min_delta_phi_sbin4, names, "qcd/h_min_delta_phi_sbin4.pdf");
+  std::vector<std::string> mc_names(names.begin()+1, names.end());
+  plotter plot;
+  plot.set_mc_names(mc_names);
+  plot_data_mc(plot, h_min_delta_phi, "qcd/h_min_delta_phi.pdf");
+  plot_data_mc(plot, h_average_higgs_mass, "qcd/h_average_higgs_mass.pdf");
+  plot_data_mc(plot, h_higgs_mass_diff, "qcd/h_higgs_mass_diff.pdf");
+  plot_data_mc(plot, h_metsig, "qcd/h_metsig.pdf");
+  plot_data_mc(plot, h_min_delta_phi_sbin0, "qcd/h_min_delta_phi_sbin0.pdf");
+  plot_data_mc(plot, h_min_delta_phi_sbin1, "qcd/h_min_delta_phi_sbin1.pdf");
+  plot_data_mc(plot, h_min_delta_phi_sbin2, "qcd/h_min_delta_phi_sbin2.pdf");
+  plot_data_mc(plot, h_min_delta_phi_sbin3, "qcd/h_min_delta_phi_sbin3.pdf");
+  plot_data_mc(plot, h_min_delta_phi_sbin4, "qcd/h_min_delta_phi_sbin4.pdf");
   double rat_tot(0.0), uncert_tot(0.0);
   double rat_sbin0(0.0), uncert_sbin0(0.0);
   double rat_sbin1(0.0), uncert_sbin1(0.0);
