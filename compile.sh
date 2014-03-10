@@ -11,8 +11,11 @@ echo
 if [[ -s $tmp_file ]] ; then
     echo "ERRORS AND WARNINGS:"
     cat $tmp_file >&2
+    rm -rf $tmp_file
+    exit 1
 else
     echo "Compiled successfully without errors or warnings!"
+    rm -rf $tmp_file
+    exit 0
 fi
 
-rm -rf $tmp_file
