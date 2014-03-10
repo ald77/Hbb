@@ -1,8 +1,12 @@
 #include <cmath>
 #include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <numeric>
 #include <vector>
 #include <string>
 #include <sstream>
+#include <limits>
 #include "TChain.h"
 #include "TH1D.h"
 #include "TCanvas.h"
@@ -10,10 +14,398 @@
 #include "TLegend.h"
 #include "TPaveText.h"
 #include "TH2D.h"
+#include "TBox.h"
+#include "TLine.h"
+#include "TFile.h"
+#include "TObjArray.h"
+#include "TGraph.h"
 #include "style.hpp"
 #include "timer.hpp"
 #include "utils.hpp"
 #include "plotter.hpp"
+
+void compare_histos(TH1D h1, TH1D h2, TH1D h3, const std::string out_name,
+		    const bool normalize=false){
+  TCanvas c;
+  h1.SetLineColor(2);
+  h2.SetLineColor(3);
+  h3.SetLineColor(4);
+  h1.SetFillColor(0);
+  h2.SetFillColor(0);
+  h3.SetFillColor(0);
+  h1.SetStats(0);
+  h2.SetStats(0);
+  h3.SetStats(0);
+  h1.Draw("hist");
+  h2.Draw("histsame");
+  h3.Draw("histsame");
+  if(normalize){
+    h1.Scale(1.0/h1.Integral("width"));
+    h2.Scale(1.0/h2.Integral("width"));
+    h3.Scale(1.0/h3.Integral("width"));
+    h1.GetYaxis()->SetTitle("Normalized Frequency");
+    h2.GetYaxis()->SetTitle("Normalized Frequency");
+    h3.GetYaxis()->SetTitle("Normalized Frequency");
+  }
+  TLegend l(0.7, 0.5, 0.95, 0.85);
+  l.AddEntry(&h1, "2 b-tags", "l");
+  l.AddEntry(&h2, "3 b-tags", "l");
+  l.AddEntry(&h3, "4 b-tags", "l");
+  l.Draw("same");
+  c.Print(out_name.c_str());
+}
+
+void sig_sb_scat(TH2D& hist, const std::string& out, const bool print_num=false){
+  hist.SetStats(0);
+  TCanvas c;
+  c.cd();
+  c.GetPad(0)->SetTopMargin(0.95);
+
+  const int bx1(1), bx2(18), bx3(21), bx4(28), bx5(31), bx6(-1);
+  const int by1(1), by2(4), by3(6), by4(7), by5(-1);
+  const double inner(hist.Integral(bx3, bx4, by1, by2));
+  const double outer1(hist.Integral(bx1, bx2, by1, by3));
+  const double outer2(hist.Integral(bx5, bx6, by1, by3));
+  const double outer3(hist.Integral(bx1, bx6, by4, by5));
+  const double outer(outer1+outer2+outer3);
+
+  const double scale(4096.0/hist.Integral());
+  std::ostringstream oss_opt("");
+  oss_opt << "scat=" << scale;
+  hist.Draw(oss_opt.str().c_str());
+
+  TLine v1(90.0, 0.0, 90.0, 30.0);
+  TLine v2(100.0, 0.0, 100.0, 20.0);
+  TLine v3(140.0, 0.0, 140.0, 20.0);
+  TLine v4(150.0, 0.0, 150.0, 30.0);
+  TLine h1(100.0, 20.0, 140.0, 20.0);
+  TLine h2(90.0, 30.0, 150.0, 30.0);
+  TBox b1(100.0, 0.0, 140.0, 20.0);
+  TBox b2(0.0, 0.0, 90.0, 30.0);
+  TBox b3(150.0, 0.0, 250.0, 30.0);
+  TBox b4(0.0, 30.0, 250.0, 120.0);
+  b1.SetFillColor(3);
+  b2.SetFillColor(2);
+  b3.SetFillColor(2);
+  b4.SetFillColor(2);
+  b1.SetFillStyle(3003);
+  b2.SetFillStyle(3003);
+  b3.SetFillStyle(3003);
+  b4.SetFillStyle(3003);
+  v1.Draw("same");
+  v2.Draw("same");
+  v3.Draw("same");
+  v4.Draw("same");
+  h1.Draw("same");
+  h2.Draw("same");
+  b1.Draw("same");
+  b1.Draw("same");
+  b2.Draw("same");
+  b3.Draw("same");
+  b4.Draw("same");
+
+  std::ostringstream oss_inner("");
+  std::ostringstream oss_outer("");
+  oss_inner << std::fixed << std::setprecision(0) << inner;
+  oss_outer << std::fixed << std::setprecision(0) << outer;
+
+  TPaveText text_inner(100.0, 0.0, 140.0, 20.0);
+  text_inner.SetX1(100.0);
+  text_inner.SetX2(140.0);
+  text_inner.SetY1(0.0);
+  text_inner.SetY2(20.0);
+  text_inner.SetBorderSize(0);
+  text_inner.SetShadowColor(0);
+  text_inner.SetLineColor(0);
+  text_inner.SetLineWidth(0);
+  TPaveText text_outer(150.0, 30.0, 190.0, 50.0);
+  text_outer.SetX1(150.0);
+  text_outer.SetX2(190.0);
+  text_outer.SetY1(30.0);
+  text_outer.SetY2(50.0);
+  text_outer.SetBorderSize(0);
+  text_outer.SetShadowColor(0);
+  text_outer.SetLineColor(0);
+  text_outer.SetLineWidth(0);
+  text_inner.AddText(oss_inner.str().c_str());
+  text_outer.AddText(oss_outer.str().c_str());
+  text_inner.SetFillStyle(0);
+  text_inner.SetTextColor(kRed);
+  text_outer.SetFillStyle(0);
+  text_outer.SetTextColor(kGreen);
+  hist.Draw((oss_opt.str()+"same").c_str());
+  if(print_num){
+    text_inner.Draw("same");
+    text_outer.Draw("same");
+  }
+  c.Print(out.c_str());
+}
+
+void scat_plot(TH2D& hist, const std::string& out, const bool print_num=false){
+  hist.SetStats(0);
+  TCanvas c;
+  c.cd();
+  c.GetPad(0)->SetTopMargin(0.95);
+
+  const int bx1(1), bx2(18), bx3(21), bx4(28), bx5(31), bx6(-1);
+  const int by1(1), by2(4), by3(6), by4(7), by5(-1);
+  const double inner(hist.Integral(bx3, bx4, by1, by2));
+  const double outer1(hist.Integral(bx1, bx2, by1, by3));
+  const double outer2(hist.Integral(bx5, bx6, by1, by3));
+  const double outer3(hist.Integral(bx1, bx6, by4, by5));
+  const double outer(outer1+outer2+outer3);
+
+  const double scale(4096.0/hist.Integral());
+  std::ostringstream oss_opt("");
+  oss_opt << "scat=" << scale;
+  hist.Draw(oss_opt.str().c_str());
+
+  TLine v1(90.0, 0.0, 90.0, 30.0);
+  TLine v2(100.0, 0.0, 100.0, 20.0);
+  TLine v3(140.0, 0.0, 140.0, 20.0);
+  TLine v4(150.0, 0.0, 150.0, 30.0);
+  TLine h1(100.0, 20.0, 140.0, 20.0);
+  TLine h2(90.0, 30.0, 150.0, 30.0);
+  TBox b1(100.0, 0.0, 140.0, 20.0);
+  TBox b2(0.0, 0.0, 90.0, 30.0);
+  TBox b3(150.0, 0.0, 250.0, 30.0);
+  TBox b4(0.0, 30.0, 250.0, 120.0);
+  b1.SetFillColor(3);
+  b2.SetFillColor(2);
+  b3.SetFillColor(2);
+  b4.SetFillColor(2);
+  b1.SetFillStyle(3003);
+  b2.SetFillStyle(3003);
+  b3.SetFillStyle(3003);
+  b4.SetFillStyle(3003);
+  /*v1.Draw("same");
+  v2.Draw("same");
+  v3.Draw("same");
+  v4.Draw("same");
+  h1.Draw("same");
+  h2.Draw("same");
+  b1.Draw("same");
+  b1.Draw("same");
+  b2.Draw("same");
+  b3.Draw("same");
+  b4.Draw("same");*/
+
+  std::ostringstream oss_inner("");
+  std::ostringstream oss_outer("");
+  oss_inner << std::fixed << std::setprecision(0) << inner;
+  oss_outer << std::fixed << std::setprecision(0) << outer;
+
+  TPaveText text_inner(100.0, 0.0, 140.0, 20.0);
+  text_inner.SetX1(100.0);
+  text_inner.SetX2(140.0);
+  text_inner.SetY1(0.0);
+  text_inner.SetY2(20.0);
+  text_inner.SetBorderSize(0);
+  text_inner.SetShadowColor(0);
+  text_inner.SetLineColor(0);
+  text_inner.SetLineWidth(0);
+  TPaveText text_outer(150.0, 30.0, 190.0, 50.0);
+  text_outer.SetX1(150.0);
+  text_outer.SetX2(190.0);
+  text_outer.SetY1(30.0);
+  text_outer.SetY2(50.0);
+  text_outer.SetBorderSize(0);
+  text_outer.SetShadowColor(0);
+  text_outer.SetLineColor(0);
+  text_outer.SetLineWidth(0);
+  text_inner.AddText(oss_inner.str().c_str());
+  text_outer.AddText(oss_outer.str().c_str());
+  text_inner.SetFillStyle(0);
+  text_inner.SetTextColor(kRed);
+  text_outer.SetFillStyle(0);
+  text_outer.SetTextColor(kGreen);
+  hist.Draw((oss_opt.str()+"same").c_str());
+  if(print_num){
+    text_inner.Draw("same");
+    text_outer.Draw("same");
+  }
+  c.Print(out.c_str());
+}
+
+unsigned count_points(const TGraph& graph, const double xmin, const double xmax,
+		      const double ymin, const double ymax){
+  unsigned count(0);
+  const int n_points(graph.GetN());
+  for(int point(0); point<n_points; ++point){
+    double x(0.0), y(0.0);
+    graph.GetPoint(point, x, y);
+    if(x>=xmin && x<xmax && y>=ymin && y<ymax) ++count;
+  }
+  return count;
+}
+
+void sig_sb_scat_data(TGraph& graph, const std::string& out, const bool print_num=false){
+  graph.SetMarkerStyle(20);
+  TH2D hist("h",";<m_{bb}> [GeV];#Delta m_{bb} [GeV]", 50, 0.0, 250.0, 24, 0.0, 120.0);
+  hist.SetStats(0);
+  TCanvas c;
+  c.cd();
+  c.GetPad(0)->SetTopMargin(0.95);
+
+  const double dbl_max(std::numeric_limits<double>::max());
+  const double inner(count_points(graph, 100.0, 140.0, 0.0, 20.0));
+  const double outer1(count_points(graph, 0.0, 90.0, 0.0, 30.0));
+  const double outer2(count_points(graph, 150.0, dbl_max, 0.0, 30.0));
+  const double outer3(count_points(graph, 0.0, dbl_max, 30.0, dbl_max));
+  const double outer(outer1+outer2+outer3);
+
+  hist.Draw();
+
+  TLine v1(90.0, 0.0, 90.0, 30.0);
+  TLine v2(100.0, 0.0, 100.0, 20.0);
+  TLine v3(140.0, 0.0, 140.0, 20.0);
+  TLine v4(150.0, 0.0, 150.0, 30.0);
+  TLine h1(100.0, 20.0, 140.0, 20.0);
+  TLine h2(90.0, 30.0, 150.0, 30.0);
+  TBox b1(100.0, 0.0, 140.0, 20.0);
+  TBox b2(0.0, 0.0, 90.0, 30.0);
+  TBox b3(150.0, 0.0, 250.0, 30.0);
+  TBox b4(0.0, 30.0, 250.0, 120.0);
+  b1.SetFillColor(3);
+  b2.SetFillColor(2);
+  b3.SetFillColor(2);
+  b4.SetFillColor(2);
+  b1.SetFillStyle(3003);
+  b2.SetFillStyle(3003);
+  b3.SetFillStyle(3003);
+  b4.SetFillStyle(3003);
+  v1.Draw("same");
+  v2.Draw("same");
+  v3.Draw("same");
+  v4.Draw("same");
+  h1.Draw("same");
+  h2.Draw("same");
+  b1.Draw("same");
+  b1.Draw("same");
+  b2.Draw("same");
+  b3.Draw("same");
+  b4.Draw("same");
+
+  std::ostringstream oss_inner("");
+  std::ostringstream oss_outer("");
+  oss_inner << std::fixed << std::setprecision(0) << inner;
+  oss_outer << std::fixed << std::setprecision(0) << outer;
+
+  TPaveText text_inner(100.0, 0.0, 140.0, 20.0);
+  text_inner.SetX1(100.0);
+  text_inner.SetX2(140.0);
+  text_inner.SetY1(0.0);
+  text_inner.SetY2(20.0);
+  text_inner.SetBorderSize(0);
+  text_inner.SetShadowColor(0);
+  text_inner.SetLineColor(0);
+  text_inner.SetLineWidth(0);
+  TPaveText text_outer(150.0, 30.0, 190.0, 50.0);
+  text_outer.SetX1(150.0);
+  text_outer.SetX2(190.0);
+  text_outer.SetY1(30.0);
+  text_outer.SetY2(50.0);
+  text_outer.SetBorderSize(0);
+  text_outer.SetShadowColor(0);
+  text_outer.SetLineColor(0);
+  text_outer.SetLineWidth(0);
+  text_inner.AddText(oss_inner.str().c_str());
+  text_outer.AddText(oss_outer.str().c_str());
+  text_inner.SetFillStyle(0);
+  text_inner.SetTextColor(kRed);
+  text_outer.SetFillStyle(0);
+  text_outer.SetTextColor(kGreen);
+  graph.Draw("p");
+  if(print_num){
+    text_inner.Draw("same");
+    text_outer.Draw("same");
+  }
+  c.Print(out.c_str());
+}
+
+void scat_plot_data(TGraph& graph, const std::string& out, const bool print_num=false){
+  graph.SetMarkerStyle(20);
+  TH2D hist("h",";<m_{bb}> [GeV];#Delta R", 35, 0.0, 250.0, 35, 0.0, 5.0);
+  hist.SetStats(0);
+  TCanvas c;
+  c.cd();
+  c.GetPad(0)->SetTopMargin(0.95);
+
+  const double dbl_max(std::numeric_limits<double>::max());
+  const double inner(count_points(graph, 100.0, 140.0, 0.0, 20.0));
+  const double outer1(count_points(graph, 0.0, 90.0, 0.0, 30.0));
+  const double outer2(count_points(graph, 150.0, dbl_max, 0.0, 30.0));
+  const double outer3(count_points(graph, 0.0, dbl_max, 30.0, dbl_max));
+  const double outer(outer1+outer2+outer3);
+
+  hist.Draw();
+
+  TLine v1(90.0, 0.0, 90.0, 30.0);
+  TLine v2(100.0, 0.0, 100.0, 20.0);
+  TLine v3(140.0, 0.0, 140.0, 20.0);
+  TLine v4(150.0, 0.0, 150.0, 30.0);
+  TLine h1(100.0, 20.0, 140.0, 20.0);
+  TLine h2(90.0, 30.0, 150.0, 30.0);
+  TBox b1(100.0, 0.0, 140.0, 20.0);
+  TBox b2(0.0, 0.0, 90.0, 30.0);
+  TBox b3(150.0, 0.0, 250.0, 30.0);
+  TBox b4(0.0, 30.0, 250.0, 120.0);
+  b1.SetFillColor(3);
+  b2.SetFillColor(2);
+  b3.SetFillColor(2);
+  b4.SetFillColor(2);
+  b1.SetFillStyle(3003);
+  b2.SetFillStyle(3003);
+  b3.SetFillStyle(3003);
+  b4.SetFillStyle(3003);
+  /*v1.Draw("same");
+  v2.Draw("same");
+  v3.Draw("same");
+  v4.Draw("same");
+  h1.Draw("same");
+  h2.Draw("same");
+  b1.Draw("same");
+  b1.Draw("same");
+  b2.Draw("same");
+  b3.Draw("same");
+  b4.Draw("same");*/
+
+  std::ostringstream oss_inner("");
+  std::ostringstream oss_outer("");
+  oss_inner << std::fixed << std::setprecision(0) << inner;
+  oss_outer << std::fixed << std::setprecision(0) << outer;
+
+  TPaveText text_inner(100.0, 0.0, 140.0, 20.0);
+  text_inner.SetX1(100.0);
+  text_inner.SetX2(140.0);
+  text_inner.SetY1(0.0);
+  text_inner.SetY2(20.0);
+  text_inner.SetBorderSize(0);
+  text_inner.SetShadowColor(0);
+  text_inner.SetLineColor(0);
+  text_inner.SetLineWidth(0);
+  TPaveText text_outer(150.0, 30.0, 190.0, 50.0);
+  text_outer.SetX1(150.0);
+  text_outer.SetX2(190.0);
+  text_outer.SetY1(30.0);
+  text_outer.SetY2(50.0);
+  text_outer.SetBorderSize(0);
+  text_outer.SetShadowColor(0);
+  text_outer.SetLineColor(0);
+  text_outer.SetLineWidth(0);
+  text_inner.AddText(oss_inner.str().c_str());
+  text_outer.AddText(oss_outer.str().c_str());
+  text_inner.SetFillStyle(0);
+  text_inner.SetTextColor(kRed);
+  text_outer.SetFillStyle(0);
+  text_outer.SetTextColor(kGreen);
+  graph.Draw("p");
+  if(false && print_num){
+    text_inner.Draw("same");
+    text_outer.Draw("same");
+  }
+  c.Print(out.c_str());
+}
 
 TH1D GetMCSum(std::vector<TH1D>& histos){
   if(histos.size()<2){
@@ -51,28 +443,31 @@ int main(){
   TChain qcd("qcd","qcd");
   TChain single_t_or_boson("single_t_or_boson","single_t_or_boson");
   TChain diboson("diboson","diboson");
-  TChain signal("signal_(m=300_GeV)", "signal_(m=300_GeV)");
+  TChain signal250("signal_m=250_GeV", "signal_m=250_GeV");
+  TChain signal350("signal_m=350_GeV", "signal_m=350_GeV");
 
-  data.Add("reduced_trees/MET_*2012*1.root/reduced_tree");
-  ttbar.Add("reduced_trees/TTJets_FullLept*1.root/reduced_tree");
-  ttbar.Add("reduced_trees/TTJets_SemiLept*1.root/reduced_tree");
-  qcd.Add("reduced_trees/TTJets_Hadronic*1.root/reduced_tree");
-  qcd.Add("reduced_trees/BJets*1.root/reduced_tree");
-  single_t_or_boson.Add("reduced_trees/*channel*1.root/reduced_tree");
-  single_t_or_boson.Add("reduced_trees/*JetsToLNu_Tune*1.root/reduced_tree");
-  single_t_or_boson.Add("reduced_trees/ZJetsToNuNu*1.root/reduced_tree");
-  diboson.Add("reduced_trees/WH*1.root/reduced_tree");
-  diboson.Add("reduced_trees/WW*1.root/reduced_tree");
-  diboson.Add("reduced_trees/WZ*1.root/reduced_tree");
-  diboson.Add("reduced_trees/ZZ*1.root/reduced_tree");
-  signal.Add("reduced_trees/*SMS*1.root/reduced_tree");
+  data.Add("reduced_trees/MET_*2012*1_SyncSkim.root/reduced_tree");
+  ttbar.Add("reduced_trees/TTJets_FullLept*1_SyncSkim.root/reduced_tree");
+  ttbar.Add("reduced_trees/TTJets_SemiLept*1_SyncSkim.root/reduced_tree");
+  qcd.Add("reduced_trees/TTJets_Ha2dronic*1_SyncSkim.root/reduced_tree");
+  qcd.Add("reduced_trees/BJets*1_SyncSkim.root/reduced_tree");
+  single_t_or_boson.Add("reduced_trees/*channel*1_SyncSkim.root/reduced_tree");
+  single_t_or_boson.Add("reduced_trees/*JetsToLNu_Tune*1_SyncSkim.root/reduced_tree");
+  single_t_or_boson.Add("reduced_trees/ZJetsToNuNu*1_SyncSkim.root/reduced_tree");
+  diboson.Add("reduced_trees/WH*1_SyncSkim.root/reduced_tree");
+  diboson.Add("reduced_trees/WW*1_SyncSkim.root/reduced_tree");
+  diboson.Add("reduced_trees/WZ*1_SyncSkim.root/reduced_tree");
+  diboson.Add("reduced_trees/ZZ*1_SyncSkim.root/reduced_tree");
+  signal250.Add("reduced_trees/SMS-TChiHH_2b2b_2J_mChargino-250_mLSP-1_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1872_v71_SyncSkim.root/reduced_tree");
+  signal350.Add("reduced_trees/SMS-TChiHH_2b2b_2J_mChargino-350_mLSP-1_TuneZ2star_8TeV-madgraph-tauola_Summer12-START53_V19_FSIM-v1_AODSIM_UCSB1871_v71_SyncSkim.root/reduced_tree");
   std::vector<TChain*> chains(0);
   chains.push_back(&data);
   chains.push_back(&qcd);
   chains.push_back(&diboson);
   chains.push_back(&single_t_or_boson);
   chains.push_back(&ttbar);
-  chains.push_back(&signal);
+  chains.push_back(&signal250);
+  chains.push_back(&signal350);
 
   std::vector<std::string> names(0);
 
@@ -82,6 +477,8 @@ int main(){
     passesLeptonVetoCut(false), passesIsoTrackVetoCut(false), passesDRCut(false),
     passesBTaggingCut(false), passesHiggsAvgMassCut(false),
     passesHiggsMassDiffCut(false), passesQCDTriggerCut(false);
+
+  bool higgs_mass_signal_region(false), higgs_mass_sideband(false);
 
   bool passesBaselineSelection(false);
 
@@ -159,6 +556,48 @@ int main(){
   std::vector<TH1D> h_4b_diff(0);
   std::vector<TH1D> h_4b_sbin(0);
   std::vector<TH2D> h_diff_vs_avg(0);
+  std::vector<TH2D> h_2b_diff_vs_avg(0);
+  std::vector<TH2D> h_3b_diff_vs_avg(0);
+  std::vector<TH2D> h_4b_diff_vs_avg(0);
+  std::vector<TH1D> h_faildr_num_b_tagged_jets(0);
+  std::vector<TH1D> h_faildr_met_sig(0);
+  std::vector<TH1D> h_faildr_met(0);
+  std::vector<TH1D> h_faildr_average_higgs_mass(0);
+  std::vector<TH1D> h_faildr_higgs_mass_difference(0);
+  std::vector<TH1D> h_passdr_num_b_tagged_jets(0);
+  std::vector<TH1D> h_passdr_met_sig(0);
+  std::vector<TH1D> h_passdr_met(0);
+  std::vector<TH1D> h_passdr_average_higgs_mass(0);
+  std::vector<TH1D> h_passdr_higgs_mass_difference(0);
+  std::vector<TH1D> h_nodr_num_b_tagged_jets(0);
+  std::vector<TH1D> h_nodr_met_sig(0);
+  std::vector<TH1D> h_nodr_met(0);
+  std::vector<TH1D> h_nodr_average_higgs_mass(0);
+  std::vector<TH1D> h_nodr_higgs_mass_difference(0);
+  std::vector<TH1D> h_maxdr_2b_sig(0);
+  std::vector<TH1D> h_maxdr_3b_sig(0);
+  std::vector<TH1D> h_maxdr_4b_sig(0);
+  std::vector<TH1D> h_maxdr_2b_sb(0);
+  std::vector<TH1D> h_maxdr_3b_sb(0);
+  std::vector<TH1D> h_maxdr_4b_sb(0);
+
+  std::vector<TH2D> h_dr_vs_avg(0);
+  TGraph g_dr_vs_avg(0);
+  TGraph g_dr_vs_avg_2b_sig(0);
+  TGraph g_dr_vs_avg_3b_sig(0);
+  TGraph g_dr_vs_avg_4b_sig(0);
+  TGraph g_dr_vs_avg_2b_sb(0);
+  TGraph g_dr_vs_avg_3b_sb(0);
+  TGraph g_dr_vs_avg_4b_sb(0);
+
+  TGraph g_faildr_diff_vs_avg_data(0);
+  TGraph g_passdr_diff_vs_avg_data(0);
+  TGraph g_nodr_diff_vs_avg_data(0);
+
+  TGraph g_diff_vs_avg_data(0);
+  TGraph g_2b_diff_vs_avg_data(0);
+  TGraph g_3b_diff_vs_avg_data(0);
+  TGraph g_4b_diff_vs_avg_data(0);
 
   for(unsigned chain_num(0); chain_num<chains.size(); ++chain_num){
     const double stupid_factor(chain_num==0?19307.0/5208.0:1.0);
@@ -181,6 +620,8 @@ int main(){
     setup(chain, "passesHiggsAvgMassCut", passesHiggsAvgMassCut);
     setup(chain, "passesHiggsMassDiffCut", passesHiggsMassDiffCut);
     setup(chain, "passesQCDTriggerCut", passesQCDTriggerCut);
+    setup(chain, "higgs_mass_signal_region", higgs_mass_signal_region);
+    setup(chain, "higgs_mass_sideband", higgs_mass_sideband);
     setup(chain, "pu_true_num_interactions", pu_true_num_interactions);
     setup(chain, "num_primary_vertices", num_primary_vertices);
     setup(chain, "highest_jet_pt", highest_jet_pt);
@@ -266,16 +707,43 @@ int main(){
 
     h_2b_avg.push_back(TH1D(("h_2b_avg"+name).c_str(), "<m_{bb}> (baseline);<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
     h_2b_diff.push_back(TH1D(("h_2b_diff"+name).c_str(), "#Delta m_{bb} (baseline);#Delta m_{bb} [GeV];Events/5 GeV", 24, 0.0, 120.0));
-    h_2b_sbin.push_back(TH1D(("h_2b_sbin"+name).c_str(), "#S_{MET} bin Counts (2b baseline);S_{MET} bin;Events", 4, 0.5, 4.5));
+    h_2b_sbin.push_back(TH1D(("h_2b_sbin"+name).c_str(), "S_{MET} bin Counts (2b full selection);S_{MET} bin;Events", 4, 0.5, 4.5));
     h_3b_avg.push_back(TH1D(("h_3b_avg"+name).c_str(), "<m_{bb}> (baseline);<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
     h_3b_diff.push_back(TH1D(("h_3b_diff"+name).c_str(), "#Delta m_{bb} (baseline);#Delta m_{bb} [GeV];Events/5 GeV", 24, 0.0, 120.0));
-    h_3b_sbin.push_back(TH1D(("h_3b_sbin"+name).c_str(), "#S_{MET} bin Counts (3b baseline);S_{MET} bin;Events", 4, 0.5, 4.5));
+    h_3b_sbin.push_back(TH1D(("h_3b_sbin"+name).c_str(), "S_{MET} bin Counts (3b full selection);S_{MET} bin;Events", 4, 0.5, 4.5));
     h_4b_avg.push_back(TH1D(("h_4b_avg"+name).c_str(), "<m_{bb}> (baseline);<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
     h_4b_diff.push_back(TH1D(("h_4b_diff"+name).c_str(), "#Delta m_{bb} (baseline);#Delta m_{bb} [GeV];Events/5 GeV", 24, 0.0, 120.0));
-    h_4b_sbin.push_back(TH1D(("h_4b_sbin"+name).c_str(), "#S_{MET} bin Counts (4b baseline);S_{MET} bin;Events", 4, 0.5, 4.5));
+    h_4b_sbin.push_back(TH1D(("h_4b_sbin"+name).c_str(), "S_{MET} bin Counts (4b full selection);S_{MET} bin;Events", 4, 0.5, 4.5));
 
-    h_diff_vs_avg.push_back(TH2D(("h_diff_vs_avg"+name).c_str(), ";<m_{bb}> [GeV];#Delta m_{bb}", 50, 0.0, 250.0, 24, 0.0, 120.0));
-    
+    h_diff_vs_avg.push_back(TH2D(("h_diff_vs_avg"+name).c_str(), ";<m_{bb}> [GeV];#Delta m_{bb} [GeV]", 50, 0.0, 250.0, 24, 0.0, 120.0));
+    h_2b_diff_vs_avg.push_back(TH2D(("h_2b_diff_vs_avg"+name).c_str(), ";<m_{bb}> [GeV];#Delta m_{bb} [GeV]", 50, 0.0, 250.0, 24, 0.0, 120.0));
+    h_3b_diff_vs_avg.push_back(TH2D(("h_3b_diff_vs_avg"+name).c_str(), ";<m_{bb}> [GeV];#Delta m_{bb} [GeV]", 50, 0.0, 250.0, 24, 0.0, 120.0));
+    h_4b_diff_vs_avg.push_back(TH2D(("h_4b_diff_vs_avg"+name).c_str(), ";<m_{bb}> [GeV];#Delta m_{bb} [GeV]", 50, 0.0, 250.0, 24, 0.0, 120.0));
+
+    h_faildr_num_b_tagged_jets.push_back(TH1D(("h_faildr_num_b_tagged_jets"+name).c_str(), "Num b-Tagged Jets (full sel.);Num b-Tagged jets;Events/1", 16, -0.5, 15.5));
+    h_faildr_met_sig.push_back(TH1D(("h_faildr_met_sig"+name).c_str(), "S_{MET} (full sel.);S_{MET};Events/10", 40, 0.0, 400.0));
+    h_faildr_met.push_back(TH1D(("h_faildr_met"+name).c_str(), "MET (full sel.);MET [GeV];Events/10 GeV", 40, 0.0, 400.0));
+    h_faildr_average_higgs_mass.push_back(TH1D(("h_faildr_average_higgs_mass"+name).c_str(), "<m_{bb}> (full sel.);<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_faildr_higgs_mass_difference.push_back(TH1D(("h_faildr_higgs_mass_difference"+name).c_str(), "#Delta m_{bb} (full sel.);#Delta m_{bb} [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_passdr_num_b_tagged_jets.push_back(TH1D(("h_passdr_num_b_tagged_jets"+name).c_str(), "Num b-Tagged Jets (full sel.);Num b-Tagged jets;Events/1", 16, -0.5, 15.5));
+    h_passdr_met_sig.push_back(TH1D(("h_passdr_met_sig"+name).c_str(), "S_{MET} (full sel.);S_{MET};Events/10", 40, 0.0, 400.0));
+    h_passdr_met.push_back(TH1D(("h_passdr_met"+name).c_str(), "MET (full sel.);MET [GeV];Events/10 GeV", 40, 0.0, 400.0));
+    h_passdr_average_higgs_mass.push_back(TH1D(("h_passdr_average_higgs_mass"+name).c_str(), "<m_{bb}> (full sel.);<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_passdr_higgs_mass_difference.push_back(TH1D(("h_passdr_higgs_mass_difference"+name).c_str(), "#Delta m_{bb} (full sel.);#Delta m_{bb} [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_nodr_num_b_tagged_jets.push_back(TH1D(("h_nodr_num_b_tagged_jets"+name).c_str(), "Num b-Tagged Jets (full sel.);Num b-Tagged jets;Events/1", 16, -0.5, 15.5));
+    h_nodr_met_sig.push_back(TH1D(("h_nodr_met_sig"+name).c_str(), "S_{MET} (full sel.);S_{MET};Events/10", 40, 0.0, 400.0));
+    h_nodr_met.push_back(TH1D(("h_nodr_met"+name).c_str(), "MET (full sel.);MET [GeV];Events/10 GeV", 40, 0.0, 400.0));
+    h_nodr_average_higgs_mass.push_back(TH1D(("h_nodr_average_higgs_mass"+name).c_str(), "<m_{bb}> (full sel.);<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_nodr_higgs_mass_difference.push_back(TH1D(("h_nodr_higgs_mass_difference"+name).c_str(), "#Delta m_{bb} (full sel.);#Delta m_{bb} [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_maxdr_2b_sig.push_back(TH1D(("h_maxdr_2b_sig"+name).c_str(), "Max #Delta R (2b SIG);Max #Delta R;Events/0.2", 25, 0.0, 5.0));
+    h_maxdr_3b_sig.push_back(TH1D(("h_maxdr_3b_sig"+name).c_str(), "Max #Delta R (3b SIG);Max #Delta R;Events/0.2", 25, 0.0, 5.0));
+    h_maxdr_4b_sig.push_back(TH1D(("h_maxdr_4b_sig"+name).c_str(), "Max #Delta R (>3b SIG);Max #Delta R;Events/0.2", 25, 0.0, 5.0));
+    h_maxdr_2b_sb.push_back(TH1D(("h_maxdr_2b_sb"+name).c_str(), "Max #Delta R (2b SB);Max #Delta R;Events/0.2", 25, 0.0, 5.0));
+    h_maxdr_3b_sb.push_back(TH1D(("h_maxdr_3b_sb"+name).c_str(), "Max #Delta R (3b SB);Max #Delta R;Events/0.2", 25, 0.0, 5.0));
+    h_maxdr_4b_sb.push_back(TH1D(("h_maxdr_4b_sb"+name).c_str(), "Max #Delta R (>3b SB);Max #Delta R;Events/0.2", 25, 0.0, 5.0));
+
+    h_dr_vs_avg.push_back(TH2D(("h_dr_vs_avg"+name).c_str(), ";<m_{bb}> [GeV];Max #Delta R", 35, 0.0, 250.0, 35, 0.0, 5.0));
+
     const int num_events(chain.GetEntries());
     Timer timer(num_events);
     timer.Start();
@@ -284,46 +752,109 @@ int main(){
         timer.PrintRemainingTime();
       }
       chain.GetEntry(event);
+      if(chain_num==chains.size()-1) full_weight*=0.004187617/1.33586290758103132e-05;
+      if(chain_num==chains.size()-2) full_weight*=0.009816715/3.10530595015734434e-05;
 
-      if(passesBaselineSelection){
-	if(chain_num<chains.size()-1 || chargino_mass==300){
-	  unsigned short sbin(0);
-	  if(met_sig<50.0){
-	    sbin=1;
-	  }else if(met_sig<100.0){
-	    sbin=2;
-	  }else if(met_sig<150.0){
-	    sbin=3;
-	  }else{
-	    sbin=4;
+      if(passesJSONCut && passesPVCut && passesJet2PtCut && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut && passesLeptonVetoCut && passesIsoTrackVetoCut){
+	if(num_b_tagged_jets==2){
+	  if(higgs_mass_signal_region){
+	    h_maxdr_2b_sig.at(chain_num).Fill(max_delta_R, full_weight);
+	  }else if(higgs_mass_sideband){
+	    h_maxdr_2b_sb.at(chain_num).Fill(max_delta_R, full_weight);
 	  }
-	  switch(num_b_tagged_jets){
-	  case 2:
-	    h_2b_avg.at(chain_num).Fill(average_higgs_mass, full_weight);
-	    h_2b_diff.at(chain_num).Fill(higgs_mass_difference, full_weight);
-	    h_2b_sbin.at(chain_num).Fill(sbin, full_weight);
-	    break;
-	  case 3:
-	    h_3b_avg.at(chain_num).Fill(average_higgs_mass, full_weight);
-	    h_3b_diff.at(chain_num).Fill(higgs_mass_difference, full_weight);
-	    h_3b_sbin.at(chain_num).Fill(sbin, full_weight);
-	    break;
-	  case 4:
-	    h_4b_avg.at(chain_num).Fill(average_higgs_mass, full_weight);
-	    h_4b_diff.at(chain_num).Fill(higgs_mass_difference, full_weight);
-	    h_4b_sbin.at(chain_num).Fill(sbin, full_weight);
-	    break;
-	  default:
-	    break;
+	}else if(num_b_tagged_jets==3){
+	  if(higgs_mass_signal_region){
+	    h_maxdr_3b_sig.at(chain_num).Fill(max_delta_R, full_weight);
+	  }else if(higgs_mass_sideband){
+	    h_maxdr_3b_sb.at(chain_num).Fill(max_delta_R, full_weight);
 	  }
-	  h_diff_vs_avg.at(chain_num).Fill(average_higgs_mass, higgs_mass_difference, full_weight);
+	}else if(num_b_tagged_jets>=4){
+	  if(higgs_mass_signal_region){
+	    h_maxdr_4b_sig.at(chain_num).Fill(max_delta_R, full_weight);
+	  }else if(higgs_mass_sideband){
+	    h_maxdr_4b_sb.at(chain_num).Fill(max_delta_R, full_weight);
+	  }
+	}
+
+	h_dr_vs_avg.at(chain_num).Fill(average_higgs_mass, max_delta_R, full_weight);
+	if(chain_num==0){
+	  add_point(g_dr_vs_avg, average_higgs_mass, max_delta_R);
+	  if(num_b_tagged_jets==2){
+	    if(higgs_mass_signal_region){
+	      add_point(g_dr_vs_avg_2b_sig, average_higgs_mass, max_delta_R);
+	    }else if(higgs_mass_sideband){
+	      add_point(g_dr_vs_avg_2b_sb, average_higgs_mass, max_delta_R);
+	    }
+	  }else if(num_b_tagged_jets==3){
+	    if(higgs_mass_signal_region){
+	      add_point(g_dr_vs_avg_3b_sig, average_higgs_mass, max_delta_R);
+	    }else if(higgs_mass_sideband){
+	      add_point(g_dr_vs_avg_3b_sb, average_higgs_mass, max_delta_R);
+	    }
+	  }else if(num_b_tagged_jets>=4){
+	    if(higgs_mass_signal_region){
+	      add_point(g_dr_vs_avg_4b_sig, average_higgs_mass, max_delta_R);
+	    }else if(higgs_mass_sideband){
+	      add_point(g_dr_vs_avg_4b_sb, average_higgs_mass, max_delta_R);
+	    }
+	  }
 	}
       }
 
+      if(passesJSONCut && passesPVCut && passesJet2PtCut && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut && passesLeptonVetoCut && passesIsoTrackVetoCut && passesHiggsAvgMassCut && passesHiggsMassDiffCut && passesDRCut){
+	unsigned short sbin(0);
+	if(met_sig<50.0){
+	  sbin=1;
+	}else if(met_sig<100.0){
+	  sbin=2;
+	}else if(met_sig<150.0){
+	  sbin=3;
+	}else{
+	  sbin=4;
+	}
+	if(num_b_tagged_jets==2){
+	  h_2b_avg.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  h_2b_diff.at(chain_num).Fill(higgs_mass_difference, full_weight);
+	  h_2b_sbin.at(chain_num).Fill(sbin, full_weight);
+	  h_2b_diff_vs_avg.at(chain_num).Fill(average_higgs_mass, higgs_mass_difference, full_weight);
+	  if(chain_num==0){
+	    g_2b_diff_vs_avg_data.SetPoint(g_2b_diff_vs_avg_data.GetN(),
+					   average_higgs_mass,
+					   higgs_mass_difference);
+	  }
+	}else if(num_b_tagged_jets==3){
+	  h_3b_avg.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  h_3b_diff.at(chain_num).Fill(higgs_mass_difference, full_weight);
+	  h_3b_sbin.at(chain_num).Fill(sbin, full_weight);
+	  h_3b_diff_vs_avg.at(chain_num).Fill(average_higgs_mass, higgs_mass_difference, full_weight);
+	  if(chain_num==0){
+	    g_3b_diff_vs_avg_data.SetPoint(g_3b_diff_vs_avg_data.GetN(),
+					   average_higgs_mass,
+					   higgs_mass_difference);
+	  }
+	}else if(num_b_tagged_jets>=4){
+	  h_4b_avg.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  h_4b_diff.at(chain_num).Fill(higgs_mass_difference, full_weight);
+	  h_4b_sbin.at(chain_num).Fill(sbin, full_weight);
+	  h_4b_diff_vs_avg.at(chain_num).Fill(average_higgs_mass, higgs_mass_difference, full_weight);
+	  if(chain_num==0){
+	    g_4b_diff_vs_avg_data.SetPoint(g_4b_diff_vs_avg_data.GetN(),
+					   average_higgs_mass,
+					   higgs_mass_difference);
+	  }
+	}
+	h_diff_vs_avg.at(chain_num).Fill(average_higgs_mass, higgs_mass_difference, full_weight);
+	if(chain_num==0){
+	  g_diff_vs_avg_data.SetPoint(g_diff_vs_avg_data.GetN(),
+				      average_higgs_mass,
+				      higgs_mass_difference);
+	}
+      }
+    
       if(passesJSONCut && passesPVCut && second_highest_jet_pt>70.0
-         /*&& passes2CSVTCut*/ && !passesMETSig30Cut && passesMETCleaningCut
-         /*&& passesTriggerCut*/ && passesNumJetsCut && !passesMinDeltaPhiCut
-         && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut
+	 /*&& passes2CSVTCut*/ && !passesMETSig30Cut && passesMETCleaningCut
+	 /*&& passesTriggerCut*/ && passesNumJetsCut && !passesMinDeltaPhiCut
+	 && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut
 	 && num_b_tagged_jets<3 && met>160.0 && passesQCDTriggerCut){
 	h_qcd_control_highest_csv.at(chain_num).Fill(highest_csv, full_weight*stupid_factor);
 	h_qcd_control_second_highest_csv.at(chain_num).Fill(second_highest_csv, full_weight*stupid_factor);
@@ -332,31 +863,31 @@ int main(){
 	h_qcd_control_fifth_highest_csv.at(chain_num).Fill(fifth_highest_csv, full_weight*stupid_factor);
       }
       if(passesJSONCut && passesPVCut && second_highest_jet_pt>70.0
-         /*&& passes2CSVTCut && !passesMETSig30Cut*/ && passesMETCleaningCut
-         /*&& passesTriggerCut*/ && passesNumJetsCut && !passesMinDeltaPhiCut
-         && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut
+	 /*&& passes2CSVTCut && !passesMETSig30Cut*/ && passesMETCleaningCut
+	 /*&& passesTriggerCut*/ && passesNumJetsCut && !passesMinDeltaPhiCut
+	 && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut
 	 && num_b_tagged_jets<3 && met>160.0 && passesQCDTriggerCut){
 	h_qcd_control_met_sig.at(chain_num).Fill(met_sig, full_weight*stupid_factor);
       }
       if(passesJSONCut && passesPVCut && second_highest_jet_pt>70.0
-         /*&& passes2CSVTCut*/ && !passesMETSig30Cut && passesMETCleaningCut
-         /*&& passesTriggerCut*/ && passesNumJetsCut && !passesMinDeltaPhiCut
-         && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut
+	 /*&& passes2CSVTCut*/ && !passesMETSig30Cut && passesMETCleaningCut
+	 /*&& passesTriggerCut*/ && passesNumJetsCut && !passesMinDeltaPhiCut
+	 && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut
 	 && num_b_tagged_jets<3 /*&& met>160.0*/ && passesQCDTriggerCut){
 	h_qcd_control_met.at(chain_num).Fill(met, full_weight*stupid_factor);
       }
       if(passesJSONCut && passesPVCut && passesJet2PtCut
-         && passes2CSVTCut /*&& passesMETSig30Cut*/ && passesMETCleaningCut
-         && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
-         /*&& passesLeptonVetoCut && passesIsoTrackVetoCut*/ && passesDRCut
+	 && passes2CSVTCut /*&& passesMETSig30Cut*/ && passesMETCleaningCut
+	 && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
+	 /*&& passesLeptonVetoCut && passesIsoTrackVetoCut*/ && passesDRCut
 	 && num_leptons==1 && num_taus==0){
 	h_1l_met_sig.at(chain_num).Fill(met_sig, full_weight*stupid_factor);
 	h_1l_met.at(chain_num).Fill(met, full_weight*stupid_factor);
       }
       if(passesJSONCut && passesPVCut && passesJet2PtCut
-         && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
-         && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
-         /*&& passesLeptonVetoCut && passesIsoTrackVetoCut*/ && passesDRCut
+	 && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
+	 && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
+	 /*&& passesLeptonVetoCut && passesIsoTrackVetoCut*/ && passesDRCut
 	 && num_leptons==1 && num_taus==0){
 	h_1l_highest_csv.at(chain_num).Fill(highest_csv, full_weight);
 	h_1l_second_highest_csv.at(chain_num).Fill(second_highest_csv, full_weight);
@@ -366,75 +897,141 @@ int main(){
       }
 
       if(passesJSONCut && passesPVCut && passesJet2PtCut
-         && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
-         && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
-         && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
-        h_pu_true_num_interactions.at(chain_num).Fill(pu_true_num_interactions, full_weight);
-        h_num_primary_vertices.at(chain_num).Fill(num_primary_vertices, full_weight);
-        h_third_highest_jet_pt.at(chain_num).Fill(third_highest_jet_pt, full_weight);
-        h_fourth_highest_jet_pt.at(chain_num).Fill(fourth_highest_jet_pt, full_weight);
-        h_fifth_highest_jet_pt.at(chain_num).Fill(fifth_highest_jet_pt, full_weight);
-        h_third_highest_csv.at(chain_num).Fill(third_highest_csv, full_weight);
-        h_fourth_highest_csv.at(chain_num).Fill(fourth_highest_csv, full_weight);
-        h_fifth_highest_csv.at(chain_num).Fill(fifth_highest_csv, full_weight);
-        h_min_delta_R.at(chain_num).Fill(min_delta_R, full_weight);
-        h_ht_jets.at(chain_num).Fill(ht_jets, full_weight);
-        h_ht_jets_met.at(chain_num).Fill(ht_jets_met, full_weight);
-        h_ht_jets_leps.at(chain_num).Fill(ht_jets_leps, full_weight);
-        h_ht_jets_met_leps.at(chain_num).Fill(ht_jets_met_leps, full_weight);
-        h_top_pt.at(chain_num).Fill(top_pt, full_weight);
-        h_average_higgs_mass.at(chain_num).Fill(average_higgs_mass, full_weight);
-        h_higgs_mass_difference.at(chain_num).Fill(higgs_mass_difference, full_weight);
+	 && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
+	 && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
+	 && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
+	h_pu_true_num_interactions.at(chain_num).Fill(pu_true_num_interactions, full_weight);
+	h_num_primary_vertices.at(chain_num).Fill(num_primary_vertices, full_weight);
+	h_third_highest_jet_pt.at(chain_num).Fill(third_highest_jet_pt, full_weight);
+	h_fourth_highest_jet_pt.at(chain_num).Fill(fourth_highest_jet_pt, full_weight);
+	h_fifth_highest_jet_pt.at(chain_num).Fill(fifth_highest_jet_pt, full_weight);
+	h_third_highest_csv.at(chain_num).Fill(third_highest_csv, full_weight);
+	h_fourth_highest_csv.at(chain_num).Fill(fourth_highest_csv, full_weight);
+	h_fifth_highest_csv.at(chain_num).Fill(fifth_highest_csv, full_weight);
+	h_min_delta_R.at(chain_num).Fill(min_delta_R, full_weight);
+	h_ht_jets.at(chain_num).Fill(ht_jets, full_weight);
+	h_ht_jets_met.at(chain_num).Fill(ht_jets_met, full_weight);
+	h_ht_jets_leps.at(chain_num).Fill(ht_jets_leps, full_weight);
+	h_ht_jets_met_leps.at(chain_num).Fill(ht_jets_met_leps, full_weight);
+	h_top_pt.at(chain_num).Fill(top_pt, full_weight);
+	h_average_higgs_mass.at(chain_num).Fill(average_higgs_mass, full_weight);
+	h_higgs_mass_difference.at(chain_num).Fill(higgs_mass_difference, full_weight);
       }
       if(passesJSONCut && passesPVCut /*&& passesJet2PtCut*/
-         && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
-         && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
-         && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
-        h_highest_jet_pt.at(chain_num).Fill(highest_jet_pt, full_weight);
-        h_second_highest_jet_pt.at(chain_num).Fill(second_highest_jet_pt, full_weight);
+	 && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
+	 && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
+	 && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
+	h_highest_jet_pt.at(chain_num).Fill(highest_jet_pt, full_weight);
+	h_second_highest_jet_pt.at(chain_num).Fill(second_highest_jet_pt, full_weight);
       }
       if(passesJSONCut && passesPVCut && passesJet2PtCut
-         /*&& passes2CSVTCut*/ && passesMETSig30Cut && passesMETCleaningCut
-         && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
-         && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
-        h_highest_csv.at(chain_num).Fill(highest_csv, full_weight);
-        h_second_highest_csv.at(chain_num).Fill(second_highest_csv, full_weight);
-        h_num_b_tagged_jets.at(chain_num).Fill(num_b_tagged_jets, full_weight);
+	 /*&& passes2CSVTCut*/ && passesMETSig30Cut && passesMETCleaningCut
+	 && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
+	 && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
+	h_highest_csv.at(chain_num).Fill(highest_csv, full_weight);
+	h_second_highest_csv.at(chain_num).Fill(second_highest_csv, full_weight);
+	h_num_b_tagged_jets.at(chain_num).Fill(num_b_tagged_jets, full_weight);
       }
       if(passesJSONCut && passesPVCut && passesJet2PtCut
-         && passes2CSVTCut && /*passesMETSig30Cut &&*/ passesMETCleaningCut
-         && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
-         && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
-        h_met_sig.at(chain_num).Fill(met_sig, full_weight);
-        h_met.at(chain_num).Fill(met, full_weight);
+	 && passes2CSVTCut && /*passesMETSig30Cut &&*/ passesMETCleaningCut
+	 && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
+	 && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
+	h_met_sig.at(chain_num).Fill(met_sig, full_weight);
+	h_met.at(chain_num).Fill(met, full_weight);
       } 
       if(passesJSONCut && passesPVCut && passesJet2PtCut
-         && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
-         && passesTriggerCut && /*passesNumJetsCut &&*/ passesMinDeltaPhiCut
-         && passesLeptonVetoCut && passesIsoTrackVetoCut /*&& passesDRCut*/){
-        h_num_jets.at(chain_num).Fill(num_jets, full_weight);
+	 && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
+	 && passesTriggerCut && /*passesNumJetsCut &&*/ passesMinDeltaPhiCut
+	 && passesLeptonVetoCut && passesIsoTrackVetoCut /*&& passesDRCut*/){
+	h_num_jets.at(chain_num).Fill(num_jets, full_weight);
       }
       if(passesJSONCut && passesPVCut && passesJet2PtCut
-         && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
-         && passesTriggerCut && passesNumJetsCut /*&& passesMinDeltaPhiCut*/
-         && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
-        h_min_delta_phi.at(chain_num).Fill(min_delta_phi, full_weight);
+	 && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
+	 && passesTriggerCut && passesNumJetsCut /*&& passesMinDeltaPhiCut*/
+	 && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
+	h_min_delta_phi.at(chain_num).Fill(min_delta_phi, full_weight);
       }
       if(passesJSONCut && passesPVCut && passesJet2PtCut
-         && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
-         && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
-         /*&& passesLeptonVetoCut && passesIsoTrackVetoCut*/ && passesDRCut){
-        h_num_electrons.at(chain_num).Fill(num_electrons, full_weight);
-        h_num_muons.at(chain_num).Fill(num_muons, full_weight);
-        h_num_taus.at(chain_num).Fill(num_taus, full_weight);
-        h_num_iso_tracks.at(chain_num).Fill(num_iso_tracks, full_weight);
-        h_num_leptons.at(chain_num).Fill(num_leptons, full_weight);
+	 && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
+	 && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
+	 /*&& passesLeptonVetoCut && passesIsoTrackVetoCut*/ && passesDRCut){
+	h_num_electrons.at(chain_num).Fill(num_electrons, full_weight);
+	h_num_muons.at(chain_num).Fill(num_muons, full_weight);
+	h_num_taus.at(chain_num).Fill(num_taus, full_weight);
+	h_num_iso_tracks.at(chain_num).Fill(num_iso_tracks, full_weight);
+	h_num_leptons.at(chain_num).Fill(num_leptons, full_weight);
       }
       if(passesJSONCut && passesPVCut && passesJet2PtCut
-         && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
-         && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
-         && passesLeptonVetoCut && passesIsoTrackVetoCut /*&& passesDRCut*/){
-        h_max_delta_R.at(chain_num).Fill(max_delta_R, full_weight);
+	 && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
+	 && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
+	 && passesLeptonVetoCut && passesIsoTrackVetoCut /*&& passesDRCut*/){
+	h_max_delta_R.at(chain_num).Fill(max_delta_R, full_weight);
+      }
+
+      if(passesJSONCut && passesPVCut && passesJet2PtCut
+	 && passes2CSVTCut && passesMETCleaningCut
+	 && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut
+	 && passesLeptonVetoCut && passesIsoTrackVetoCut){
+	if(!passesDRCut){
+	  if(passesHiggsAvgMassCut && passesHiggsMassDiffCut && passesMETSig30Cut){
+	    h_faildr_num_b_tagged_jets.at(chain_num).Fill(num_b_tagged_jets, full_weight);
+	  }
+	  if(passesHiggsAvgMassCut && passesHiggsMassDiffCut && passesBTaggingCut){
+	    h_faildr_met_sig.at(chain_num).Fill(met_sig, full_weight);
+	    h_faildr_met.at(chain_num).Fill(met, full_weight);
+	  }
+	  if(passesBTaggingCut && passesHiggsMassDiffCut && passesMETSig30Cut){
+	    h_faildr_average_higgs_mass.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }
+	  if(passesHiggsAvgMassCut && passesBTaggingCut && passesMETSig30Cut){
+	    h_faildr_higgs_mass_difference.at(chain_num).Fill(higgs_mass_difference, full_weight);
+	  }
+	  if(passesMETSig30Cut && passesBTaggingCut && chain_num==0){
+	    g_faildr_diff_vs_avg_data.SetPoint(g_faildr_diff_vs_avg_data.GetN(),
+					       average_higgs_mass,
+					       higgs_mass_difference);
+
+	  }
+	}else{
+	  if(passesHiggsAvgMassCut && passesHiggsMassDiffCut && passesMETSig30Cut){
+	    h_passdr_num_b_tagged_jets.at(chain_num).Fill(num_b_tagged_jets, full_weight);
+	  }
+	  if(passesHiggsAvgMassCut && passesHiggsMassDiffCut && passesBTaggingCut){
+	    h_passdr_met_sig.at(chain_num).Fill(met_sig, full_weight);
+	    h_passdr_met.at(chain_num).Fill(met, full_weight);
+	  }
+	  if(passesBTaggingCut && passesHiggsMassDiffCut && passesMETSig30Cut){
+	    h_passdr_average_higgs_mass.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }
+	  if(passesHiggsAvgMassCut && passesBTaggingCut && passesMETSig30Cut){
+	    h_passdr_higgs_mass_difference.at(chain_num).Fill(higgs_mass_difference, full_weight);
+	  }
+	  if(passesMETSig30Cut && num_b_tagged_jets>=4 && chain_num==0){
+	    g_passdr_diff_vs_avg_data.SetPoint(g_passdr_diff_vs_avg_data.GetN(),
+					       average_higgs_mass,
+					       higgs_mass_difference);
+
+	  }
+	}
+	if(passesHiggsAvgMassCut && passesHiggsMassDiffCut && passesMETSig30Cut){
+	  h_nodr_num_b_tagged_jets.at(chain_num).Fill(num_b_tagged_jets, full_weight);
+	}
+	if(passesHiggsAvgMassCut && passesHiggsMassDiffCut && passesBTaggingCut){
+	  h_nodr_met_sig.at(chain_num).Fill(met_sig, full_weight);
+	  h_nodr_met.at(chain_num).Fill(met, full_weight);
+	}
+	if(passesBTaggingCut && passesHiggsMassDiffCut && passesMETSig30Cut){
+	  h_nodr_average_higgs_mass.at(chain_num).Fill(average_higgs_mass, full_weight);
+	}
+	if(passesHiggsAvgMassCut && passesBTaggingCut && passesMETSig30Cut){
+	  h_nodr_higgs_mass_difference.at(chain_num).Fill(higgs_mass_difference, full_weight);
+	}
+	  if(passesMETSig30Cut && passesBTaggingCut && chain_num==0){
+	    g_nodr_diff_vs_avg_data.SetPoint(g_nodr_diff_vs_avg_data.GetN(),
+					       average_higgs_mass,
+					       higgs_mass_difference);
+
+	  }
       }
       timer.Iterate();
     }
@@ -492,46 +1089,114 @@ int main(){
   plot_data_mc_sig(plot, h_2b_sbin, "nm1/2b_sbin.pdf");
   plot_data_mc_sig(plot, h_3b_sbin, "nm1/3b_sbin.pdf");
   plot_data_mc_sig(plot, h_4b_sbin, "nm1/4b_sbin.pdf");
+  plot_data_mc(plot, h_faildr_num_b_tagged_jets, "nm1/faildr_num_b_tagged_jets.pdf");
+  plot_data_mc(plot, h_faildr_met_sig, "nm1/faildr_met_sig.pdf");
+  plot_data_mc(plot, h_faildr_met, "nm1/faildr_met.pdf");
+  plot_data_mc(plot, h_faildr_average_higgs_mass, "nm1/faildr_average_higgs_mass.pdf");
+  plot_data_mc(plot, h_faildr_higgs_mass_difference, "nm1/faildr_higgs_mass_difference.pdf");
+  plot_data_mc(plot, h_passdr_num_b_tagged_jets, "nm1/passdr_num_b_tagged_jets.pdf");
+  plot_data_mc(plot, h_passdr_met_sig, "nm1/passdr_met_sig.pdf");
+  plot_data_mc(plot, h_passdr_met, "nm1/passdr_met.pdf");
+  plot_data_mc(plot, h_passdr_average_higgs_mass, "nm1/passdr_average_higgs_mass.pdf");
+  plot_data_mc(plot, h_passdr_higgs_mass_difference, "nm1/passdr_higgs_mass_difference.pdf");
+  plot_data_mc(plot, h_nodr_num_b_tagged_jets, "nm1/nodr_num_b_tagged_jets.pdf");
+  plot_data_mc(plot, h_nodr_met_sig, "nm1/nodr_met_sig.pdf");
+  plot_data_mc(plot, h_nodr_met, "nm1/nodr_met.pdf");
+  plot_data_mc(plot, h_nodr_average_higgs_mass, "nm1/nodr_average_higgs_mass.pdf");
+  plot_data_mc(plot, h_nodr_higgs_mass_difference, "nm1/nodr_higgs_mass_difference.pdf");
+  plot_data_mc(plot, h_maxdr_2b_sig, "nm1/maxdr_2b_sig.pdf");
+  plot_data_mc(plot, h_maxdr_3b_sig, "nm1/maxdr_3b_sig.pdf");
+  plot_data_mc(plot, h_maxdr_4b_sig, "nm1/maxdr_4b_sig.pdf");
+  plot_data_mc(plot, h_maxdr_2b_sb, "nm1/maxdr_2b_sb.pdf");
+  plot_data_mc(plot, h_maxdr_3b_sb, "nm1/maxdr_3b_sb.pdf");
+  plot_data_mc(plot, h_maxdr_4b_sb, "nm1/maxdr_4b_sb.pdf");
   
-  TCanvas c;
-  h_2b_avg.at(4).SetLineColor(2);
-  h_2b_diff.at(4).SetLineColor(2);
-  h_3b_avg.at(4).SetLineColor(3);
-  h_3b_diff.at(4).SetLineColor(3);
-  h_4b_avg.at(4).SetLineColor(4);
-  h_4b_diff.at(4).SetLineColor(4);
-  h_2b_avg.at(4).Draw("hist");
-  h_3b_avg.at(4).Draw("histsame");
-  h_4b_avg.at(4).Draw("histsame");
-  h_2b_avg.at(4).Scale(1.0/h_2b_avg.at(4).Integral("width"));
-  h_3b_avg.at(4).Scale(1.0/h_3b_avg.at(4).Integral("width"));
-  h_4b_avg.at(4).Scale(1.0/h_4b_avg.at(4).Integral("width"));
-  h_2b_diff.at(4).Scale(1.0/h_2b_diff.at(4).Integral("width"));
-  h_3b_diff.at(4).Scale(1.0/h_3b_diff.at(4).Integral("width"));
-  h_4b_diff.at(4).Scale(1.0/h_4b_diff.at(4).Integral("width"));
-  h_2b_avg.at(4).SetStats(0);
-  h_3b_avg.at(4).SetStats(0);
-  h_4b_avg.at(4).SetStats(0);
-  h_2b_diff.at(4).SetStats(0);
-  h_3b_diff.at(4).SetStats(0);
-  h_4b_diff.at(4).SetStats(0);
-  TLegend l(0.7, 0.5, 0.95, 0.85);
-  l.AddEntry(&h_2b_avg.at(4), "tt1l (2b)", "l");
-  l.AddEntry(&h_3b_avg.at(4), "tt1l (3b)", "l");
-  l.AddEntry(&h_4b_avg.at(4), "tt1l (4b)", "l");
-  l.Draw("same");
-  c.Print("nm1/avg_compare.pdf");
-  h_2b_diff.at(4).Draw("hist");
-  h_3b_diff.at(4).Draw("histsame");
-  h_4b_diff.at(4).Draw("histsame");
-  l.Draw("same");
-  c.Print("nm1/diff_compare.pdf");
-
   for(unsigned chain_num(0); chain_num<chains.size(); ++chain_num){
     TCanvas cc;
     h_diff_vs_avg.at(chain_num).Draw("SCAT");
     cc.Print(("nm1/diff_vs_avg"+names.at(chain_num)+".pdf").c_str());
   }
+
+  TH1D h_2b_avg_sm(std::accumulate(h_2b_avg.begin()+2, h_2b_avg.end()-2, h_2b_avg.at(1)));
+  TH1D h_3b_avg_sm(std::accumulate(h_3b_avg.begin()+2, h_3b_avg.end()-2, h_3b_avg.at(1)));
+  TH1D h_4b_avg_sm(std::accumulate(h_4b_avg.begin()+2, h_4b_avg.end()-2, h_4b_avg.at(1)));
+  TH1D h_2b_diff_sm(std::accumulate(h_2b_diff.begin()+2, h_2b_diff.end()-2, h_2b_diff.at(1)));
+  TH1D h_3b_diff_sm(std::accumulate(h_3b_diff.begin()+2, h_3b_diff.end()-2, h_3b_diff.at(1)));
+  TH1D h_4b_diff_sm(std::accumulate(h_4b_diff.begin()+2, h_4b_diff.end()-2, h_4b_diff.at(1)));
+  compare_histos(h_2b_avg_sm, h_3b_avg_sm, h_4b_avg_sm, "nm1/avg_compare.pdf");
+  compare_histos(h_2b_avg_sm, h_3b_avg_sm, h_4b_avg_sm, "nm1/avg_compare_norm.pdf", true);
+  compare_histos(h_2b_diff_sm, h_3b_diff_sm, h_4b_diff_sm, "nm1/diff_compare.pdf");
+  compare_histos(h_2b_diff_sm, h_3b_diff_sm, h_4b_diff_sm, "nm1/diff_compare_norm.pdf", true);
+
+  compare_histos(h_2b_avg.at(1), h_3b_avg.at(1), h_4b_avg.at(1), "nm1/avg_compare_qcd.pdf");
+  compare_histos(h_2b_avg.at(1), h_3b_avg.at(1), h_4b_avg.at(1), "nm1/avg_compare_qcd_norm.pdf", true);
+  compare_histos(h_2b_diff.at(1), h_3b_diff.at(1), h_4b_diff.at(1), "nm1/diff_compare_qcd.pdf");
+  compare_histos(h_2b_diff.at(1), h_3b_diff.at(1), h_4b_diff.at(1), "nm1/diff_compare_qcd_norm.pdf", true);
+
+  TH2D h_diff_vs_avg_sm(std::accumulate(h_diff_vs_avg.begin()+2, h_diff_vs_avg.end()-2, h_diff_vs_avg.at(1)));
+  TH2D h_2b_diff_vs_avg_sm(std::accumulate(h_2b_diff_vs_avg.begin()+2, h_2b_diff_vs_avg.end()-2, h_2b_diff_vs_avg.at(1)));
+  TH2D h_3b_diff_vs_avg_sm(std::accumulate(h_3b_diff_vs_avg.begin()+2, h_3b_diff_vs_avg.end()-2, h_3b_diff_vs_avg.at(1)));
+  TH2D h_4b_diff_vs_avg_sm(std::accumulate(h_4b_diff_vs_avg.begin()+2, h_4b_diff_vs_avg.end()-2, h_4b_diff_vs_avg.at(1)));
+
+  TH2D h_dr_vs_avg_sm(std::accumulate(h_dr_vs_avg.begin()+2, h_dr_vs_avg.end()-2, h_dr_vs_avg.at(1)));
+  scat_plot(h_dr_vs_avg_sm, "nm1/h_dr_vs_avg_sm.pdf");
+
+  sig_sb_scat(h_diff_vs_avg_sm, "nm1/diff_vs_avg_sm.pdf");
+  sig_sb_scat(h_2b_diff_vs_avg_sm, "nm1/2b_diff_vs_avg_sm.pdf");
+  sig_sb_scat(h_3b_diff_vs_avg_sm, "nm1/3b_diff_vs_avg_sm.pdf");
+  sig_sb_scat(h_4b_diff_vs_avg_sm, "nm1/4b_diff_vs_avg_sm.pdf");
+  sig_sb_scat(h_2b_diff_vs_avg_sm, "nm1/2b_diff_vs_avg_sig250.pdf");
+  sig_sb_scat(h_3b_diff_vs_avg_sm, "nm1/3b_diff_vs_avg_sig250.pdf");
+  sig_sb_scat(*(h_diff_vs_avg.end()-2), "nm1/diff_vs_avg_sig250.pdf");
+  sig_sb_scat(*(h_2b_diff_vs_avg.end()-2), "nm1/2b_diff_vs_avg_sig250.pdf");
+  sig_sb_scat(*(h_3b_diff_vs_avg.end()-2), "nm1/3b_diff_vs_avg_sig250.pdf");
+  sig_sb_scat(*(h_4b_diff_vs_avg.end()-2), "nm1/4b_diff_vs_avg_sig250.pdf");
+  sig_sb_scat(*(h_diff_vs_avg.end()-1), "nm1/diff_vs_avg_sig350.pdf");
+  sig_sb_scat(*(h_2b_diff_vs_avg.end()-1), "nm1/2b_diff_vs_avg_sig350.pdf");
+  sig_sb_scat(*(h_3b_diff_vs_avg.end()-1), "nm1/3b_diff_vs_avg_sig350.pdf");
+  sig_sb_scat(*(h_4b_diff_vs_avg.end()-1), "nm1/4b_diff_vs_avg_sig350.pdf");
+  sig_sb_scat(h_diff_vs_avg.at(1), "nm1/diff_vs_avg_qcd.pdf");
+  sig_sb_scat(h_2b_diff_vs_avg.at(1), "nm1/2b_diff_vs_avg_qcd.pdf");
+  sig_sb_scat(h_3b_diff_vs_avg.at(1), "nm1/3b_diff_vs_avg_qcd.pdf");
+  sig_sb_scat(h_4b_diff_vs_avg.at(1), "nm1/4b_diff_vs_avg_qcd.pdf");
+  sig_sb_scat(h_diff_vs_avg_sm, "nm1/diff_vs_avg_sm_count.pdf", true);
+  sig_sb_scat(h_2b_diff_vs_avg_sm, "nm1/2b_diff_vs_avg_sm_count.pdf", true);
+  sig_sb_scat(h_3b_diff_vs_avg_sm, "nm1/3b_diff_vs_avg_sm_count.pdf", true);
+  sig_sb_scat(h_4b_diff_vs_avg_sm, "nm1/4b_diff_vs_avg_sm_count.pdf", true);
+  sig_sb_scat(h_2b_diff_vs_avg_sm, "nm1/2b_diff_vs_avg_sig250_count.pdf", true);
+  sig_sb_scat(h_3b_diff_vs_avg_sm, "nm1/3b_diff_vs_avg_sig250_count.pdf", true);
+  sig_sb_scat(*(h_diff_vs_avg.end()-2), "nm1/diff_vs_avg_sig250_count.pdf", true);
+  sig_sb_scat(*(h_2b_diff_vs_avg.end()-2), "nm1/2b_diff_vs_avg_sig250_count.pdf", true);
+  sig_sb_scat(*(h_3b_diff_vs_avg.end()-2), "nm1/3b_diff_vs_avg_sig250_count.pdf", true);
+  sig_sb_scat(*(h_4b_diff_vs_avg.end()-2), "nm1/4b_diff_vs_avg_sig250_count.pdf", true);
+  sig_sb_scat(*(h_diff_vs_avg.end()-1), "nm1/diff_vs_avg_sig350_count.pdf", true);
+  sig_sb_scat(*(h_2b_diff_vs_avg.end()-1), "nm1/2b_diff_vs_avg_sig350_count.pdf", true);
+  sig_sb_scat(*(h_3b_diff_vs_avg.end()-1), "nm1/3b_diff_vs_avg_sig350_count.pdf", true);
+  sig_sb_scat(*(h_4b_diff_vs_avg.end()-1), "nm1/4b_diff_vs_avg_sig350_count.pdf", true);
+  sig_sb_scat(h_diff_vs_avg.at(1), "nm1/diff_vs_avg_qcd_count.pdf", true);
+  sig_sb_scat(h_2b_diff_vs_avg.at(1), "nm1/2b_diff_vs_avg_qcd_count.pdf", true);
+  sig_sb_scat(h_3b_diff_vs_avg.at(1), "nm1/3b_diff_vs_avg_qcd_count.pdf", true);
+  sig_sb_scat(h_4b_diff_vs_avg.at(1), "nm1/4b_diff_vs_avg_qcd_count.pdf", true);
+  sig_sb_scat_data(g_diff_vs_avg_data, "nm1/diff_vs_avg_data.pdf");
+  sig_sb_scat_data(g_2b_diff_vs_avg_data, "nm1/2b_diff_vs_avg_data.pdf");
+  sig_sb_scat_data(g_3b_diff_vs_avg_data, "nm1/3b_diff_vs_avg_data.pdf");
+  sig_sb_scat_data(g_4b_diff_vs_avg_data, "nm1/4b_diff_vs_avg_data.pdf");
+  sig_sb_scat_data(g_diff_vs_avg_data, "nm1/diff_vs_avg_data_count.pdf", true);
+  sig_sb_scat_data(g_2b_diff_vs_avg_data, "nm1/2b_diff_vs_avg_data_count.pdf", true);
+  sig_sb_scat_data(g_3b_diff_vs_avg_data, "nm1/3b_diff_vs_avg_data_count.pdf", true);
+  sig_sb_scat_data(g_4b_diff_vs_avg_data, "nm1/4b_diff_vs_avg_data_count.pdf", true);
+
+  sig_sb_scat_data(g_faildr_diff_vs_avg_data, "nm1/faildr_diff_vs_avg_data_count.pdf", true);
+  sig_sb_scat_data(g_passdr_diff_vs_avg_data, "nm1/passdr_diff_vs_avg_data_count.pdf", true);
+  sig_sb_scat_data(g_nodr_diff_vs_avg_data, "nm1/nodr_diff_vs_avg_data_count.pdf", true);
+
+  scat_plot_data(g_dr_vs_avg, "nm1/dr_vs_avg.pdf");
+  scat_plot_data(g_dr_vs_avg_2b_sig, "nm1/dr_vs_avg_2b_sig.pdf");
+  scat_plot_data(g_dr_vs_avg_2b_sb, "nm1/dr_vs_avg_2b_sb.pdf");
+  scat_plot_data(g_dr_vs_avg_3b_sig, "nm1/dr_vs_avg_3b_sig.pdf");
+  scat_plot_data(g_dr_vs_avg_3b_sb, "nm1/dr_vs_avg_3b_sb.pdf");
+  scat_plot_data(g_dr_vs_avg_4b_sig, "nm1/dr_vs_avg_4b_sig.pdf");
+  scat_plot_data(g_dr_vs_avg_4b_sb, "nm1/dr_vs_avg_4b_sb.pdf");
 
   //TH1D tot_min_delta_phi(GetMCSum(h_min_delta_phi));
   TH1D tot_min_delta_phi(h_min_delta_phi.at(0));
@@ -541,4 +1206,6 @@ int main(){
   const double high_integral(tot_min_delta_phi.Integral(the_bin, num_bins+1));
   std::cout << "Low integral: " << low_integral << std::endl;
   std::cout << "High integral: " << high_integral << std::endl;
+
+  std::cout << (h_4b_diff_vs_avg.end()-1)->Integral() << std::endl;
 }

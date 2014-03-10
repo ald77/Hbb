@@ -23,17 +23,17 @@ int main(){
   TChain single_t_or_boson("single_t_or_boson","single_t_or_boson");
   TChain diboson("diboson","diboson");
 
-  data.Add("reduced_trees/MET_*2012*1.root/reduced_tree");
-  ttbar.Add("reduced_trees/TTJets_FullLept*1.root/reduced_tree");
-  ttbar.Add("reduced_trees/TTJets_SemiLept*1.root/reduced_tree");
-  qcd.Add("reduced_trees/TTJets_Hadronic*1.root/reduced_tree");
-  qcd.Add("reduced_trees/BJets*1.root/reduced_tree");
-  single_t_or_boson.Add("reduced_trees/*channel*1.root/reduced_tree");
-  single_t_or_boson.Add("reduced_trees/*JetsTo*1.root/reduced_tree");
-  diboson.Add("reduced_trees/WH*1.root/reduced_tree");
-  diboson.Add("reduced_trees/WW*1.root/reduced_tree");
-  diboson.Add("reduced_trees/WZ*1.root/reduced_tree");
-  diboson.Add("reduced_trees/ZZ*1.root/reduced_tree");
+  data.Add("reduced_trees/MET_*2012*1_SyncSkim.root/reduced_tree");
+  ttbar.Add("reduced_trees/TTJets_FullLept*1_SyncSkim.root/reduced_tree");
+  ttbar.Add("reduced_trees/TTJets_SemiLept*1_SyncSkim.root/reduced_tree");
+  qcd.Add("reduced_trees/TTJets_Hadronic*1_SyncSkim.root/reduced_tree");
+  qcd.Add("reduced_trees/BJets*1_SyncSkim.root/reduced_tree");
+  single_t_or_boson.Add("reduced_trees/*channel*1_SyncSkim.root/reduced_tree");
+  single_t_or_boson.Add("reduced_trees/*JetsTo*1_SyncSkim.root/reduced_tree");
+  diboson.Add("reduced_trees/WH*1_SyncSkim.root/reduced_tree");
+  diboson.Add("reduced_trees/WW*1_SyncSkim.root/reduced_tree");
+  diboson.Add("reduced_trees/WZ*1_SyncSkim.root/reduced_tree");
+  diboson.Add("reduced_trees/ZZ*1_SyncSkim.root/reduced_tree");
   std::vector<TChain*> chains(0);
   chains.push_back(&data);
   chains.push_back(&qcd);
@@ -44,6 +44,7 @@ int main(){
   std::vector<TH1D> h_pv_nopileup(0), h_pv_notoppt(0), h_pv(0);
   std::vector<TH1D> h_btags_nopileup(0), h_btags_notoppt(0), h_btags(0);
   std::vector<TH1D> h_mbb_nopileup(0), h_mbb_notoppt(0), h_mbb(0);
+  std::vector<TH1D> h_toppt_nopileup(0), h_toppt_notoppt(0), h_toppt(0);
   std::vector<TH1D> h_n_jet(0);
   unsigned num_bins(6);
   for(unsigned histo(0); histo<num_bins; ++histo){
@@ -70,6 +71,9 @@ int main(){
     h_mbb_nopileup.push_back(TH1D(("h_"+name+"_mbb_nopileup").c_str(),"<m_{bb}> (no pileup reweighting, baseline selection);m_{bb} [GeV];Events/5 GeV", 50, 0.0, 250.0));
     h_mbb_notoppt.push_back(TH1D(("h_"+name+"_mbb_notoppt").c_str(),"<m_{bb}> (no top pt-based reweighting, baseline selection);m_{bb} [GeV];Events/5 GeV", 50, 0.0, 250.0));
     h_mbb.push_back(TH1D(("h_"+name+"_mbb").c_str(),"<m_{bb}> (baseline selection);m_{bb} [GeV];Events/5 GeV", 50, 0.0, 250.0));
+    h_toppt_nopileup.push_back(TH1D(("h_"+name+"_toppt_nopileup").c_str(),"Top p_{T} (no pileup reweighting, baseline selection);top p_{T} [GeV];Events/10 GeV", 50, 0.0, 500.0));
+    h_toppt_notoppt.push_back(TH1D(("h_"+name+"_toppt_notoppt").c_str(),"Top p_{T} (no top pt-based reweighting, baseline selection);top p_{T};Events/10 GeV", 50, 0.0, 500.0));
+    h_toppt.push_back(TH1D(("h_"+name+"_toppt").c_str(),"Top p_{T} (baseline selection);top p_{T} [GeV];Events/10 GeV", 50, 0.0, 500.0));
     names.push_back(name);
   }
 
@@ -88,6 +92,7 @@ int main(){
   float full_weight(0.0), lumi_weight(0.0), top_pt_weight(0.0), pu_weight(0.0), trigger_weight(0.0);
   float average_higgs_mass(0.0);
 
+  float top_pt(0.0);
   unsigned short num_b_tagged_jets(0);
 
   for(unsigned chain(0); chain<chains.size(); ++chain){
@@ -122,6 +127,7 @@ int main(){
     chains.at(chain)->SetBranchAddress("top_pt_weight", &top_pt_weight);
     chains.at(chain)->SetBranchAddress("trigger_weight", &trigger_weight);
     chains.at(chain)->SetBranchAddress("num_b_tagged_jets", &num_b_tagged_jets);
+    chains.at(chain)->SetBranchAddress("top_pt", &top_pt);
     int num_entries(chains.at(chain)->GetEntries());
 
     for(int entry(0); entry<num_entries; ++entry){
@@ -139,6 +145,9 @@ int main(){
         h_mbb_nopileup.at(chain).Fill(average_higgs_mass, no_pu_weight);
         h_mbb_notoppt.at(chain).Fill(average_higgs_mass, no_toppt_weight);
         h_mbb.at(chain).Fill(average_higgs_mass, full_weight);
+        h_toppt_nopileup.at(chain).Fill(top_pt, no_pu_weight);
+        h_toppt_notoppt.at(chain).Fill(top_pt, no_toppt_weight);
+        h_toppt.at(chain).Fill(top_pt, full_weight);
       }
       if(chain==0){
         if(passesJSONCut && passesPVCut && passesJet2PtCut && passesMETSig30Cut
@@ -164,4 +173,7 @@ int main(){
   plot_data_mc(plot, h_mbb, "mbb.pdf");
   plot_data_mc(plot, h_mbb_nopileup, "mbb_nopileup.pdf");
   plot_data_mc(plot, h_mbb_notoppt, "mbb_notoppt.pdf");
+  plot_data_mc(plot, h_toppt, "toppt.pdf");
+  plot_data_mc(plot, h_toppt_nopileup, "toppt_nopileup.pdf");
+  plot_data_mc(plot, h_toppt_notoppt, "toppt_notoppt.pdf");
 }

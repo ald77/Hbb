@@ -14,7 +14,7 @@ void plot_data_mc(const plotter& plot,
 		  std::vector<TH1D>& histos,
 		  const std::string& output_name){
   if(histos.size()>0){
-    std::vector<TH1D> mc(histos.begin()+1, histos.end());
+    std::vector<TH1D> mc(histos.begin()+1, histos.end()-2);
     plot.plot_data_mc(histos.at(0), mc, output_name);
   }
 }
@@ -24,7 +24,7 @@ void plot_data_mc_sig(const plotter& plot,
 		      const std::string& output_name){
   if(histos.size()>1){
     TH1D data(histos.at(0));
-    std::vector<TH1D> mc(histos.begin()+1, histos.end()-1);
+    std::vector<TH1D> mc(histos.begin()+1, histos.end()-2);
     TH1D sig(histos.at(histos.size()-1));
     plot.plot_data_mc_sig(data, mc, sig, output_name);
   }
@@ -61,12 +61,12 @@ void plotter::plot_data_mc(TH1D& data,
   }
 
   THStack stack(("s_"+name).c_str(), full_title.c_str());
-  TH1D total(("h_"+name).c_str(), full_title.c_str(), num_bins, &bin_edges.at(0));
+  TH1D total(mc.size()>0?mc.at(0):TH1D());
   assign_color(total, 1);
 
   for(std::vector<TH1D>::size_type histo(0); histo<mc.size(); ++histo){
     stack.Add(&mc.at(histo));
-    total.Add(&mc.at(histo));
+    if(histo!=0) total.Add(&mc.at(histo));
   }
 
   const double the_max(std::max(data.GetMaximum(), total.GetMaximum()));
@@ -85,7 +85,7 @@ void plotter::plot_data_mc(TH1D& data,
 
   TH1D residuals(data);
   residuals.SetTitle("");
-  residuals.GetYaxis()->SetTitle("Residual");
+  residuals.GetYaxis()->SetTitle("Pull");
   residuals.SetStats(0);
   for(unsigned bin(0); bin<=num_bins+1; ++bin){
     const double xd(data.GetBinContent(bin));
@@ -120,7 +120,7 @@ void plotter::plot_data_mc(TH1D& data,
   canvas.cd(1);
   canvas.GetPad(1)->SetPad(0.0, vertical_divide_, 1.0, 1.0);
   canvas.GetPad(1)->SetMargin(0.15, 0.05, 0.0, 0.15/(1.0-vertical_divide_));
-  canvas.GetPad(1)->SetLogy(1);
+  canvas.GetPad(1)->SetLogy(0);
   stack.Draw("hist");
   data.Draw("samee1");
   legend.Draw("same");
@@ -140,6 +140,8 @@ void plotter::plot_data_mc_sig(TH1D& data,
   assign_color(data, 1);
   assign_colors(mc);
   assign_color(sig, 2);
+  sig.SetFillColor(0);
+  sig.SetFillStyle(0);
 
   const std::string name(data.GetName());
   std::string full_title("");
@@ -151,12 +153,12 @@ void plotter::plot_data_mc_sig(TH1D& data,
   }
 
   THStack stack(("s_"+name).c_str(), full_title.c_str());
-  TH1D total(("h_"+name).c_str(), full_title.c_str(), num_bins, &bin_edges.at(0));
+  TH1D total(mc.size()>0?mc.at(0):TH1D());
   assign_color(total, 1);
 
   for(std::vector<TH1D>::size_type histo(0); histo<mc.size(); ++histo){
     stack.Add(&mc.at(histo));
-    total.Add(&mc.at(histo));
+    if(histo!=0) total.Add(&mc.at(histo));
   }
 
   const double the_max(std::max(data.GetMaximum(), total.GetMaximum()));
@@ -175,7 +177,7 @@ void plotter::plot_data_mc_sig(TH1D& data,
 
   TH1D residuals(data);
   residuals.SetTitle("");
-  residuals.GetYaxis()->SetTitle("Residual");
+  residuals.GetYaxis()->SetTitle("Pull");
   residuals.SetStats(0);
   for(unsigned bin(0); bin<=num_bins+1; ++bin){
     const double xd(data.GetBinContent(bin));
@@ -204,6 +206,7 @@ void plotter::plot_data_mc_sig(TH1D& data,
   for(std::vector<TH1D>::size_type histo(0); histo<mc.size(); ++histo){
     legend.AddEntry(&mc.at(histo), mc_names_.at(histo).c_str(), "f");
   }
+  legend.AddEntry(&sig, "Signal (m=250 GeV)", "l");
 
   sig=sig+total;
 
@@ -212,7 +215,7 @@ void plotter::plot_data_mc_sig(TH1D& data,
   canvas.cd(1);
   canvas.GetPad(1)->SetPad(0.0, vertical_divide_, 1.0, 1.0);
   canvas.GetPad(1)->SetMargin(0.15, 0.05, 0.0, 0.15/(1.0-vertical_divide_));
-  canvas.GetPad(1)->SetLogy(1);
+  canvas.GetPad(1)->SetLogy(0);
   stack.Draw("hist");
   data.Draw("samee1");
   sig.Draw("samehist");
@@ -224,4 +227,6 @@ void plotter::plot_data_mc_sig(TH1D& data,
   residuals.Draw("histp");
   canvas.cd(0);
   canvas.Print(output_name.c_str());
+
+
 }
