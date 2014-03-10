@@ -7,6 +7,9 @@
 #include "TH1D.h"
 #include "TChain.h"
 #include "TColor.h"
+#include "TGraph.h"
+
+void add_point(TGraph& graph, const double x, const double y);
 
 template<typename T>
 void setup(TChain& chain, const std::string& name, T& variable){
@@ -16,9 +19,9 @@ void setup(TChain& chain, const std::string& name, T& variable){
 
 template<typename T>
 void assign_colors(std::vector<T>& items,
-		   const unsigned short start,
-		   const float lightness,
-		   const float saturation){
+                   const unsigned short start,
+                   const float lightness,
+                   const float saturation){
   const float golden_angle(180.0*(3.0-sqrt(5.0)));
   for(typename std::vector<T>::size_type item_num(0);
       item_num<items.size();
@@ -26,7 +29,7 @@ void assign_colors(std::vector<T>& items,
     const unsigned short multiplier(item_num+start);
     float r(0.0), g(0.0), b(0.0);
     TColor::HLS2RGB(fmod(multiplier*golden_angle,360.0),
-		    lightness, saturation, r, g, b);
+                    lightness, saturation, r, g, b);
     const int color_num(TColor::GetColor(r, g, b));
     T& item(items.at(item_num));
     item.SetFillColor(color_num);
@@ -37,7 +40,7 @@ void assign_colors(std::vector<T>& items,
 
 template<typename T>
 void assign_colors(std::vector<T>& items, const unsigned short start){
-  assign_colors(items, start, 0.75, 0.75);
+  assign_colors(items, start, 0.75, 1.00);
 }
 
 template<typename T>
