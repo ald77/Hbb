@@ -50,7 +50,11 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   float met_sig(0.0), met(0.0);
   unsigned short num_jets(0), num_b_tagged_jets(0);
   float min_delta_phi(0.0);
-  unsigned short num_electrons(0), num_muons(0), num_taus(0), num_iso_tracks(0), num_leptons(0);
+  unsigned short num_iso_tracks(0);
+  unsigned short num_electrons(0), num_muons(0), num_taus(0), num_leptons(0);
+  unsigned short num_loose_electrons(0), num_loose_muons(0), num_loose_taus(0), num_loose_leptons(0);
+  unsigned short num_medium_electrons(0), num_medium_muons(0), num_medium_taus(0), num_medium_leptons(0);
+  unsigned short num_tight_electrons(0), num_tight_muons(0), num_tight_taus(0), num_tight_leptons(0);
   float min_delta_r(0.0), max_delta_r(0.0);
   float average_higgs_mass(0.0), higgs_mass_difference(0.0);
   float ht_jets(0.0), ht_jets_met(0.0), ht_jets_leps(0.0), ht_jets_met_leps(0.0);
@@ -118,7 +122,23 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   reduced_tree.Branch("num_electrons", &num_electrons);
   reduced_tree.Branch("num_muons", &num_muons);
   reduced_tree.Branch("num_taus", &num_taus);
-  reduced_tree.Branch("num_leptons",&num_leptons);
+  reduced_tree.Branch("num_leptons", &num_leptons);
+
+  reduced_tree.Branch("num_loose_electrons", &num_loose_electrons);
+  reduced_tree.Branch("num_loose_muons", &num_loose_muons);
+  reduced_tree.Branch("num_loose_taus", &num_loose_taus);
+  reduced_tree.Branch("num_loose_leptons", &num_loose_leptons);
+
+  reduced_tree.Branch("num_medium_electrons", &num_medium_electrons);
+  reduced_tree.Branch("num_medium_muons", &num_medium_muons);
+  reduced_tree.Branch("num_medium_taus", &num_medium_taus);
+  reduced_tree.Branch("num_medium_leptons", &num_medium_leptons);
+
+  reduced_tree.Branch("num_tight_electrons", &num_tight_electrons);
+  reduced_tree.Branch("num_tight_muons", &num_tight_muons);
+  reduced_tree.Branch("num_tight_taus", &num_tight_taus);
+  reduced_tree.Branch("num_tight_leptons", &num_tight_leptons);
+
   reduced_tree.Branch("num_iso_tracks", &num_iso_tracks);
 
   reduced_tree.Branch("min_delta_R", &min_delta_r);
@@ -213,10 +233,22 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
 
     min_delta_phi=GetMinDeltaPhiMET();
 
-    num_electrons=GetNumVetoElectrons();
-    num_muons=GetNumVetoMuons();
-    num_taus=GetNumVetoTaus();
+    num_electrons=GetNumElectrons(0);
+    num_muons=GetNumMuons(0);
+    num_taus=GetNumTaus(0);
     num_leptons=num_electrons+num_muons+num_taus;
+    num_loose_electrons=GetNumElectrons(1);
+    num_loose_muons=GetNumMuons(1);
+    num_loose_taus=GetNumTaus(1);
+    num_loose_leptons=num_loose_electrons+num_loose_muons+num_loose_taus;
+    num_medium_electrons=GetNumElectrons(2);
+    num_medium_muons=GetNumMuons(2);
+    num_medium_taus=GetNumTaus(2);
+    num_medium_leptons=num_medium_electrons+num_medium_muons+num_medium_taus;
+    num_tight_electrons=GetNumElectrons(3);
+    num_tight_muons=GetNumMuons(3);
+    num_tight_taus=GetNumTaus(3);
+    num_tight_leptons=num_tight_electrons+num_tight_muons+num_tight_taus;
     num_iso_tracks=NewGetNumIsoTracks();
 
     min_delta_r=GetMinDR();

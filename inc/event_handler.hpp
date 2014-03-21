@@ -153,13 +153,13 @@ protected:
   bool isProblemJet(const unsigned int) const;
   bool jetPassLooseID(const unsigned int) const;
 
-  bool isVetoElectron(const unsigned int) const;
-  bool isVetoMuon(const unsigned int) const;
-  bool isVetoTau(const unsigned int) const;
+  bool isElectron(const unsigned int, const unsigned short=0, const bool=true) const;
+  bool isMuon(const unsigned int, const unsigned short=0, const bool=true) const;
+  bool isTau(const unsigned int, const unsigned short=0, const bool=true) const;
 
-  int GetNumVetoElectrons() const;
-  int GetNumVetoMuons() const;
-  int GetNumVetoTaus() const;
+  int GetNumElectrons(const unsigned short=0, const bool=true) const;
+  int GetNumMuons(const unsigned short=0, const bool=true) const;
+  int GetNumTaus(const unsigned short=0, const bool=true) const;
 
   bool isIsoTrack(const unsigned int, const double=10.0) const;
   bool isQualityTrack(const unsigned int) const;

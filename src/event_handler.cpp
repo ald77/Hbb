@@ -15,6 +15,7 @@
 #include <sstream>
 #include <algorithm>
 #include <functional>
+#include <limits>
 #include "TChain.h"
 #include "TTree.h"
 #include "TBranch.h"
@@ -367,8 +368,8 @@ bool EventHandler::PassesBaselineSelection() const{
 }
 
 bool EventHandler::PassesSingleLeptonControlCut() const {
-  if(GetNumVetoElectrons()+GetNumVetoMuons()!=1) return false;
-  if(GetNumVetoTaus()>0) return false;
+  if(GetNumElectrons(1)+GetNumMuons(1)!=1) return false;
+  if(GetNumTaus()>0) return false;
   if(!PassesIsoTrackVetoCut()) return false;
   return true;
 }
@@ -751,13 +752,13 @@ double EventHandler::GetHT(const bool useMET, const bool useLeps) const{
   }
   if(useLeps){
     for(unsigned int i(0); i<pf_els_pt->size(); ++i){
-      if(isVetoElectron(i)) HT+=pf_els_pt->at(i);
+      if(isElectron(i)) HT+=pf_els_pt->at(i);
     }
     for(unsigned int i(0); i<pf_mus_pt->size(); ++i){
-      if(isVetoMuon(i)) HT+=pf_mus_pt->at(i);
+      if(isMuon(i)) HT+=pf_mus_pt->at(i);
     }
     for(unsigned int i(0); i<taus_pt->size(); ++i){
-      if(isVetoTau(i)) HT+=taus_pt->at(i);
+      if(isTau(i)) HT+=taus_pt->at(i);
     }
   }
   return HT;
@@ -1045,10 +1046,10 @@ bool EventHandler::PassesMETSig30Cut() const{
 }
 
 bool EventHandler::PassesLeptonVetoCut() const{
-  return GetNumVetoElectrons()==0 && GetNumVetoMuons()==0 && GetNumVetoTaus()==0;
+  return GetNumElectrons()==0 && GetNumMuons()==0 && GetNumTaus()==0;
 }
 bool EventHandler::PassesSingleLeptonCut() const{
-  return GetNumVetoElectrons()+GetNumVetoMuons()==1 && GetNumVetoTaus()==0;
+  return GetNumElectrons()+GetNumMuons()==1 && GetNumTaus()==0;
 }
 
 bool EventHandler::PassesIsoTrackVetoCut() const{
@@ -1187,29 +1188,71 @@ bool EventHandler::jetPassLooseID(const unsigned int ijet) const{
   return false;
 }
 
-bool EventHandler::isVetoElectron(const unsigned int k) const{
+bool EventHandler::isElectron(const unsigned int k,
+			      const unsigned short level,
+			      const bool use_iso) const{
+  //N.B.: cut does not have the fabs(1/E-1/p) and conversion rejection cuts from the EGamma POG!!!
+  const double dmax(std::numeric_limits<double>::max());
+  double pt_cut(10.0); //Not actually part of the EGamma ID
+  double eta_cut(0.007), phi_cut(0.8), sigmaietaieta_cut(0.01), h_over_e_cut(0.15), d0_cut(0.04), dz_cut(0.2), iso_cut(0.15);
+  switch(level){
+  case 1:
+    pt_cut=20.0;
+    if(pf_els_isEB->at(k)){
+      eta_cut=0.007; phi_cut=0.15; sigmaietaieta_cut=0.01; h_over_e_cut=0.12;
+      d0_cut=0.02; dz_cut=0.2; iso_cut=0.15;
+    }else if(pf_els_isEE->at(k)){
+      eta_cut=0.009; phi_cut=0.10; sigmaietaieta_cut=0.03; h_over_e_cut=0.1;
+      d0_cut=0.02; dz_cut=0.2; iso_cut=(pf_els_pt->at(k)>20.0?0.15:0.10);
+    }
+    break;
+  case 2:
+    pt_cut=20.0;
+    if(pf_els_isEB->at(k)){
+      eta_cut=0.004; phi_cut=0.06; sigmaietaieta_cut=0.01; h_over_e_cut=0.12;
+      d0_cut=0.02; dz_cut=0.1; iso_cut=0.15;
+    }else if(pf_els_isEE->at(k)){
+      eta_cut=0.007; phi_cut=0.03; sigmaietaieta_cut=0.03; h_over_e_cut=0.1;
+      d0_cut=0.02; dz_cut=0.1; iso_cut=(pf_els_pt->at(k)>20.0?0.15:0.10);
+    }
+    break;
+  case 3:
+    pt_cut=20.0;
+    if(pf_els_isEB->at(k)){
+      eta_cut=0.004; phi_cut=0.03; sigmaietaieta_cut=0.01; h_over_e_cut=0.12;
+      d0_cut=0.02; dz_cut=0.1; iso_cut=0.10;
+    }else if(pf_els_isEE->at(k)){
+      eta_cut=0.005; phi_cut=0.02; sigmaietaieta_cut=0.03; h_over_e_cut=0.1;
+      d0_cut=0.02; dz_cut=0.1; iso_cut=(pf_els_pt->at(k)>20.0?0.10:0.07);
+    }
+    break;
+  case 0: //intentionally falling through to default "veto" case
+  default:
+    pt_cut=10.0;
+    if(pf_els_isEB->at(k)){
+      eta_cut=0.007; phi_cut=0.8; sigmaietaieta_cut=0.01; h_over_e_cut=0.15;
+      d0_cut=0.04; dz_cut=0.2; iso_cut=0.15;
+    }else if(pf_els_isEE->at(k)){
+      eta_cut=0.01; phi_cut=0.7; sigmaietaieta_cut=0.03; h_over_e_cut=dmax;
+      d0_cut=0.04; dz_cut=0.2; iso_cut=0.15;
+    }
+    break;
+  }
   //if(k>pf_else_pt->size()) return false;
   if (fabs(pf_els_scEta->at(k)) >= 2.5 ) return false;
-  if (pf_els_pt->at(k) < 10) return false;
-  if(pf_els_isEB->at(k)){
-    if ( fabs(pf_els_dEtaIn->at(k)) > 0.007)  return false;
-    if ( fabs(pf_els_dPhiIn->at(k)) > 0.8)  return false;
-    if (pf_els_sigmaIEtaIEta->at(k) > 0.01) return false;
-    if (pf_els_hadOverEm->at(k) > 0.15) return false;
-  }else if(pf_els_isEE->at(k)){
-    if ( fabs(pf_els_dEtaIn->at(k)) > 0.01)  return false;
-    if ( fabs(pf_els_dPhiIn->at(k)) > 0.7)  return false;
-    if (pf_els_sigmaIEtaIEta->at(k) > 0.03) return false;
-  }else{
-    fprintf(stderr, "Warning: Electron is not in barrel or endcap.\n");
-    return false;
-  }
+  if (pf_els_pt->at(k) < pt_cut) return false;
+
+  if ( fabs(pf_els_dEtaIn->at(k)) > eta_cut)  return false;
+  if ( fabs(pf_els_dPhiIn->at(k)) > phi_cut)  return false;
+  if (pf_els_sigmaIEtaIEta->at(k) > sigmaietaieta_cut) return false;
+  if (pf_els_hadOverEm->at(k) > h_over_e_cut) return false;
+
   const double beamx(beamSpot_x->at(0)), beamy(beamSpot_y->at(0)); 
   const double d0(pf_els_d0dum->at(k)-beamx*sin(pf_els_tk_phi->at(k))+beamy*cos(pf_els_tk_phi->at(k)));
-  if ( fabs(d0) >= 0.04 ) return false;
-  if ( fabs(pf_els_vz->at(k) - pv_z->at(0) ) >= 0.2 ) return false;
+  if ( fabs(d0) >= d0_cut ) return false;
+  if ( fabs(pf_els_vz->at(k) - pv_z->at(0) ) >= dz_cut ) return false;
 
-  if(GetElectronRelIso(k)>=0.15) return false;
+  if(GetElectronRelIso(k)>=iso_cut && use_iso) return false;
   return true;
 }
 
@@ -1230,9 +1273,14 @@ double EventHandler::GetElectronRelIso(const unsigned int k) const{
   return ( pf_els_PFchargedHadronIsoR03->at(k) + ( eleIso > 0 ? eleIso : 0.0 ) )/pf_els_pt->at(k);
 }
 
-bool EventHandler::isVetoMuon(const unsigned int k) const{
+bool EventHandler::isMuon(const unsigned int k,
+			  const unsigned short level,
+			  const bool use_iso) const{
+  double pt_thresh(0.0);
+  if(level>=1) pt_thresh=20.0;
+
   if (fabs(pf_mus_eta->at(k)) >= 2.4 ) return false;
-  if (pf_mus_pt->at(k) < 10) return false;
+  if (pf_mus_pt->at(k) < pt_thresh) return false;
   if ( !pf_mus_id_GlobalMuonPromptTight->at(k)) return false;
   // GlobalMuonPromptTight includes: isGlobal, globalTrack()->normalizedChi2() < 10, numberOfValidMuonHits() > 0
   if ( pf_mus_numberOfMatchedStations->at(k) <= 1 ) return false;
@@ -1247,37 +1295,42 @@ bool EventHandler::isVetoMuon(const unsigned int k) const{
   double isoNeutral(pf_mus_pfIsolationR04_sumNeutralHadronEt->at(k) + pf_mus_pfIsolationR04_sumPhotonEt->at(k) - 0.5*pf_mus_pfIsolationR04_sumPUPt->at(k));
   if(isoNeutral<0.0) isoNeutral=0.0;
   const double pf_mus_rel_iso((pf_mus_pfIsolationR04_sumChargedHadronPt->at(k) + isoNeutral) / pf_mus_pt->at(k));
-  if (pf_mus_rel_iso > 0.2) return false;
+  if (pf_mus_rel_iso > 0.2 && use_iso) return false;
   return true;
 }
 
-bool EventHandler::isVetoTau(const unsigned int k) const{
-  if (taus_pt->at(k)<20) return false; // Updated 6/24
+bool EventHandler::isTau(const unsigned int k,
+			 const unsigned short level,
+			 const bool require_iso) const{
+  double pt_cut(20.0);
+  if(level>0) pt_cut=30.0;
+
+  if (taus_pt->at(k)<pt_cut) return false;
   if (fabs(taus_eta->at(k)) > 2.4) return false;
-  if (taus_byLooseIsolationDeltaBetaCorr->at(k) <= 0) return false;
+  if (require_iso && (taus_byLooseIsolationDeltaBetaCorr->at(k) <= 0)) return false;
   return true;
 }
 
-int EventHandler::GetNumVetoElectrons() const{
+int EventHandler::GetNumElectrons(const unsigned short level, const bool use_iso) const{
   int count(0);
   for(unsigned int i(0); i<pf_els_pt->size(); ++i){
-    if(isVetoElectron(i)) ++count;
+    if(isElectron(i,level, use_iso)) ++count;
   }
   return count;
 }
 
-int EventHandler::GetNumVetoMuons() const{
+int EventHandler::GetNumMuons(const unsigned short level, const bool use_iso) const{
   int count(0);
   for(unsigned int i(0); i<pf_mus_pt->size(); ++i){
-    if(isVetoMuon(i)) ++count;
+    if(isMuon(i,level,use_iso)) ++count;
   }
   return count;
 }
 
-int EventHandler::GetNumVetoTaus() const{
+int EventHandler::GetNumTaus(const unsigned short level, const bool use_iso) const{
   int count(0);
   for(unsigned int i(0); i<taus_pt->size(); ++i){
-    if(isVetoTau(i)) ++count;
+    if(isTau(i,level,use_iso)) ++count;
   }
   return count;
 }
