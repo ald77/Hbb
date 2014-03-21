@@ -52,6 +52,7 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   float min_delta_phi(0.0);
   unsigned short num_iso_tracks(0);
   unsigned short num_electrons(0), num_muons(0), num_taus(0), num_leptons(0);
+  unsigned short num_noiso_electrons(0), num_noiso_muons(0), num_noiso_taus(0), num_noiso_leptons(0);
   unsigned short num_loose_electrons(0), num_loose_muons(0), num_loose_taus(0), num_loose_leptons(0);
   unsigned short num_medium_electrons(0), num_medium_muons(0), num_medium_taus(0), num_medium_leptons(0);
   unsigned short num_tight_electrons(0), num_tight_muons(0), num_tight_taus(0), num_tight_leptons(0);
@@ -123,6 +124,11 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
   reduced_tree.Branch("num_muons", &num_muons);
   reduced_tree.Branch("num_taus", &num_taus);
   reduced_tree.Branch("num_leptons", &num_leptons);
+
+  reduced_tree.Branch("num_noiso_electrons", &num_noiso_electrons);
+  reduced_tree.Branch("num_noiso_muons", &num_noiso_muons);
+  reduced_tree.Branch("num_noiso_taus", &num_noiso_taus);
+  reduced_tree.Branch("num_noiso_leptons", &num_noiso_leptons);
 
   reduced_tree.Branch("num_loose_electrons", &num_loose_electrons);
   reduced_tree.Branch("num_loose_muons", &num_loose_muons);
@@ -237,6 +243,10 @@ void ReducedTreeMaker::MakeReducedTree(const std::string& out_file_name){
     num_muons=GetNumMuons(0);
     num_taus=GetNumTaus(0);
     num_leptons=num_electrons+num_muons+num_taus;
+    num_noiso_electrons=GetNumElectrons(0,false);
+    num_noiso_muons=GetNumMuons(0,false);
+    num_noiso_taus=GetNumTaus(0,false);
+    num_noiso_leptons=num_noiso_electrons+num_noiso_muons+num_noiso_taus;
     num_loose_electrons=GetNumElectrons(1);
     num_loose_muons=GetNumMuons(1);
     num_loose_taus=GetNumTaus(1);
