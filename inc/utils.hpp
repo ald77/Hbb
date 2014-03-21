@@ -8,8 +8,19 @@
 #include "TChain.h"
 #include "TColor.h"
 #include "TGraph.h"
+#include "TH1.h"
+
+void get_count_and_uncertainty(TTree& tree,
+			       const std::string& cut,
+			       double& count,
+			       double& uncertainty);
 
 void add_point(TGraph& graph, const double x, const double y);
+double get_maximum(const TH1& h);
+double get_maximum(const TGraph& h);
+double get_minimum_positive(const TH1& h);
+double get_minimum_positive(const TGraph& h);
+void normalize(TH1& h);
 
 template<typename T>
 void setup(TChain& chain, const std::string& name, T& variable){
