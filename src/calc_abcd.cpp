@@ -331,6 +331,8 @@ int main(int argc, char *argv[]){
   names.push_back("raw_plots_and_values/BJets_HT-500To1000_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1894_v71_SyncSkim.root");//8
   names.push_back("raw_plots_and_values/TTJets_FullLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7C-v2_AODSIM_UCSB1883_v71_SyncSkim.root");//9
   names.push_back("raw_plots_and_values/TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7C-v1_AODSIM_UCSB1884_v71_SyncSkim.root");//10
+  names.push_back("raw_plots_and_values/TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V19_ext1-v1_AODSIM_UCSB1962_v71_SyncSkim.root");
+  names.push_back("raw_plots_and_values/TTJets_SemiLeptMGDecays_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V19_ext2-v1_AODSIM_UCSB1959_v71_SyncSkim.root");
   names.push_back("raw_plots_and_values/TTJets_HadronicMGDecays_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A_ext-v1_AODSIM_UCSB1880_v71_SyncSkim.root");//11
   names.push_back("raw_plots_and_values/TTH_HToBB_M-125_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1855_v71_SyncSkim.root");//12
   names.push_back("raw_plots_and_values/TTWJets_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB1857_v71_SyncSkim.root");//13
@@ -379,23 +381,24 @@ int main(int argc, char *argv[]){
 
   std::vector<std::string> tex(0);
   std::vector<unsigned int> upper(0), lower(0);
+
   if(!(plot_only && mc_plot)){
     tex.push_back("Data"); upper.push_back(6); lower.push_back(0);
   }
   if(!plot_only){
     tex.push_back("QCD"); upper.push_back(9); lower.push_back(6);
     tex.push_back("$t\\overline{t}$ (2l)"); upper.push_back(10); lower.push_back(9);
-    tex.push_back("$t\\overline{t}$ (1l)"); upper.push_back(11); lower.push_back(10);
-    tex.push_back("$t\\overline{t}$ (0l)"); upper.push_back(12); lower.push_back(11);
-    tex.push_back("t\\overline{t}H$"); upper.push_back(13); lower.push_back(12);
-    tex.push_back("$t\\overline{t}V$"); upper.push_back(15); lower.push_back(13);
-    tex.push_back("$t$"); upper.push_back(21); lower.push_back(15);
-    tex.push_back("$V$"); upper.push_back(29); lower.push_back(21);
-    tex.push_back("$VH$"); upper.push_back(31); lower.push_back(29);
-    tex.push_back("$VV$"); upper.push_back(33); lower.push_back(31);
+    tex.push_back("$t\\overline{t}$ (1l)"); upper.push_back(13); lower.push_back(10);
+    tex.push_back("$t\\overline{t}$ (0l)"); upper.push_back(14); lower.push_back(13);
+    tex.push_back("t\\overline{t}H$"); upper.push_back(15); lower.push_back(14);
+    tex.push_back("$t\\overline{t}V$"); upper.push_back(17); lower.push_back(15);
+    tex.push_back("$t$"); upper.push_back(23); lower.push_back(17);
+    tex.push_back("$V$"); upper.push_back(31); lower.push_back(23);
+    tex.push_back("$VH$"); upper.push_back(33); lower.push_back(31);
+    tex.push_back("$VV$"); upper.push_back(35); lower.push_back(33);
   }
   if(mc_plot || !plot_only){
-    tex.push_back("SM total"); upper.push_back(33); lower.push_back(9);
+    tex.push_back("SM total"); upper.push_back(35); lower.push_back(9);
   }
 
   std::vector<double> Aval(tex.size()), Aup(tex.size()), Adown(tex.size()),
