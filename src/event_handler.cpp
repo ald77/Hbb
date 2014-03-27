@@ -1276,7 +1276,7 @@ double EventHandler::GetElectronRelIso(const unsigned int k) const{
 bool EventHandler::isMuon(const unsigned int k,
 			  const unsigned short level,
 			  const bool use_iso) const{
-  double pt_thresh(0.0);
+  double pt_thresh(10.0);
   if(level>=1) pt_thresh=20.0;
 
   if (fabs(pf_mus_eta->at(k)) >= 2.4 ) return false;
