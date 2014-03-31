@@ -494,6 +494,8 @@ int main(){
   float min_delta_phi(0.0);
   unsigned short num_electrons(0), num_muons(0), num_taus(0), num_iso_tracks(0),
     num_leptons(0);
+  unsigned short num_loose_electrons(0), num_loose_muons(0), num_loose_taus(0),
+    num_loose_leptons(0);
   float min_delta_R(0.0), max_delta_R(0.0);
   float average_higgs_mass(0.0), higgs_mass_difference(0.0);
   float ht_jets(0.0), ht_jets_met(0.0), ht_jets_leps(0.0), ht_jets_met_leps(0.0);
@@ -518,11 +520,12 @@ int main(){
   std::vector<TH1D> h_num_jets(0);
   std::vector<TH1D> h_num_b_tagged_jets(0);
   std::vector<TH1D> h_min_delta_phi(0);
+  std::vector<TH1D> h_num_iso_tracks(0);
   std::vector<TH1D> h_num_electrons(0);
   std::vector<TH1D> h_num_muons(0);
   std::vector<TH1D> h_num_taus(0);
-  std::vector<TH1D> h_num_iso_tracks(0);
   std::vector<TH1D> h_num_leptons(0);
+  std::vector<TH1D> h_num_loose_leptons(0);
   std::vector<TH1D> h_min_delta_R(0);
   std::vector<TH1D> h_max_delta_R(0);
   std::vector<TH1D> h_average_higgs_mass(0);
@@ -580,6 +583,30 @@ int main(){
   std::vector<TH1D> h_maxdr_2b_sb(0);
   std::vector<TH1D> h_maxdr_3b_sb(0);
   std::vector<TH1D> h_maxdr_4b_sb(0);
+  std::vector<TH1D> h_mbb_2b_sb(0);
+  std::vector<TH1D> h_mbb_3b_sb(0);
+  std::vector<TH1D> h_mbb_4b_sb(0);
+  std::vector<TH1D> h_mbb_2b_sig(0);
+  std::vector<TH1D> h_mbb_3b_sig(0);
+  std::vector<TH1D> h_mbb_4b_sig(0);
+  std::vector<TH1D> h_mbb_nodr_2b_sb(0);
+  std::vector<TH1D> h_mbb_nodr_3b_sb(0);
+  std::vector<TH1D> h_mbb_nodr_4b_sb(0);
+  std::vector<TH1D> h_mbb_nodr_2b_sig(0);
+  std::vector<TH1D> h_mbb_nodr_3b_sig(0);
+  std::vector<TH1D> h_mbb_nodr_4b_sig(0);
+  std::vector<TH1D> h_mbb_1l_2b_sb(0);
+  std::vector<TH1D> h_mbb_1l_3b_sb(0);
+  std::vector<TH1D> h_mbb_1l_4b_sb(0);
+  std::vector<TH1D> h_mbb_1l_2b_sig(0);
+  std::vector<TH1D> h_mbb_1l_3b_sig(0);
+  std::vector<TH1D> h_mbb_1l_4b_sig(0);
+  std::vector<TH1D> h_mbb_1l_nodr_2b_sb(0);
+  std::vector<TH1D> h_mbb_1l_nodr_3b_sb(0);
+  std::vector<TH1D> h_mbb_1l_nodr_4b_sb(0);
+  std::vector<TH1D> h_mbb_1l_nodr_2b_sig(0);
+  std::vector<TH1D> h_mbb_1l_nodr_3b_sig(0);
+  std::vector<TH1D> h_mbb_1l_nodr_4b_sig(0);
 
   std::vector<TH2D> h_dr_vs_avg(0);
   TGraph g_dr_vs_avg(0);
@@ -639,11 +666,15 @@ int main(){
     setup(chain, "num_jets", num_jets);
     setup(chain, "num_b_tagged_jets", num_b_tagged_jets);
     setup(chain, "min_delta_phi", min_delta_phi);
+    setup(chain, "num_iso_tracks", num_iso_tracks);
     setup(chain, "num_electrons", num_electrons);
     setup(chain, "num_muons", num_muons);
     setup(chain, "num_taus", num_taus);
-    setup(chain, "num_iso_tracks", num_iso_tracks);
     setup(chain, "num_leptons", num_leptons);
+    setup(chain, "num_loose_electrons", num_loose_electrons);
+    setup(chain, "num_loose_muons", num_loose_muons);
+    setup(chain, "num_loose_taus", num_loose_taus);
+    setup(chain, "num_loose_leptons", num_loose_leptons);
     setup(chain, "min_delta_R", min_delta_R);
     setup(chain, "max_delta_R", max_delta_R);
     setup(chain, "average_higgs_mass", average_higgs_mass);
@@ -680,7 +711,8 @@ int main(){
     h_num_muons.push_back(TH1D(("h_num_muons"+name).c_str(), "Num Muons (baseline);Num Muons;Events/1", 16, -0.5, 15.5));
     h_num_taus.push_back(TH1D(("h_num_taus"+name).c_str(), "Num Taus (baseline);Num Taus;Events/1", 16, -0.5, 15.5));
     h_num_iso_tracks.push_back(TH1D(("h_num_iso_tracks"+name).c_str(), "Num Iso Tracks (baseline);Num Iso Tracks;Events/1", 16, -0.5, 15.5));
-    h_num_leptons.push_back(TH1D(("h_num_leptons"+name).c_str(), "Num Leptons (baseline);Num Leptons;Events/1", 16, -0.5, 15.5));
+    h_num_leptons.push_back(TH1D(("h_num_leptons"+name).c_str(), "Num Veto Leptons (baseline);Num Leptons;Events/1", 16, -0.5, 15.5));
+    h_num_loose_leptons.push_back(TH1D(("h_num_loose_leptons"+name).c_str(), "Num Loose Leptons (baseline);Num Leptons;Events/1", 16, -0.5, 15.5));
     h_min_delta_R.push_back(TH1D(("h_min_delta_R"+name).c_str(), "Min Delta R (baseline);Min Delta R;Events/0.1", 50, 0.0, 5.0));
     h_max_delta_R.push_back(TH1D(("h_max_delta_R"+name).c_str(), "Max Delta R (baseline);Max Delta R;Events/0.1", 50, 0.0, 5.0));
     h_average_higgs_mass.push_back(TH1D(("h_average_higgs_mass"+name).c_str(), "<m_{bb}> (baseline);<m_{bb}> [GeV];Events/5 GeV", 50, 0.0, 250.0));
@@ -744,6 +776,31 @@ int main(){
 
     h_dr_vs_avg.push_back(TH2D(("h_dr_vs_avg"+name).c_str(), ";<m_{bb}> [GeV];Max #Delta R", 35, 0.0, 250.0, 35, 0.0, 5.0));
 
+    h_mbb_2b_sb.push_back(TH1D(("h_mbb_2b_sb"+name).c_str(), "2b SB;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_3b_sb.push_back(TH1D(("h_mbb_3b_sb"+name).c_str(), "3b SB;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_4b_sb.push_back(TH1D(("h_mbb_4b_sb"+name).c_str(), "4b SB;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_2b_sig.push_back(TH1D(("h_mbb_2b_sig"+name).c_str(), "2b SIG;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_3b_sig.push_back(TH1D(("h_mbb_3b_sig"+name).c_str(), "3b SIG;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_4b_sig.push_back(TH1D(("h_mbb_4b_sig"+name).c_str(), "4b SIG;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_nodr_2b_sb.push_back(TH1D(("h_mbb_nodr_2b_sb"+name).c_str(), "2b SB no #Delta R cut;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_nodr_3b_sb.push_back(TH1D(("h_mbb_nodr_3b_sb"+name).c_str(), "3b SB no #Delta R cut;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_nodr_4b_sb.push_back(TH1D(("h_mbb_nodr_4b_sb"+name).c_str(), "4b SB no #Delta R cut;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_nodr_2b_sig.push_back(TH1D(("h_mbb_nodr_2b_sig"+name).c_str(), "2b SIG no #Delta R cut;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_nodr_3b_sig.push_back(TH1D(("h_mbb_nodr_3b_sig"+name).c_str(), "3b SIG no #Delta R cut;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_nodr_4b_sig.push_back(TH1D(("h_mbb_nodr_4b_sig"+name).c_str(), "4b SIG no #Delta R cut;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_1l_2b_sb.push_back(TH1D(("h_mbb_1l_2b_sb"+name).c_str(), "2b SB 1l;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_1l_3b_sb.push_back(TH1D(("h_mbb_1l_3b_sb"+name).c_str(), "3b SB 1l;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_1l_4b_sb.push_back(TH1D(("h_mbb_1l_4b_sb"+name).c_str(), "4b SB 1l;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_1l_2b_sig.push_back(TH1D(("h_mbb_1l_2b_sig"+name).c_str(), "2b SIG 1l;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_1l_3b_sig.push_back(TH1D(("h_mbb_1l_3b_sig"+name).c_str(), "3b SIG 1l;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_1l_4b_sig.push_back(TH1D(("h_mbb_1l_4b_sig"+name).c_str(), "4b SIG 1l;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_1l_nodr_2b_sb.push_back(TH1D(("h_mbb_1l_nodr_2b_sb"+name).c_str(), "2b SB no #Delta R cut, 1l;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_1l_nodr_3b_sb.push_back(TH1D(("h_mbb_1l_nodr_3b_sb"+name).c_str(), "3b SB no #Delta R cut, 1l;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_1l_nodr_4b_sb.push_back(TH1D(("h_mbb_1l_nodr_4b_sb"+name).c_str(), "4b SB no #Delta R cut, 1l;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_1l_nodr_2b_sig.push_back(TH1D(("h_mbb_1l_nodr_2b_sig"+name).c_str(), "2b SIG no #Delta R cut, 1l;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_1l_nodr_3b_sig.push_back(TH1D(("h_mbb_1l_nodr_3b_sig"+name).c_str(), "3b SIG no #Delta R cut, 1l;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+    h_mbb_1l_nodr_4b_sig.push_back(TH1D(("h_mbb_1l_nodr_4b_sig"+name).c_str(), "4b SIG no #Delta R cut, 1l;<m_{bb}> [GeV];Events/10 GeV", 25, 0.0, 250.0));
+
     const int num_events(chain.GetEntries());
     Timer timer(num_events);
     timer.Start();
@@ -754,6 +811,91 @@ int main(){
       chain.GetEntry(event);
       if(chain_num==chains.size()-1) full_weight*=0.004187617/1.33586290758103132e-05;
       if(chain_num==chains.size()-2) full_weight*=0.009816715/3.10530595015734434e-05;
+
+      if(passesJSONCut && passesPVCut && passesJet2PtCut && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut && passesLeptonVetoCut && passesIsoTrackVetoCut && passesDRCut){
+	if(num_b_tagged_jets==2){
+	  if(higgs_mass_difference>30.0){
+	    h_mbb_2b_sb.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }else if(higgs_mass_difference<20.0){
+	    h_mbb_2b_sig.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }
+	}else if(num_b_tagged_jets==3){
+	  if(higgs_mass_difference>30.0){
+	    h_mbb_3b_sb.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }else if(higgs_mass_difference<20.0){
+	    h_mbb_3b_sig.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }
+	}else if(num_b_tagged_jets>=4){
+	  if(higgs_mass_difference>30.0){
+	    h_mbb_4b_sb.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }else if(higgs_mass_difference<20.0){
+	    h_mbb_4b_sig.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }
+	}
+      }
+      if(passesJSONCut && passesPVCut && passesJet2PtCut && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut && passesLeptonVetoCut && passesIsoTrackVetoCut){
+	if(num_b_tagged_jets==2){
+	  if(higgs_mass_difference>30.0){
+	    h_mbb_nodr_2b_sb.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }else if(higgs_mass_difference<20.0){
+	    h_mbb_nodr_2b_sig.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }
+	}else if(num_b_tagged_jets==3){
+	  if(higgs_mass_difference>30.0){
+	    h_mbb_nodr_3b_sb.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }else if(higgs_mass_difference<20.0){
+	    h_mbb_nodr_3b_sig.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }
+	}else if(num_b_tagged_jets>=4){
+	  if(higgs_mass_difference>30.0){
+	    h_mbb_nodr_4b_sb.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }else if(higgs_mass_difference<20.0){
+	    h_mbb_nodr_4b_sig.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }
+	}
+      }
+      if(passesJSONCut && passesPVCut && passesJet2PtCut && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut && (num_loose_electrons+num_loose_muons==1 && num_taus==0) && passesDRCut){
+	if(num_b_tagged_jets==2){
+	  if(higgs_mass_difference>30.0){
+	    h_mbb_1l_2b_sb.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }else if(higgs_mass_difference<20.0){
+	    h_mbb_1l_2b_sig.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }
+	}else if(num_b_tagged_jets==3){
+	  if(higgs_mass_difference>30.0){
+	    h_mbb_1l_3b_sb.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }else if(higgs_mass_difference<20.0){
+	    h_mbb_1l_3b_sig.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }
+	}else if(num_b_tagged_jets>=4){
+	  if(higgs_mass_difference>30.0){
+	    h_mbb_1l_4b_sb.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }else if(higgs_mass_difference<20.0){
+	    h_mbb_1l_4b_sig.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }
+	}
+      }
+      if(passesJSONCut && passesPVCut && passesJet2PtCut && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut && (num_loose_electrons+num_loose_muons==1 && num_taus==0)){
+	if(num_b_tagged_jets==2){
+	  if(higgs_mass_difference>30.0){
+	    h_mbb_1l_nodr_2b_sb.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }else if(higgs_mass_difference<20.0){
+	    h_mbb_1l_nodr_2b_sig.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }
+	}else if(num_b_tagged_jets==3){
+	  if(higgs_mass_difference>30.0){
+	    h_mbb_1l_nodr_3b_sb.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }else if(higgs_mass_difference<20.0){
+	    h_mbb_1l_nodr_3b_sig.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }
+	}else if(num_b_tagged_jets>=4){
+	  if(higgs_mass_difference>30.0){
+	    h_mbb_1l_nodr_4b_sb.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }else if(higgs_mass_difference<20.0){
+	    h_mbb_1l_nodr_4b_sig.at(chain_num).Fill(average_higgs_mass, full_weight);
+	  }
+	}
+      }
 
       if(passesJSONCut && passesPVCut && passesJet2PtCut && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut && passesTriggerCut && passesNumJetsCut && passesMinDeltaPhiCut && passesLeptonVetoCut && passesIsoTrackVetoCut){
 	if(num_b_tagged_jets==2){
@@ -959,7 +1101,10 @@ int main(){
 	h_num_muons.at(chain_num).Fill(num_muons, full_weight);
 	h_num_taus.at(chain_num).Fill(num_taus, full_weight);
 	h_num_iso_tracks.at(chain_num).Fill(num_iso_tracks, full_weight);
-	h_num_leptons.at(chain_num).Fill(num_leptons, full_weight);
+	if(num_taus==0){
+	  h_num_leptons.at(chain_num).Fill(num_electrons+num_muons, full_weight);
+	  h_num_loose_leptons.at(chain_num).Fill(num_loose_electrons+num_loose_muons, full_weight);
+	}
       }
       if(passesJSONCut && passesPVCut && passesJet2PtCut
 	 && passes2CSVTCut && passesMETSig30Cut && passesMETCleaningCut
@@ -1041,6 +1186,30 @@ int main(){
 
   plotter plot;
   plot.set_mc_names(sub_names);
+  plot_data_mc(plot, h_mbb_2b_sb, "nm1/mbb_2b_sb.pdf");
+  plot_data_mc(plot, h_mbb_3b_sb, "nm1/mbb_3b_sb.pdf");
+  plot_data_mc(plot, h_mbb_4b_sb, "nm1/mbb_4b_sb.pdf");
+  plot_data_mc(plot, h_mbb_2b_sig, "nm1/mbb_2b_sig.pdf");
+  plot_data_mc(plot, h_mbb_3b_sig, "nm1/mbb_3b_sig.pdf");
+  plot_data_mc(plot, h_mbb_4b_sig, "nm1/mbb_4b_sig.pdf");
+  plot_data_mc(plot, h_mbb_nodr_2b_sb, "nm1/mbb_nodr_2b_sb.pdf");
+  plot_data_mc(plot, h_mbb_nodr_3b_sb, "nm1/mbb_nodr_3b_sb.pdf");
+  plot_data_mc(plot, h_mbb_nodr_4b_sb, "nm1/mbb_nodr_4b_sb.pdf");
+  plot_data_mc(plot, h_mbb_nodr_2b_sig, "nm1/mbb_nodr_2b_sig.pdf");
+  plot_data_mc(plot, h_mbb_nodr_3b_sig, "nm1/mbb_nodr_3b_sig.pdf");
+  plot_data_mc(plot, h_mbb_nodr_4b_sig, "nm1/mbb_nodr_4b_sig.pdf");
+  plot_data_mc(plot, h_mbb_1l_2b_sb, "nm1/mbb_1l_2b_sb.pdf");
+  plot_data_mc(plot, h_mbb_1l_3b_sb, "nm1/mbb_1l_3b_sb.pdf");
+  plot_data_mc(plot, h_mbb_1l_4b_sb, "nm1/mbb_1l_4b_sb.pdf");
+  plot_data_mc(plot, h_mbb_1l_2b_sig, "nm1/mbb_1l_2b_sig.pdf");
+  plot_data_mc(plot, h_mbb_1l_3b_sig, "nm1/mbb_1l_3b_sig.pdf");
+  plot_data_mc(plot, h_mbb_1l_4b_sig, "nm1/mbb_1l_4b_sig.pdf");
+  plot_data_mc(plot, h_mbb_1l_nodr_2b_sb, "nm1/mbb_1l_nodr_2b_sb.pdf");
+  plot_data_mc(plot, h_mbb_1l_nodr_3b_sb, "nm1/mbb_1l_nodr_3b_sb.pdf");
+  plot_data_mc(plot, h_mbb_1l_nodr_4b_sb, "nm1/mbb_1l_nodr_4b_sb.pdf");
+  plot_data_mc(plot, h_mbb_1l_nodr_2b_sig, "nm1/mbb_1l_nodr_2b_sig.pdf");
+  plot_data_mc(plot, h_mbb_1l_nodr_3b_sig, "nm1/mbb_1l_nodr_3b_sig.pdf");
+  plot_data_mc(plot, h_mbb_1l_nodr_4b_sig, "nm1/mbb_1l_nodr_4b_sig.pdf");
   plot_data_mc(plot, h_pu_true_num_interactions, "nm1/pu_true_num_interactions.pdf");
   plot_data_mc(plot, h_num_primary_vertices, "nm1/num_primary_vertices.pdf");
   plot_data_mc(plot, h_highest_jet_pt, "nm1/highest_jet_pt.pdf");
@@ -1063,6 +1232,7 @@ int main(){
   plot_data_mc(plot, h_num_taus, "nm1/num_taus.pdf");
   plot_data_mc(plot, h_num_iso_tracks, "nm1/num_iso_tracks.pdf");
   plot_data_mc(plot, h_num_leptons, "nm1/num_leptons.pdf");
+  plot_data_mc(plot, h_num_loose_leptons, "nm1/num_loose_leptons.pdf");
   plot_data_mc(plot, h_min_delta_R, "nm1/min_delta_R.pdf");
   plot_data_mc(plot, h_max_delta_R, "nm1/max_delta_R.pdf");
   plot_data_mc(plot, h_average_higgs_mass, "nm1/average_higgs_mass.pdf");
