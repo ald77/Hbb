@@ -85,7 +85,7 @@ void plotter::plot_data_mc(TH1D& data,
 
   TH1D residuals(data);
   residuals.SetTitle("");
-  residuals.GetYaxis()->SetTitle("Pull");
+  residuals.GetYaxis()->SetTitle("Data-MC");
   residuals.SetStats(0);
   for(unsigned bin(0); bin<=num_bins+1; ++bin){
     const double xd(data.GetBinContent(bin));
@@ -97,8 +97,8 @@ void plotter::plot_data_mc(TH1D& data,
     if(denom!=0.0){
       content=(xd-xm)/denom;
     }
-    residuals.SetBinContent(bin, content);
-    residuals.SetBinError(bin, 0.0);
+    residuals.SetBinContent(bin, xd-xm);
+    residuals.SetBinError(bin, denom);
   }
 
   residuals.SetTitleSize(0.12,"X");
@@ -128,7 +128,7 @@ void plotter::plot_data_mc(TH1D& data,
   canvas.GetPad(2)->SetPad(0.0, 0.0, 1.0, vertical_divide_);
   canvas.GetPad(2)->SetMargin(0.15, 0.05, 0.15/vertical_divide_, 0.0);
   canvas.GetPad(2)->SetGridy(1);
-  residuals.Draw("histp");
+  residuals.Draw("e1p");
   canvas.cd(0);
   canvas.Print(output_name.c_str());
 }
