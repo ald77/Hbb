@@ -11,6 +11,18 @@
 #include "utils.hpp"
 #include "style.hpp"
 #include "timer.hpp"
+#include "math.hpp"
+
+void print_good(double x[3][2][4], double u[3][2][4]){
+  for(unsigned sbin_index(0); sbin_index<4; ++sbin_index){
+    for(unsigned nb_index(0); nb_index<3; ++nb_index){
+      for(unsigned mbb_index(0); mbb_index<2; ++mbb_index){
+	std::cout << "$" << fix_width(x[nb_index][mbb_index][sbin_index],4) << "\\pm" << fix_width(u[nb_index][mbb_index][sbin_index],4) << "$ & ";
+      }
+    }
+    std::cout << "\\\\" << std::endl;
+  }
+}
 
 int main(){
   SetStyle();
@@ -24,11 +36,11 @@ int main(){
   const std::string cut_sbin2("met_sig>=50.0 && met_sig<100.0");
   const std::string cut_sbin3("met_sig>=100.0 && met_sig<150.0");
   const std::string cut_sbin4("met_sig>=150.0");
-
+  
   TChain chain("chain","chain");
 
-  /*chain.Add("reduced_trees/BJets*SyncSkim.root/reduced_tree");
-  chain.Add("reduced_trees/T*channel*SyncSkim.root/reduced_tree");
+  chain.Add("reduced_trees/QCD_HT*SyncSkim_mdpscaled.root/reduced_tree");
+  /*chain.Add("reduced_trees/T*channel*SyncSkim.root/reduced_tree");
   chain.Add("reduced_trees/TTH*SyncSkim.root/reduced_tree");
   chain.Add("reduced_trees/TTJets_FullLept*SyncSkim.root/reduced_tree");
   chain.Add("reduced_trees/TTJets_SemiLept*SyncSkim.root/reduced_tree");
@@ -43,7 +55,7 @@ int main(){
   chain.Add("reduced_trees/ZZ_*SyncSkim.root/reduced_tree");
   chain.Add("reduced_trees/ZJetsToNuNu*SyncSkim.root/reduced_tree");*/
 
-  chain.Add("reduced_trees/MET_Run2012*SyncSkim.root/reduced_tree");
+  //chain.Add("reduced_trees/MET_Run2012*SyncSkim.root/reduced_tree");
 
   double counts[3][2][4], uncerts[3][2][4];
 
@@ -103,8 +115,57 @@ int main(){
       }
     }
   }
-
+  double indep_counts[3][2][4];
+  get_independence_model(counts, indep_counts);
   make_complicated_plot(counts, uncerts);
+  print_counts(counts, uncerts);
+  print_good(counts, uncerts);
+  std::cout << "Independence model:" << std::endl;
+  print_matrix(indep_counts);
+  print_kappas(counts, uncerts);
+}
+
+void sum_on_sbins(double counts_in[3][2][4], double uncerts_in[3][2][4], double counts_out[3][2], double uncerts_out[3][2]){
+  for(unsigned nb_index(0); nb_index<3; ++nb_index){
+    for(unsigned mbb_index(0); mbb_index<2; ++mbb_index){
+      counts_out[nb_index][mbb_index]=0.0;
+      uncerts_out[nb_index][mbb_index]=0.0;
+      for(unsigned sbin_index(0); sbin_index<4; ++sbin_index){
+	counts_out[nb_index][mbb_index]+=counts_in[nb_index][mbb_index][sbin_index];
+	uncerts_out[nb_index][mbb_index]+=uncerts_in[nb_index][mbb_index][sbin_index]*uncerts_in[nb_index][mbb_index][sbin_index];
+      }
+      uncerts_out[nb_index][mbb_index]=sqrt(uncerts_out[nb_index][mbb_index]);
+    }
+  }
+}
+
+void get_kappa_and_uncert(double& kappa, double& uncert, const double& a, const double& b, const double& c, const double& d, const double& ua, const double& ub, const double& uc, const double &ud){
+  kappa=a*d/(b*c);
+  uncert=sqrt(a*a*b*b*c*c*ud*ud+a*a*b*b*uc*uc*d*d+a*a*ub*ub*c*c*d*d+ua*ua*b*b*c*c*d*d)/(b*b*c*c);
+}
+
+void print_kappas(double counts[3][2][4], double uncerts[3][2][4]){
+  double counts_sum[3][2], uncerts_sum[3][2];
+  sum_on_sbins(counts, uncerts, counts_sum, uncerts_sum);
+  double kappa23(0.0), kappa24(0.0), kappa34(0.0);
+  double uncert23(0.0), uncert24(0.0), uncert34(0.0);
+  get_kappa_and_uncert(kappa23, uncert23, counts_sum[1][0], counts_sum[1][1], counts_sum[0][0], counts_sum[0][1], uncerts_sum[1][0], uncerts_sum[1][1], uncerts_sum[0][0], uncerts_sum[0][1]);
+  get_kappa_and_uncert(kappa24, uncert24, counts_sum[2][0], counts_sum[2][1], counts_sum[0][0], counts_sum[0][1], uncerts_sum[2][0], uncerts_sum[2][1], uncerts_sum[0][0], uncerts_sum[0][1]);
+  get_kappa_and_uncert(kappa34, uncert34, counts_sum[2][0], counts_sum[2][1], counts_sum[1][0], counts_sum[1][1], uncerts_sum[2][0], uncerts_sum[2][1], uncerts_sum[1][0], uncerts_sum[1][1]);
+  std::cout << "Overall: " << std::endl;
+  std::cout << kappa23 << "+-" << uncert23 << std::endl;
+  std::cout << kappa24 << "+-" << uncert24 << std::endl;
+  std::cout << kappa34 << "+-" << uncert34 << std::endl;
+  
+  for(unsigned sbin_index(0); sbin_index<4; ++sbin_index){
+    get_kappa_and_uncert(kappa23, uncert23, counts[1][0][sbin_index], counts[1][1][sbin_index], counts[0][0][sbin_index], counts[0][1][sbin_index], uncerts[1][0][sbin_index], uncerts[1][1][sbin_index], uncerts[0][0][sbin_index], uncerts[0][1][sbin_index]);
+    get_kappa_and_uncert(kappa24, uncert24, counts[2][0][sbin_index], counts[2][1][sbin_index], counts[0][0][sbin_index], counts[0][1][sbin_index], uncerts[2][0][sbin_index], uncerts[2][1][sbin_index], uncerts[0][0][sbin_index], uncerts[0][1][sbin_index]);
+    get_kappa_and_uncert(kappa34, uncert34, counts[2][0][sbin_index], counts[2][1][sbin_index], counts[1][0][sbin_index], counts[1][1][sbin_index], uncerts[2][0][sbin_index], uncerts[2][1][sbin_index], uncerts[1][0][sbin_index], uncerts[1][1][sbin_index]);
+    std::cout << "S-bin: " << sbin_index+1 << std::endl;
+    std::cout << kappa23 << "+-" << uncert23 << std::endl;
+    std::cout << kappa24 << "+-" << uncert24 << std::endl;
+    std::cout << kappa34 << "+-" << uncert34 << std::endl;
+  }
 }
 
 void get_abcd_prediction_and_uncertainty(double num_count_1, double num_uncert_1,
@@ -113,6 +174,75 @@ void get_abcd_prediction_and_uncertainty(double num_count_1, double num_uncert_1
 					 double& count, double& uncert){
   count=num_count_1*num_count_2/(den_count);
   uncert=std::sqrt(num_count_1*num_count_1*num_count_2*num_count_2*den_uncert*den_uncert+num_count_1*num_count_1*num_uncert_2*num_uncert_2*den_count*den_count+num_uncert_1*num_uncert_1*num_count_2*num_count_2*den_count*den_count)/(den_count*den_count);
+}
+
+void get_independence_model(double in[3][2][4], double out[3][2][4]){
+  double out1[3], out2[2], out3[4];
+  std::vector<double> sum_vec(0);
+  for(unsigned index1(0); index1<3; ++index1){
+    out1[index1]=0.0;
+    sum_vec.clear();
+    for(unsigned index2(0); index2<2; ++index2){
+      for(unsigned index3(0); index3<4; ++index3){
+	sum_vec.push_back(in[index1][index2][index3]);
+      }
+    }
+    out1[index1]=Math::Sum(sum_vec.begin(), sum_vec.end());
+  }
+  for(unsigned index2(0); index2<2; ++index2){
+    out2[index2]=0.0;
+    sum_vec.clear();
+    for(unsigned index1(0); index1<3; ++index1){
+      for(unsigned index3(0); index3<4; ++index3){
+	sum_vec.push_back(in[index1][index2][index3]);
+      }
+    }
+    out2[index2]=Math::Sum(sum_vec.begin(), sum_vec.end());
+  }
+  for(unsigned index3(0); index3<4; ++index3){
+    out3[index3]=0.0;
+    sum_vec.clear();
+    for(unsigned index1(0); index1<3; ++index1){
+      for(unsigned index2(0); index2<2; ++index2){
+	sum_vec.push_back(in[index1][index2][index3]);
+      }
+    }
+    out3[index3]=Math::Sum(sum_vec.begin(), sum_vec.end());
+  }
+  sum_vec.clear();
+  for(unsigned index3(0); index3<4; ++index3){
+    for(unsigned index1(0); index1<3; ++index1){
+      for(unsigned index2(0); index2<2; ++index2){
+	sum_vec.push_back(in[index1][index2][index3]);
+      }
+    }
+  }
+  double sum_sq_inv(Math::Sum(sum_vec.begin(), sum_vec.end()));
+  sum_sq_inv=1.0/(sum_sq_inv*sum_sq_inv);
+  for(unsigned index3(0); index3<4; ++index3){
+    for(unsigned index1(0); index1<3; ++index1){
+      for(unsigned index2(0); index2<2; ++index2){
+	out[index1][index2][index3]=out1[index1]*out2[index2]*out3[index3]*sum_sq_inv;
+      }
+    }
+  }
+}
+
+void print_counts(double counts[3][2][4], double uncerts[3][2][4]){
+  print_matrix(counts);
+  std::cout << std::endl;
+  print_matrix(uncerts);
+}
+
+void print_matrix(double mat[3][2][4]){
+  for(unsigned sbin_index(0); sbin_index<4; ++sbin_index){
+    for(unsigned nb_index(0); nb_index<3; ++nb_index){
+      for(unsigned mbb_index(0); mbb_index<2; ++mbb_index){
+	std::cout << fix_width(mat[nb_index][mbb_index][sbin_index],4) << ' ';
+      }
+    }
+    std::cout << std::endl;
+  }
 }
 
 void make_complicated_plot(double counts[3][2][4], double uncerts[3][2][4]){

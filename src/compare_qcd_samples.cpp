@@ -24,8 +24,8 @@ void compare(std::vector<TH1D>& h, const std::string& out_name){
   h.at(0).SetMaximum(the_max);
   h.at(1).SetMaximum(the_max);
   TLegend legend(0.5, 0.7, 0.9, 0.85);
-  legend.AddEntry(&h.at(0), "High-stat, 2 gen bs", "lpe");
-  legend.AddEntry(&h.at(1), "Low-stat", "lpe");
+  legend.AddEntry(&h.at(0), "BJets", "lpe");
+  legend.AddEntry(&h.at(1), "HT-binned", "lpe");
   legend.Draw("same");
   canvas.SetLogy(0);
   canvas.Print((out_name+".pdf").c_str());
@@ -51,7 +51,7 @@ int main(){
   TChain qcd_4b("qcd_4b", "qcd_4b");
 
   qcd_2b.Add("reduced_trees/BJets*1.root/reduced_tree");
-  qcd_4b.Add("reduced_trees/QCD*1.root/reduced_tree");
+  qcd_4b.Add("reduced_trees/QCD_HT*1.root/reduced_tree");
 
   std::cout << "TESTING:" << std::endl;
   double count(0.0), uncert(0.0);

@@ -1,9 +1,29 @@
 #include "utils.hpp"
 
+#include <sstream>
+#include <string>
 #include "TGraph.h"
 #include "TH1.h"
 #include "TH1D.h"
 #include "TChain.h"
+
+std::string fix_width(const long double number, const std::streamsize width){
+  std::ostringstream oss("");
+  std::ios_base::fmtflags opts(std::ios::showpoint & ~std::ios::showpos | std::ios::right | std::ios::dec | std::ios::fixed);
+  oss.fill('0');
+  oss.flags(opts);
+  oss.precision(width);
+  oss << number;
+  std::string printed_num(oss.str());
+  std::string::size_type decimal_location(printed_num.find('.'));
+  printed_num.resize((static_cast<std::string::size_type>(width)>decimal_location)
+		     ?width:(decimal_location+1u));
+  if(printed_num.size()>0 && printed_num.at(printed_num.size()-1)=='.'){
+    printed_num.resize(printed_num.size()-1);
+    printed_num=" "+printed_num;
+  }
+  return printed_num;
+}
 
 void get_count_and_uncertainty(TTree& tree,
 			       const std::string& cut,
@@ -34,6 +54,24 @@ double get_maximum(const TGraph& g){
       if(y>max) max=y;
     }
     return max;
+  }
+}
+
+double get_minimum(const TH1& h){
+  return h.GetBinContent(h.GetMinimumBin());
+}
+
+double get_minimum(const TGraph& g){
+  if(g.GetN()<=0){
+    return 0.0;
+  }else{
+    double x(0.0), y(0.0), min(0.0);
+    g.GetPoint(1, x, min);
+    for(unsigned short i(2); i<=g.GetN(); ++i){
+      g.GetPoint(1, x, y);
+      if(y<min) min=y;
+    }
+    return min;
   }
 }
 

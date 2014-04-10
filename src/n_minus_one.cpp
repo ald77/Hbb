@@ -24,6 +24,36 @@
 #include "utils.hpp"
 #include "plotter.hpp"
 
+double add_in_quadrature(const double a, const double b, const double c){
+  double x(0.0), y(0.0), z(0.0);
+  if(a>=b && a>=c){
+    x=a; y=b; z=c;
+  }else if(b>=a && b>=c){
+    x=b; y=a; z=c;
+  }else{
+    x=c; y=a; z=b;
+  }
+  if(x==0.0){
+    return 0.0;
+  }else{
+    const double r1(y/x), r2(z/x);
+    return fabs(x)*sqrt(1.0+r1*r1+r2*r2);
+  }
+}
+
+double get_qcd_scaling(const TH1D& data, const TH1D& back, const TH1D& qcd){
+  for(double x(3.7); x<4.1; x+=0.01){
+    double err(0.0);
+    for(int bin(0); bin<=data.GetNbinsX()+1; ++bin){
+      double diff(data.GetBinContent(bin)-back.GetBinContent(bin)-x*qcd.GetBinContent(bin));
+      double uncert(add_in_quadrature(data.GetBinError(bin), back.GetBinError(bin), x*qcd.GetBinError(bin)));
+      if(uncert>0.0) err+=(diff*diff/(uncert*uncert));
+    }
+    std::cout << x << " " << err << std::endl;
+  }
+  return 1.0;
+}
+
 void compare_histos(TH1D h1, TH1D h2, TH1D h3, const std::string out_name,
 		    const bool normalize=false){
   TCanvas c;
@@ -529,6 +559,7 @@ int main(){
   std::vector<TH1D> h_min_delta_R(0);
   std::vector<TH1D> h_max_delta_R(0);
   std::vector<TH1D> h_average_higgs_mass(0);
+  std::vector<TH1D> h_average_higgs_mass_4b_sig(0);
   std::vector<TH1D> h_higgs_mass_difference(0);
   std::vector<TH1D> h_ht_jets(0);
   std::vector<TH1D> h_ht_jets_met(0);
@@ -716,6 +747,7 @@ int main(){
     h_min_delta_R.push_back(TH1D(("h_min_delta_R"+name).c_str(), "Min Delta R (baseline);Min Delta R;Events/0.1", 50, 0.0, 5.0));
     h_max_delta_R.push_back(TH1D(("h_max_delta_R"+name).c_str(), "Max Delta R (baseline);Max Delta R;Events/0.1", 50, 0.0, 5.0));
     h_average_higgs_mass.push_back(TH1D(("h_average_higgs_mass"+name).c_str(), "<m_{bb}> (baseline);<m_{bb}> [GeV];Events/5 GeV", 50, 0.0, 250.0));
+    h_average_higgs_mass_4b_sig.push_back(TH1D(("h_average_higgs_mass_4b_sig"+name).c_str(), "<m_{bb}> (4b SIG);<m_{bb}> [GeV];Events/5 GeV", 25, 0.0, 250.0));
     h_higgs_mass_difference.push_back(TH1D(("h_higgs_mass_difference"+name).c_str(), "#Delta m_{bb} (baseline);#Delta m_{bb} [GeV];Events/5 GeV", 50, 0.0, 250.0));
     h_ht_jets.push_back(TH1D(("h_ht_jets"+name).c_str(), "H_{T} (jets) (baseline);H_{T} [GeV];Events/10 GeV", 100, 0.0, 1000.0));
     h_ht_jets_met.push_back(TH1D(("h_ht_jets_met"+name).c_str(), "H_{T} (jets+MET) (baseline);H_{T} [GeV];Events/10 GeV", 100, 0.0, 1000.0));
@@ -1057,6 +1089,9 @@ int main(){
 	h_ht_jets_met_leps.at(chain_num).Fill(ht_jets_met_leps, full_weight);
 	h_top_pt.at(chain_num).Fill(top_pt, full_weight);
 	h_average_higgs_mass.at(chain_num).Fill(average_higgs_mass, full_weight);
+	if(passesHiggsMassDiffCut && passesBTaggingCut){
+	  h_average_higgs_mass_4b_sig.at(chain_num).Fill(average_higgs_mass, full_weight);
+	}
 	h_higgs_mass_difference.at(chain_num).Fill(higgs_mass_difference, full_weight);
       }
       if(passesJSONCut && passesPVCut /*&& passesJet2PtCut*/
@@ -1182,6 +1217,14 @@ int main(){
     }
   }
 
+  TH1D h_min_delta_phi_data(h_min_delta_phi.at(0));
+  TH1D h_min_delta_phi_back(h_min_delta_phi.at(2));
+  h_min_delta_phi_back=h_min_delta_phi_back+h_min_delta_phi.at(3);
+  h_min_delta_phi_back=h_min_delta_phi_back+h_min_delta_phi.at(4);
+  TH1D h_min_delta_phi_qcd(h_min_delta_phi.at(1));
+  const double scaling(get_qcd_scaling(h_min_delta_phi_data, h_min_delta_phi_back, h_min_delta_phi_qcd));
+  std::cout << "QCD SCALING: " << scaling << std::endl;
+
   std::vector<std::string> sub_names(names.begin()+1, names.end());
 
   plotter plot;
@@ -1236,6 +1279,7 @@ int main(){
   plot_data_mc(plot, h_min_delta_R, "nm1/min_delta_R.pdf");
   plot_data_mc(plot, h_max_delta_R, "nm1/max_delta_R.pdf");
   plot_data_mc(plot, h_average_higgs_mass, "nm1/average_higgs_mass.pdf");
+  plot_data_mc(plot, h_average_higgs_mass_4b_sig, "nm1/average_higgs_mass_4b_sig.pdf");
   plot_data_mc(plot, h_higgs_mass_difference, "nm1/higgs_mass_difference.pdf");
   plot_data_mc(plot, h_ht_jets, "nm1/ht_jets.pdf");
   plot_data_mc(plot, h_ht_jets_met, "nm1/ht_jets_met.pdf");
