@@ -97,6 +97,7 @@ void plotter::plot_data_mc(TH1D& data,
     if(denom!=0.0){
       content=(xd-xm)/denom;
     }
+    if(false && content==0.0){}
     residuals.SetBinContent(bin, xd-xm);
     residuals.SetBinError(bin, denom);
   }
