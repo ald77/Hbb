@@ -19,9 +19,10 @@ vpath %.exe $(EXEDIR)
 vpath %.d $(MAKEDIR)
 
 # Add new executables to this list
-all: make_plots.exe skim_file.exe stack_histos.exe draw_abcd_ratio_plots.exe make_sig_plots.exe calc_abcd.exe count_specific_mass_events.exe draw_npv_plot.exe make_cutflow_table.exe calc_abcd_new.exe make_reduced_tree.exe efficiencies.exe full_sim_vs_fast_sim.exe pileup_plots.exe qcd_plots.exe qcd_study.exe n_minus_one.exe abcd_obs_compare.exe abcd_predictions.exe compare_qcd_samples.exe qcd_systematic.exe fix_sample.exe composition_systematic.exe
+all: make_plots.exe skim_file.exe stack_histos.exe draw_abcd_ratio_plots.exe make_sig_plots.exe calc_abcd.exe count_specific_mass_events.exe draw_npv_plot.exe make_cutflow_table.exe calc_abcd_new.exe make_reduced_tree.exe efficiencies.exe full_sim_vs_fast_sim.exe pileup_plots.exe qcd_plots.exe qcd_study.exe n_minus_one.exe abcd_obs_compare.exe abcd_predictions.exe compare_qcd_samples.exe qcd_systematic.exe fix_sample.exe composition_systematic.exe new_composition_systematic.exe
 
 # List any object files your executable oneed to be linked with
+$(EXEDIR)/new_composition_systematic.exe: new_composition_systematic.o utils.o math.o
 $(EXEDIR)/composition_systematic.exe: composition_systematic.o utils.o math.o
 $(EXEDIR)/fix_sample.exe: fix_sample.o utils.o timer.o
 $(EXEDIR)/qcd_systematic.exe: qcd_systematic.o utils.o timer.o
