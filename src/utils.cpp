@@ -1,5 +1,6 @@
 #include "utils.hpp"
 
+#include <limits>
 #include <sstream>
 #include <string>
 #include "TGraph.h"
@@ -9,7 +10,7 @@
 
 std::string fix_width(const long double number, const std::streamsize width){
   std::ostringstream oss("");
-  std::ios_base::fmtflags opts(std::ios::showpoint & ~std::ios::showpos | std::ios::right | std::ios::dec | std::ios::fixed);
+  std::ios_base::fmtflags opts((std::ios::showpoint & (~std::ios::showpos)) | std::ios::right | std::ios::dec | std::ios::fixed);
   oss.fill('0');
   oss.flags(opts);
   oss.precision(width);
@@ -45,7 +46,7 @@ double get_maximum(const TH1& h){
 
 double get_maximum(const TGraph& g){
   if(g.GetN()<=0){
-    return 0.0;
+    return -std::numeric_limits<double>::max();
   }else{
     double x(0.0), y(0.0), max(0.0);
     g.GetPoint(1, x, max);
@@ -63,7 +64,7 @@ double get_minimum(const TH1& h){
 
 double get_minimum(const TGraph& g){
   if(g.GetN()<=0){
-    return 0.0;
+    return std::numeric_limits<double>::max();
   }else{
     double x(0.0), y(0.0), min(0.0);
     g.GetPoint(1, x, min);
@@ -77,7 +78,7 @@ double get_minimum(const TGraph& g){
 
 double get_minimum_positive(const TH1& h){
   if(h.GetNbinsX()==0){
-    return 0.0;
+    return std::numeric_limits<double>::max();
   }else{
     double min(h.GetBinContent(1));
     for(unsigned short bin(2); bin<=h.GetNbinsX(); ++bin){
@@ -91,13 +92,71 @@ double get_minimum_positive(const TH1& h){
 
 double get_minimum_positive(const TGraph& g){
   if(g.GetN()==0){
-    return 0.0;
+    return std::numeric_limits<double>::max();
   }else{
     double x(0.0), y(0.0), min(0.0);
     g.GetPoint(1, x, min);
     for(unsigned short i(2); i<=g.GetN(); ++i){
       g.GetPoint(1, x, y);
       if(y<min && y>0.0) min=y;
+    }
+    return min;
+  }
+}
+
+double get_maximum_with_error(const TH1& h){
+  if(h.GetNbinsX()==0){
+    return -std::numeric_limits<double>::max();
+  }else{
+    double max(h.GetBinContent(1)+h.GetBinError(1));
+    for(int bin(2); bin<=h.GetNbinsX(); ++bin){
+      const double this_one(h.GetBinContent(bin)+h.GetBinError(bin));
+      if(this_one>max) max=this_one;
+    }
+    return max;
+  }
+}
+
+double get_minimum_with_error(const TH1& h){
+  if(h.GetNbinsX()==0){
+    return std::numeric_limits<double>::max();
+  }else{
+    double min(h.GetBinContent(1)-h.GetBinError(1));
+    for(int bin(2); bin<=h.GetNbinsX(); ++bin){
+      const double this_one(h.GetBinContent(bin)+h.GetBinError(bin));
+      if(this_one<min) min=this_one;
+    }
+    return min;
+  }
+}
+
+double get_maximum_with_error(const TGraph& h){
+  if(h.GetN()==0){
+    return std::numeric_limits<double>::max();
+  }else{
+    double x(0.0), y(0.0);
+    h.GetPoint(1, x, y);
+    double max(y+h.GetErrorYhigh(1));
+    for(int point(2); point<h.GetN(); ++point){
+      h.GetPoint(point, x, y);
+      const double this_one(y+h.GetErrorYhigh(point));
+      if(this_one>max) max=this_one;
+    }
+    return max;
+  }
+}
+
+double get_minimum_with_error(const TGraph& h){
+  if(h.GetN()==0){
+    return std::numeric_limits<double>::max();
+  }else{
+    double x(0.0), y(0.0);
+    h.GetPoint(1, x, y);
+    double min(y-h.GetErrorYlow(1));
+    for(int point(2); point<h.GetN(); ++point){
+      h.GetPoint(point, x, y);
+      const double this_one(y-h.GetErrorYlow(point));
+      if(this_one<min) min=this_one;
     }
     return min;
   }
