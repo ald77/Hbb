@@ -204,6 +204,7 @@ int main(int argc, char *argv[]){
     if(!(entry%(1<<14))) timer.PrintRemainingTime();
     reduced_tree_old->GetEntry(entry);
     //lumi_weight=lumi_weight_in;
+    if(false && lumi_weight_in==0.0){}
     lumi_weight*=3.88;
     full_weight=pu_weight*lumi_weight*top_pt_weight_official*trigger_weight;
     reduced_tree_new->Fill();
