@@ -5,6 +5,9 @@
 #include <cmath>
 #include <ios>
 #include <vector>
+#include <random>
+#include <array>
+#include <algorithm>
 #include "TH1D.h"
 #include "TChain.h"
 #include "TColor.h"
@@ -25,6 +28,10 @@ double get_minimum(const TH1& h);
 double get_minimum(const TGraph& h);
 double get_minimum_positive(const TH1& h);
 double get_minimum_positive(const TGraph& h);
+double get_maximum_with_error(const TH1& h);
+double get_maximum_with_error(const TGraph& h);
+double get_minimum_with_error(const TH1& h);
+double get_minimum_with_error(const TGraph& h);
 void normalize(TH1& h);
 
 template<typename T>
@@ -86,6 +93,16 @@ void get_full_title(const T& histo, std::string& title){
   title+=histo.GetXaxis()->GetTitle();
   title+=";";
   title+=histo.GetYaxis()->GetTitle();
+}
+
+template<typename T, unsigned draws=1000>
+void initialize_prng(T& prng){
+  std::random_device rd;
+  std::array<std::random_device::result_type, draws+1> seed_data;
+  seed_data.at(0)=0;
+  std::generate(seed_data.begin()+1, seed_data.end(), std::ref(rd));
+  std::seed_seq seq(seed_data.begin(), seed_data.end());
+  prng.seed(seq);
 }
 
 #endif
