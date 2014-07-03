@@ -1,5 +1,5 @@
 #ifndef H_REDUCED_TREE_MAKER
-#define H_REDCUED_TREE_MAKER
+#define H_REDUCED_TREE_MAKER
 
 #include <string>
 #include "event_handler.hpp"
